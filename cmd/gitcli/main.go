@@ -4,64 +4,48 @@ import (
 	"fmt"
 	"os"
 
-	gitcontrol "github.com/sehwan505/codev42/internal/gitcontrol/repo"
-
+	"github.com/sehwan505/codev42/configs"
+	"github.com/sehwan505/codev42/internal/gitcontrol"
 	"github.com/spf13/cobra"
 )
 
 var gInfo = &gitcontrol.GitInfo{}
 var authInfo = &gitcontrol.Auth{}
+var config = &configs.Config{}
 
 func main() {
 	var rootCmd = &cobra.Command{
 		Use:   "gitcli",
-		Short: "Simple git cli with go-git",
+		Short: "git cli for codev42",
 	}
-
-	// 1) 특정 파일에서 ID/Token 불러오기
-	loadCmd := &cobra.Command{
-		Use:   "load-auth [filePath]",
-		Short: "Load userID and token from file",
-		Args:  cobra.ExactArgs(1),
-		RunE: func(cmd *cobra.Command, args []string) error {
-			filePath := args[0]
-			a, err := gitcontrol.LoadAuthFromFile(filePath)
-			if err != nil {
-				return err
-			}
-			authInfo = a
-			fmt.Printf("Loaded Auth: userID=%s, token=%s\n", authInfo.UserID, authInfo.Token)
-			return nil
-		},
+	config, err := configs.GetConfig()
+	if err != nil {
+		return
 	}
-
-	// 2) git repository 연동 (열기)
-	repoCmd := &cobra.Command{
-		Use:   "open-repo [path]",
-		Short: "Open local git repo from path",
-		Args:  cobra.ExactArgs(1),
-		RunE: func(cmd *cobra.Command, args []string) error {
-			repoPath := args[0]
-			repo, err := gitcontrol.OpenGitRepo(repoPath)
-			if err != nil {
-				return err
-			}
-			gInfo.RepoPath = repoPath
-			gInfo.Repo = repo
-
-			// 현재 브랜치 파악
-			headRef, err := repo.Head()
-			if err != nil {
-				return err
-			}
-			branchName := headRef.Name().Short()
-			gInfo.CurrentBranch = branchName
-			fmt.Printf("Opened repo at %s (current branch: %s)\n", repoPath, branchName)
-			return nil
-		},
+	auth, err := gitcontrol.LoadAuthFromFile(config)
+	if err != nil {
+		return
 	}
+	authInfo = auth
+	fmt.Printf("Loaded Auth: userID=%s, token=%s\n", authInfo.UserID, authInfo.Token)
 
-	// 3) branch 설정하기(체크아웃)
+	repo, err := gitcontrol.OpenGitRepo(config.GitRepo)
+	if err != nil {
+		return
+	}
+	gInfo.RepoPath = config.GitRepo
+	gInfo.Repo = repo
+
+	// 현재 브랜치 파악
+	headRef, err := repo.Head()
+	if err != nil {
+		return
+	}
+	branchName := headRef.Name().Short()
+	gInfo.CurrentBranch = branchName
+	fmt.Printf("Opened repo at %s (current branch: %s)\n", gInfo.Repo, branchName)
+
+	// branch 설정하기(체크아웃)
 	checkoutCmd := &cobra.Command{
 		Use:   "checkout [branchName]",
 		Short: "Checkout to branchName",
@@ -77,7 +61,7 @@ func main() {
 		},
 	}
 
-	// 4) branch 생성하기
+	// branch 생성하기
 	createBranchCmd := &cobra.Command{
 		Use:   "create-branch [branchName]",
 		Short: "Create a new branch",
@@ -93,7 +77,7 @@ func main() {
 		},
 	}
 
-	// 5) branch 지우기
+	// branch 지우기
 	deleteBranchCmd := &cobra.Command{
 		Use:   "delete-branch [branchName]",
 		Short: "Delete branch",
@@ -109,7 +93,7 @@ func main() {
 		},
 	}
 
-	// 6) commit 하기
+	// commit 하기
 	commitCmd := &cobra.Command{
 		Use:   "commit [message]",
 		Short: "Commit all changes with given message",
@@ -125,19 +109,20 @@ func main() {
 		},
 	}
 
-	// 7) branch 시작점부터 지금까지 변경사항 확인
+	// branch 시작점부터 지금까지 변경사항 확인
 	showBranchChangesCmd := &cobra.Command{
-		Use:   "show-branch-changes [branchName]",
+		Use:   "show-branch-changes [branchName] [baseBranch]",
 		Short: "Show changes from branch start to HEAD",
-		Args:  cobra.ExactArgs(1),
+		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			branchName := args[0]
-			err := gitcontrol.ShowChangesFromBranchStart(gInfo, branchName)
+			baseBranch := args[1]
+			err := gitcontrol.ShowChangesFromBranchPoint(gInfo, branchName, baseBranch)
 			return err
 		},
 	}
 
-	// 8) branch 내 커밋 확인
+	// branch 내 커밋 확인
 	listCommitsCmd := &cobra.Command{
 		Use:   "list-commits [branchName]",
 		Short: "List commits in a branch",
@@ -148,7 +133,7 @@ func main() {
 		},
 	}
 
-	// 9) 특정 커밋ID부터 지금까지 변경사항 확인
+	// 특정 커밋ID부터 지금까지 변경사항 확인
 	showChangesFromCommitCmd := &cobra.Command{
 		Use:   "show-changes [commitID] [branchName]",
 		Short: "Show changes from commitID to HEAD of branch",
@@ -156,13 +141,12 @@ func main() {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			commitID := args[0]
 			branchName := args[1]
-			return gitcontrol.ShowChangesFromCommit(gInfo, commitID, branchName)
+			commitInfo := &gitcontrol.CommitInfo{commitID, branchName}
+			return gitcontrol.ShowChangesFromCommit(gInfo, commitInfo)
 		},
 	}
 
 	// 명령어 등록
-	rootCmd.AddCommand(loadCmd)
-	rootCmd.AddCommand(repoCmd)
 	rootCmd.AddCommand(checkoutCmd)
 	rootCmd.AddCommand(createBranchCmd)
 	rootCmd.AddCommand(deleteBranchCmd)
