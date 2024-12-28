@@ -32,7 +32,7 @@ func NewMasterAgent(apiKey string) *MasterAgent {
 	}
 }
 
-func GenerateSchema[T any]() interface{} {
+func GenerateDevPlanSchema[T any]() interface{} {
 	reflector := jsonschema.Reflector{
 		AllowAdditionalProperties: false,
 		DoNotReference:            true,
@@ -42,13 +42,17 @@ func GenerateSchema[T any]() interface{} {
 	return schema
 }
 
-var DevPlanResponseSchema = GenerateSchema[DevPlan]()
+var DevPlanResponseSchema = GenerateDevPlanSchema[DevPlan]()
 
 func (agent MasterAgent) Call(prompt string) (*DevPlan, error) {
 	prompt = "prompt: " + prompt
 	prompt += `
+	you should follow the rules to make a development plan
 	rule: make a development plan about prompt with annotations of functions and classes as a list
-	every annotation must contains @params, @returns, @description	
+	function annotation follow @name, @params, @returns, @description
+	for example, function @name: add_function @params: x: int, y: int @returns: int @description: add x and y
+	class annotation must contains @name @description, @attribute, @methods with annotations of functions
+	for example, class @name: calculator @description: class_name @attribute: x: int, y: int @methods: @name: add_method @params: x: int, y: int @returns: int @description: add x and y
 	`
 	print("> ")
 	println(prompt)

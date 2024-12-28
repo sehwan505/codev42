@@ -21,5 +21,14 @@ func main() {
 		fmt.Printf("Error: %v\n", err)
 		return
 	}
-	fmt.Printf("Dev Plan: %s\n", devPlan)
+	workerAgent := agent.NewWorkerAgent(config.OpenAiKey)
+	for _, annotation := range devPlan.Annotations {
+		fmt.Printf("Function: %s\n", annotation)
+		devResult, err := workerAgent.Call(annotation)
+		if err != nil {
+			fmt.Printf("Error: %v\n", err)
+			return
+		}
+		fmt.Printf("Code: %s\n", devResult.Code)
+	}
 }
