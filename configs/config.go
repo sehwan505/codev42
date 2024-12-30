@@ -10,7 +10,24 @@ type Config struct {
 	GitToken  string `json:"GIT_TOKEN"`
 	GitUserID string `json:"GIT_USERID"`
 	GitRepo   string `json:"GIT_REPO"`
+
 	OpenAiKey string `json:"OPENAI_API_KEY"`
+
+	MySQLUser     string `json:"MYSQL_USER"`
+	MySQLPassword string `json:"MYSQL_PASSWORD"`
+	MySQLHost     string `json:"MYSQL_HOST"`
+	MySQLPort     string `json:"MYSQL_PORT"`
+	MySQLDB       string `json:"MYSQL_DB"`
+
+	// Milvus
+	MilvusHost string `json:"MILVUS_HOST"`
+	MilvusPort string `json:"MILVUS_PORT"`
+
+	// gRPC
+	GRPCPort string `json:"GRPC_PORT"`
+
+	// Gin HTTP
+	HTTPPort string `json:"HTTP_PORT"`
 }
 
 func GetConfig() (*Config, error) {
