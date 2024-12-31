@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"sync"
 
 	"github.com/invopop/jsonschema"
 	"github.com/openai/openai-go"
@@ -85,4 +86,41 @@ func (agent WorkerAgent) Call(devPlan string) (*DevResult, error) {
 		return nil, err
 	}
 	return devResult, nil
+}
+
+func (agent WorkerAgent) ImplementPlan(devPlan *DevPlan) ([]*DevResult, error) {
+	var wg sync.WaitGroup
+	resultChan := make(chan *DevResult, len(devPlan.Annotations))
+	errorChan := make(chan error, len(devPlan.Annotations))
+
+	for _, annotation := range devPlan.Annotations {
+		wg.Add(1)
+		go func(annotation string) {
+			defer wg.Done()
+			fmt.Printf("Processing: %s\n", annotation)
+			devResult, err := agent.Call(annotation)
+			if err != nil {
+				errorChan <- err
+				return
+			}
+			resultChan <- devResult
+		}(annotation)
+	}
+
+	wg.Wait()
+	close(resultChan)
+	close(errorChan)
+
+	var results []*DevResult
+	for result := range resultChan {
+		results = append(results, result)
+	}
+	if len(errorChan) > 0 {
+		var errors []string
+		for err := range errorChan {
+			errors = append(errors, err.Error())
+		}
+		return nil, fmt.Errorf("failed to implement plan: %v", errors)
+	}
+	return results, nil
 }
