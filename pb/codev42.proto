@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = "github.com/sehwan505/codev42/pb";
+
+service agentService {
+  rpc generatePlan (GeneratePlanRequest) returns (GeneratePlanResponse);
+  rpc SearchEntities (ImplementPlanRequest) returns (ImplementPlanResponse);
+}
+
+message GeneratePlanRequest {
+  string Prompt = 1;
+}
+
+message GeneratePlanResponse {
+  string Language = 1;
+  repeated string Plans = 2;
+}
+
+message ImplementPlanRequest {
+  string Language = 1;
+  repeated string Plans = 2;
+}
+
+message ImplementPlanResponse {
+  repeated string Description = 1;
+  string Code = 2;
+}
