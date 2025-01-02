@@ -1,4 +1,4 @@
-package agent
+package handler
 
 import (
 	"context"
@@ -11,8 +11,8 @@ import (
 )
 
 type DevResult struct {
-	Description string   `json:"description" jsonschema_description:"description of the development result"`
-	Code        []string `json:"annotations" jsonschema_description:"code implemented from the dev plan"`
+	Description string `json:"description" jsonschema_description:"description of the development result"`
+	Code        string `json:"annotations" jsonschema_description:"code implemented from the dev plan"`
 }
 
 // type Annotation struct {
@@ -45,7 +45,7 @@ func GenerateDevResultSchema[T any]() interface{} {
 
 var DevResultResponseSchema = GenerateDevResultSchema[DevResult]()
 
-func (agent WorkerAgent) Call(devPlan string) (*DevResult, error) {
+func (agent WorkerAgent) Call(language string, devPlan string) (*DevResult, error) {
 	prompt := "dev plan: " + devPlan
 	prompt += `
 	you should follow the dev plan to make a development result
@@ -88,17 +88,17 @@ func (agent WorkerAgent) Call(devPlan string) (*DevResult, error) {
 	return devResult, nil
 }
 
-func (agent WorkerAgent) ImplementPlan(devPlan *DevPlan) ([]*DevResult, error) {
+func (agent WorkerAgent) ImplementPlan(language string, plans []string) ([]*DevResult, error) {
 	var wg sync.WaitGroup
-	resultChan := make(chan *DevResult, len(devPlan.Annotations))
-	errorChan := make(chan error, len(devPlan.Annotations))
+	resultChan := make(chan *DevResult, len(plans))
+	errorChan := make(chan error, len(plans))
 
-	for _, annotation := range devPlan.Annotations {
+	for _, annotation := range plans {
 		wg.Add(1)
 		go func(annotation string) {
 			defer wg.Done()
 			fmt.Printf("Processing: %s\n", annotation)
-			devResult, err := agent.Call(annotation)
+			devResult, err := agent.Call(language, annotation)
 			if err != nil {
 				errorChan <- err
 				return

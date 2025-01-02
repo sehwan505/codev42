@@ -6,7 +6,7 @@ option go_package = "github.com/sehwan505/codev42/pb";
 
 service agentService {
   rpc generatePlan (GeneratePlanRequest) returns (GeneratePlanResponse);
-  rpc SearchEntities (ImplementPlanRequest) returns (ImplementPlanResponse);
+  rpc implementPlan (ImplementPlanRequest) returns (ImplementPlanResponse);
 }
 
 message GeneratePlanRequest {
@@ -24,6 +24,10 @@ message ImplementPlanRequest {
 }
 
 message ImplementPlanResponse {
-  repeated string Description = 1;
+  repeated DevResult DevResults = 1;
+}
+
+message DevResult {
+  string Description = 1;
   string Code = 2;
 }

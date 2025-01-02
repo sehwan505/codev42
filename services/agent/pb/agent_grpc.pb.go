@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v5.28.3
-// source: pb/codev42.proto
+// source: agent.proto
 
 package pb
 
@@ -19,8 +19,8 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	AgentService_GeneratePlan_FullMethodName   = "/pb.agentService/generatePlan"
-	AgentService_SearchEntities_FullMethodName = "/pb.agentService/SearchEntities"
+	AgentService_GeneratePlan_FullMethodName  = "/pb.agentService/generatePlan"
+	AgentService_ImplementPlan_FullMethodName = "/pb.agentService/implementPlan"
 )
 
 // AgentServiceClient is the client API for AgentService service.
@@ -28,7 +28,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AgentServiceClient interface {
 	GeneratePlan(ctx context.Context, in *GeneratePlanRequest, opts ...grpc.CallOption) (*GeneratePlanResponse, error)
-	SearchEntities(ctx context.Context, in *ImplementPlanRequest, opts ...grpc.CallOption) (*ImplementPlanResponse, error)
+	ImplementPlan(ctx context.Context, in *ImplementPlanRequest, opts ...grpc.CallOption) (*ImplementPlanResponse, error)
 }
 
 type agentServiceClient struct {
@@ -49,10 +49,10 @@ func (c *agentServiceClient) GeneratePlan(ctx context.Context, in *GeneratePlanR
 	return out, nil
 }
 
-func (c *agentServiceClient) SearchEntities(ctx context.Context, in *ImplementPlanRequest, opts ...grpc.CallOption) (*ImplementPlanResponse, error) {
+func (c *agentServiceClient) ImplementPlan(ctx context.Context, in *ImplementPlanRequest, opts ...grpc.CallOption) (*ImplementPlanResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ImplementPlanResponse)
-	err := c.cc.Invoke(ctx, AgentService_SearchEntities_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, AgentService_ImplementPlan_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -64,7 +64,7 @@ func (c *agentServiceClient) SearchEntities(ctx context.Context, in *ImplementPl
 // for forward compatibility.
 type AgentServiceServer interface {
 	GeneratePlan(context.Context, *GeneratePlanRequest) (*GeneratePlanResponse, error)
-	SearchEntities(context.Context, *ImplementPlanRequest) (*ImplementPlanResponse, error)
+	ImplementPlan(context.Context, *ImplementPlanRequest) (*ImplementPlanResponse, error)
 	mustEmbedUnimplementedAgentServiceServer()
 }
 
@@ -78,8 +78,8 @@ type UnimplementedAgentServiceServer struct{}
 func (UnimplementedAgentServiceServer) GeneratePlan(context.Context, *GeneratePlanRequest) (*GeneratePlanResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GeneratePlan not implemented")
 }
-func (UnimplementedAgentServiceServer) SearchEntities(context.Context, *ImplementPlanRequest) (*ImplementPlanResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SearchEntities not implemented")
+func (UnimplementedAgentServiceServer) ImplementPlan(context.Context, *ImplementPlanRequest) (*ImplementPlanResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ImplementPlan not implemented")
 }
 func (UnimplementedAgentServiceServer) mustEmbedUnimplementedAgentServiceServer() {}
 func (UnimplementedAgentServiceServer) testEmbeddedByValue()                      {}
@@ -120,20 +120,20 @@ func _AgentService_GeneratePlan_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AgentService_SearchEntities_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _AgentService_ImplementPlan_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ImplementPlanRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AgentServiceServer).SearchEntities(ctx, in)
+		return srv.(AgentServiceServer).ImplementPlan(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AgentService_SearchEntities_FullMethodName,
+		FullMethod: AgentService_ImplementPlan_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AgentServiceServer).SearchEntities(ctx, req.(*ImplementPlanRequest))
+		return srv.(AgentServiceServer).ImplementPlan(ctx, req.(*ImplementPlanRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -150,10 +150,10 @@ var AgentService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _AgentService_GeneratePlan_Handler,
 		},
 		{
-			MethodName: "SearchEntities",
-			Handler:    _AgentService_SearchEntities_Handler,
+			MethodName: "implementPlan",
+			Handler:    _AgentService_ImplementPlan_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "pb/codev42.proto",
+	Metadata: "agent.proto",
 }

@@ -1,4 +1,4 @@
-package agent
+package handler
 
 import (
 	"context"
@@ -10,8 +10,8 @@ import (
 )
 
 type DevPlan struct {
-	Language    string   `json:"language" jsonschema_description:"The programming language for development"`
-	Annotations []string `json:"annotations" jsonschema_description:"annotations of functions and classes for planning development with params, returns, and description"`
+	Language string   `json:"language" jsonschema_description:"The programming language for development"`
+	Plans    []string `json:"annotations" jsonschema_description:"annotations of functions and classes for planning development with params, returns, and description"`
 }
 
 // type Annotation struct {
