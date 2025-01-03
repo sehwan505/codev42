@@ -5,9 +5,9 @@ import (
 	"log"
 	"net"
 
-	"github.com/sehwan505/codev42/services/agent/configs"
-	"github.com/sehwan505/codev42/services/agent/handler"
-	pb "github.com/sehwan505/codev42/services/agent/pb"
+	"codev42/services/agent/configs"
+	"codev42/services/agent/handler"
+	pb "codev42/services/agent/pb"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"

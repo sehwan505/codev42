@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package pb;
 
-option go_package = "github.com/sehwan505/codev42/pb";
+option go_package = "codev42/pb";
 
 service agentService {
   rpc generatePlan (GeneratePlanRequest) returns (GeneratePlanResponse);

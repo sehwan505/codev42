@@ -5,7 +5,7 @@ import (
 
 	git "github.com/go-git/go-git/v5"
 
-	"github.com/sehwan505/codev42/configs"
+	"codev42/configs"
 )
 
 // GitInfo: 로컬 저장소 관련 정보

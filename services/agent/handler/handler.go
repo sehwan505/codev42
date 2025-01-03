@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/sehwan505/codev42/services/agent/configs"
-	"github.com/sehwan505/codev42/services/agent/pb"
+	"codev42/services/agent/configs"
+	"codev42/services/agent/pb"
 )
 
 type AgentHandler struct {

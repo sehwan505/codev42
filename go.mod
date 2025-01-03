@@ -1,6 +1,4 @@
-module github.com/sehwan505/codev42
-
-replace github.com/sehwan505/codev42 => ../codev42
+module codev42
 
 go 1.23.4
 
