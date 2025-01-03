@@ -1,0 +1,28 @@
+package routes
+
+import (
+	"log"
+
+	"codev42/services/agent/pb"
+	"codev42/services/gateway/handler"
+
+	"github.com/gin-gonic/gin"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
+)
+
+func SetupRoutes() (*grpc.ClientConn, *gin.Engine) {
+	router := gin.Default()
+	conn, err := grpc.NewClient(":9090", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		log.Fatalf("Failed to connect to gRPC server: %v", err)
+	}
+
+	agentClient := pb.NewAgentServiceClient(conn)
+	agentHandler := handler.NewAgentHandler(agentClient)
+
+	router.POST("/generate-plan", agentHandler.GeneratePlan)
+	router.POST("/implement-plan", agentHandler.ImplementPlan)
+
+	return conn, router
+}
