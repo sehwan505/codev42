@@ -1,50 +1,54 @@
 package configs
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
-	"path/filepath"
-	"runtime"
 )
 
-var BasePath string
-
 type Config struct {
-	OpenAiKey string `json:"OPENAI_API_KEY"`
+	OpenAiKey string
 
-	MySQLUser     string `json:"MYSQL_USER"`
-	MySQLPassword string `json:"MYSQL_PASSWORD"`
-	MySQLHost     string `json:"MYSQL_HOST"`
-	MySQLPort     string `json:"MYSQL_PORT"`
-	MySQLDB       string `json:"MYSQL_DB"`
+	MySQLUser     string
+	MySQLPassword string
+	MySQLHost     string
+	MySQLPort     string
+	MySQLDB       string
 
 	// Milvus
-	MilvusHost string `json:"MILVUS_HOST"`
-	MilvusPort string `json:"MILVUS_PORT"`
+	MilvusHost string
+	MilvusPort string
 
 	// gRPC
-	GRPCPort string `json:"GRPC_PORT"`
+	GRPCPort string
+}
+
+func GetEnv(key, defaultValue string) string {
+	value := os.Getenv(key)
+	if value == "" {
+		return defaultValue
+	}
+	return value
 }
 
 func GetConfig() (*Config, error) {
-	_, filename, _, ok := runtime.Caller(0)
-	if !ok {
-		return nil, fmt.Errorf("failed to get runtime caller information")
+	config := &Config{
+		OpenAiKey: GetEnv("OPENAI_API_KEY", ""),
+
+		MySQLUser:     GetEnv("MYSQL_USER", "root"),
+		MySQLPassword: GetEnv("MYSQL_PASSWORD", ""),
+		MySQLHost:     GetEnv("MYSQL_HOST", "localhost"),
+		MySQLPort:     GetEnv("MYSQL_PORT", "3306"),
+		MySQLDB:       GetEnv("MYSQL_DB", "test"),
+
+		MilvusHost: GetEnv("MILVUS_HOST", "localhost"),
+		MilvusPort: GetEnv("MILVUS_PORT", "19530"),
+
+		GRPCPort: GetEnv("GRPC_PORT", "9090"),
 	}
 
-	configFilePath := filepath.Join(filepath.Dir(filename), "config.json")
-	file, err := os.Open(configFilePath)
-	if err != nil {
-		return nil, err
+	if config.OpenAiKey == "" || config.MySQLPassword == "" {
+		return nil, fmt.Errorf("environment variable OPENAI_API_KEY is required but not set")
 	}
-	defer file.Close()
 
-	var config Config
-	err = json.NewDecoder(file).Decode(&config)
-	if err != nil {
-		return nil, err
-	}
-	return &config, nil
-
+	return config, nil
 }
