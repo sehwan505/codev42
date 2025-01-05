@@ -1,6 +1,8 @@
 package main
 
-import "codev42/services/gateway/routes"
+import (
+	"codev42/services/gateway/routes"
+)
 
 func main() {
 	conn, router := routes.SetupRoutes()

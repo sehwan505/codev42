@@ -13,7 +13,7 @@ import (
 
 func SetupRoutes() (*grpc.ClientConn, *gin.Engine) {
 	router := gin.Default()
-	conn, err := grpc.NewClient(":9090", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.NewClient("agent-server.default.svc.cluster.local:9090", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("Failed to connect to gRPC server: %v", err)
 	}
