@@ -10,11 +10,11 @@ import (
 
 // ProjectRepo : Project 엔티티에 대한 MySQL Repo
 type ProjectRepo struct {
-	dbConn *storage.DBConnection
+	dbConn *storage.RDBConnection
 }
 
 // NewProjectRepo : ProjectRepo 생성
-func NewProjectRepo(dbConn *storage.DBConnection) *ProjectRepo {
+func NewProjectRepo(dbConn *storage.RDBConnection) *ProjectRepo {
 	return &ProjectRepo{dbConn: dbConn}
 }
 

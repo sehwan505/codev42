@@ -10,11 +10,11 @@ import (
 
 // CodeRepo : Code 엔티티에 대한 MySQL Repo
 type CodeRepo struct {
-	dbConn *storage.DBConnection
+	dbConn *storage.RDBConnection
 }
 
 // NewCodeRepo : CodeRepo 생성
-func NewCodeRepo(dbConn *storage.DBConnection) *CodeRepo {
+func NewCodeRepo(dbConn *storage.RDBConnection) *CodeRepo {
 	return &CodeRepo{dbConn: dbConn}
 }
 

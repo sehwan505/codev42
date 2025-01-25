@@ -5,29 +5,19 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"net/url"
 	"time"
 
 	"codev42/services/agent/configs"
-	"codev42/services/agent/handler"
 	pb "codev42/services/agent/pb"
 	"codev42/services/agent/storage"
 	"codev42/services/agent/storage/repo"
 
+	"codev42/services/agent/handler"
+
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
-
-// func connectMongo() *mongo.Client {
-// 	mongo := db.Connect("POST_MONGO_URL")
-// 	err := mongo.Ping(context.Background(), readpref.Primary())
-// 	if err != nil {
-// 		log.Println("Couldn't connect to the Mongo", err)
-// 	} else {
-// 		log.Println("Mongo Connected!")
-// 	}
-
-// 	return mongo
-// }
 
 type VectorDB interface {
 	InitCollection(ctx context.Context, collectionName string, vectorDim int) error
@@ -36,13 +26,7 @@ type VectorDB interface {
 	Close() error
 }
 
-func main() {
-	// mongo := connectMongo()
-	// defer mongo.Disconnect(context.Background())
-	config, err := configs.GetConfig()
-	if err != nil {
-		log.Fatalf("Couldn't get config %v", err)
-	}
+func setStorage(config *configs.Config) (VectorDB, *storage.RDBConnection) {
 	useMilvus := false
 
 	var vectorDB VectorDB
@@ -74,14 +58,28 @@ func main() {
 	dsn := fmt.Sprintf(
 		"%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
 		config.MySQLUser,
-		config.MySQLPassword,
+		url.QueryEscape(config.MySQLPassword),
 		config.MySQLHost,
 		config.MySQLPort,
 		config.MySQLDB,
 	)
-	_, err = storage.NewDBConnection(dsn)
+	fmt.Printf("dsn: %s\n", dsn)
+	// MariaDB 연결
+	rdbConnection, err := storage.NewRDBConnection(dsn)
 	if err != nil {
 		log.Fatalf("Couldn't connect to MySQL %v", err)
+	}
+	// 자동 마이그레이션
+	rdbConnection.AutoMigrate()
+
+	return vectorDB, rdbConnection
+}
+
+func main() {
+	config, err := configs.GetConfig()
+	vectorDB, rdbConnection := setStorage(config)
+	if err != nil {
+		log.Fatalf("Couldn't get config %v", err)
 	}
 
 	listener, err := net.Listen("tcp", fmt.Sprintf(":%s", config.GRPCPort))
@@ -90,10 +88,12 @@ func main() {
 	}
 
 	agentHandler := &handler.AgentHandler{Config: *config}
+	codeHandler := &handler.CodeHandler{Config: *config, VectorDB: vectorDB}
 	grpcServer := grpc.NewServer()
+	pb.RegisterCodeServiceServer(grpcServer, codeHandler)
 	pb.RegisterAgentServiceServer(grpcServer, agentHandler)
 	reflection.Register(grpcServer)
 	log.Printf("Server start at port %s", config.GRPCPort)
-
 	grpcServer.Serve(listener)
+	rdbConnection.Close()
 }

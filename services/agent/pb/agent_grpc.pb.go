@@ -157,3 +157,105 @@ var AgentService_ServiceDesc = grpc.ServiceDesc{
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "agent.proto",
 }
+
+const (
+	CodeService_SaveCodeInVectordb_FullMethodName = "/pb.CodeService/saveCodeInVectordb"
+)
+
+// CodeServiceClient is the client API for CodeService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type CodeServiceClient interface {
+	SaveCodeInVectordb(ctx context.Context, in *SaveCodeRequest, opts ...grpc.CallOption) (*SaveCodeResponse, error)
+}
+
+type codeServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewCodeServiceClient(cc grpc.ClientConnInterface) CodeServiceClient {
+	return &codeServiceClient{cc}
+}
+
+func (c *codeServiceClient) SaveCodeInVectordb(ctx context.Context, in *SaveCodeRequest, opts ...grpc.CallOption) (*SaveCodeResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SaveCodeResponse)
+	err := c.cc.Invoke(ctx, CodeService_SaveCodeInVectordb_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// CodeServiceServer is the server API for CodeService service.
+// All implementations must embed UnimplementedCodeServiceServer
+// for forward compatibility.
+type CodeServiceServer interface {
+	SaveCodeInVectordb(context.Context, *SaveCodeRequest) (*SaveCodeResponse, error)
+	mustEmbedUnimplementedCodeServiceServer()
+}
+
+// UnimplementedCodeServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedCodeServiceServer struct{}
+
+func (UnimplementedCodeServiceServer) SaveCodeInVectordb(context.Context, *SaveCodeRequest) (*SaveCodeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SaveCodeInVectordb not implemented")
+}
+func (UnimplementedCodeServiceServer) mustEmbedUnimplementedCodeServiceServer() {}
+func (UnimplementedCodeServiceServer) testEmbeddedByValue()                     {}
+
+// UnsafeCodeServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to CodeServiceServer will
+// result in compilation errors.
+type UnsafeCodeServiceServer interface {
+	mustEmbedUnimplementedCodeServiceServer()
+}
+
+func RegisterCodeServiceServer(s grpc.ServiceRegistrar, srv CodeServiceServer) {
+	// If the following call pancis, it indicates UnimplementedCodeServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&CodeService_ServiceDesc, srv)
+}
+
+func _CodeService_SaveCodeInVectordb_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SaveCodeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CodeServiceServer).SaveCodeInVectordb(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CodeService_SaveCodeInVectordb_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CodeServiceServer).SaveCodeInVectordb(ctx, req.(*SaveCodeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// CodeService_ServiceDesc is the grpc.ServiceDesc for CodeService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var CodeService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "pb.CodeService",
+	HandlerType: (*CodeServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "saveCodeInVectordb",
+			Handler:    _CodeService_SaveCodeInVectordb_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "agent.proto",
+}

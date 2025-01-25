@@ -6,6 +6,7 @@ import (
 
 	"codev42/services/agent/configs"
 	"codev42/services/agent/pb"
+	"codev42/services/agent/service"
 )
 
 type AgentHandler struct {
@@ -14,7 +15,7 @@ type AgentHandler struct {
 }
 
 func (a *AgentHandler) GeneratePlan(ctx context.Context, request *pb.GeneratePlanRequest) (*pb.GeneratePlanResponse, error) {
-	masterAgent := NewMasterAgent(a.Config.OpenAiKey)
+	masterAgent := service.NewMasterAgent(a.Config.OpenAiKey)
 	devPlan, err := masterAgent.Call(request.Prompt)
 	if err != nil {
 		return nil, fmt.Errorf("failed to generate plan: %v", err)
@@ -27,7 +28,7 @@ func (a *AgentHandler) GeneratePlan(ctx context.Context, request *pb.GeneratePla
 }
 
 func (a *AgentHandler) ImplementPlan(ctx context.Context, request *pb.ImplementPlanRequest) (*pb.ImplementPlanResponse, error) {
-	workerAgent := NewWorkerAgent(a.Config.OpenAiKey)
+	workerAgent := service.NewWorkerAgent(a.Config.OpenAiKey)
 	results, err := workerAgent.ImplementPlan(request.Language, request.Plans)
 	if err != nil {
 		return nil, fmt.Errorf("failed to generate plan: %v", err)

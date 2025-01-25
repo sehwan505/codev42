@@ -16,11 +16,9 @@ type Config struct {
 
 	PineconeApiKey string
 
-	// Milvus
 	MilvusHost string
 	MilvusPort string
 
-	// gRPC
 	GRPCPort string
 }
 
@@ -36,11 +34,11 @@ func GetConfig() (*Config, error) {
 	config := &Config{
 		OpenAiKey: GetEnv("OPENAI_API_KEY", ""),
 
-		MySQLUser:     GetEnv("MYSQL_USER", "root"),
-		MySQLPassword: GetEnv("MYSQL_PASSWORD", ""),
+		MySQLUser:     GetEnv("MYSQL_USER", "mainuser"),
+		MySQLPassword: GetEnv("MYSQL_PASSWORD", "user123"),
 		MySQLHost:     GetEnv("MYSQL_HOST", "localhost"),
 		MySQLPort:     GetEnv("MYSQL_PORT", "3306"),
-		MySQLDB:       GetEnv("MYSQL_DB", "test"),
+		MySQLDB:       GetEnv("MYSQL_DB", "codev"),
 
 		PineconeApiKey: GetEnv("PINECONE_API_KEY", ""),
 
@@ -51,6 +49,7 @@ func GetConfig() (*Config, error) {
 	}
 
 	if config.OpenAiKey == "" || config.MySQLPassword == "" || config.PineconeApiKey == "" {
+		fmt.Println("environment variable OPENAI_API_KEY, MYSQL_PASSWORD, PINECONE_API_KEY is required but not set", config.OpenAiKey, config.MySQLPassword, config.PineconeApiKey)
 		return nil, fmt.Errorf("environment variable OPENAI_API_KEY is required but not set")
 	}
 

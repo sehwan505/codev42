@@ -10,11 +10,11 @@ import (
 
 // FileRepo : File 엔티티에 대한 MySQL Repo
 type FileRepo struct {
-	dbConn *storage.DBConnection
+	dbConn *storage.RDBConnection
 }
 
 // NewFileRepo : FileRepo 생성
-func NewFileRepo(dbConn *storage.DBConnection) *FileRepo {
+func NewFileRepo(dbConn *storage.RDBConnection) *FileRepo {
 	return &FileRepo{dbConn: dbConn}
 }
 
