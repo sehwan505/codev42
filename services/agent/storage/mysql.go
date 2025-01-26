@@ -50,10 +50,9 @@ func (c *RDBConnection) Close() error {
 
 // AutoMigrate : GORM의 AutoMigrate (필요에 따라 사용)
 func (c *RDBConnection) AutoMigrate() error {
-	return c.DB.AutoMigrate(&model.Project{}, &model.FileStruct{}, &model.Code{})
+	return c.DB.AutoMigrate(&model.Project{}, &model.File{}, &model.Code{})
 }
 
-// Example: 트랜잭션 예시
 // 필요 시 트랜잭션을 사용하는 헬퍼 메서드를 제공할 수도 있음
 func (c *RDBConnection) WithTransaction(ctx context.Context, fn func(tx *gorm.DB) error) error {
 	return c.DB.WithContext(ctx).Transaction(fn)

@@ -1,0 +1,78 @@
+package service
+
+import (
+	"context"
+	"fmt"
+	"path/filepath"
+	"strings"
+
+	"codev42/services/agent/model"
+	"codev42/services/agent/storage"
+	"codev42/services/agent/storage/repo"
+	"codev42/services/agent/util"
+)
+
+func SaveCode(code string, filePath string, db *storage.RDBConnection) (map[int64]string, error) {
+	extension := filepath.Ext(filePath)
+	keywords, err := util.GetKeywordsByExtension(extension)
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return nil, err
+	}
+
+	// 키워드로 코드 분리
+	chunks := util.SplitByKeywords(code, keywords)
+
+	codeRepo := repo.NewCodeRepo(db)
+	fileRepo := repo.NewFileRepo(db)
+	var id int64
+	file, err := fileRepo.GetFileByPath(context.Background(), filePath)
+	if err != nil {
+		if err.Error() == "record not found" {
+			fileModel := &model.File{
+				FilePath: filePath,
+			}
+			err = fileRepo.InsertFile(context.Background(), fileModel)
+			if err != nil {
+				return nil, fmt.Errorf("failed to insert file: %v", err)
+			}
+		} else {
+			return nil, fmt.Errorf("failed to get file: %v", err)
+		}
+	} else {
+		id = file.ID
+	}
+	var ret = make(map[int64]string)
+	for _, chunk := range chunks {
+		if strings.TrimSpace(chunk) != "" {
+			funcName := util.ExtractName(chunk, keywords)
+			code, err := codeRepo.GetCodeByFileIdAndName(context.Background(), id, funcName)
+			newCodeModel := &model.Code{
+				FileID:    id,
+				FuncName:  funcName,
+				CodeChunk: chunk,
+				ChunkHash: util.HashChunk(chunk),
+			}
+			if err != nil {
+				if err.Error() == "record not found" {
+					id, err := codeRepo.InsertCode(context.Background(), newCodeModel)
+					if err != nil {
+						return nil, fmt.Errorf("failed to insert code: %v", err)
+					}
+					ret[id] = chunk
+				} else {
+					return nil, fmt.Errorf("failed to get code: %v", err)
+				}
+			} else {
+				code.CodeChunk = chunk
+				code.ChunkHash = util.HashChunk(chunk)
+				err := codeRepo.UpdateCode(context.Background(), code)
+				if err != nil {
+					return nil, fmt.Errorf("failed to update code: %v", err)
+				}
+				ret[code.ID] = chunk
+			}
+		}
+	}
+	return ret, nil
+}

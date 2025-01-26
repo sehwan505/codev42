@@ -19,14 +19,18 @@ func NewCodeRepo(dbConn *storage.RDBConnection) *CodeRepo {
 }
 
 // InsertCode : 함수 정보 삽입
-func (r *CodeRepo) InsertCode(ctx context.Context, fn *model.Code) error {
-	return r.dbConn.DB.WithContext(ctx).Create(fn).Error
+func (r *CodeRepo) InsertCode(ctx context.Context, fn *model.Code) (int64, error) {
+	err := r.dbConn.DB.WithContext(ctx).Create(fn).Error
+	if err != nil {
+		return 0, err
+	}
+	return fn.ID, nil
 }
 
 // GetCodeByID : 함수 단건 조회
-func (r *CodeRepo) GetCodeByID(ctx context.Context, fnID int64) (*model.Code, error) {
+func (r *CodeRepo) GetCodeByFileIdAndName(ctx context.Context, fileID int64, funcName string) (*model.Code, error) {
 	var fn model.Code
-	err := r.dbConn.DB.WithContext(ctx).First(&fn, fnID).Error
+	err := r.dbConn.DB.WithContext(ctx).First(&fn, "file_id = ? AND func_name = ?", fileID, funcName).Error
 	if err != nil {
 		return nil, fmt.Errorf("failed to find Code: %w", err)
 	}

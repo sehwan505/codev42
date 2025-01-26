@@ -11,7 +11,6 @@ type PineconeConnection struct {
 	Client *pinecone.Client
 }
 
-// NewPineconeConnection initializes a connection to Pinecone.
 func NewPineconeConnection(ctx context.Context, apiKey string) (*PineconeConnection, error) {
 	pc, err := pinecone.NewClient(pinecone.NewClientParams{
 		ApiKey: apiKey,
@@ -24,8 +23,6 @@ func NewPineconeConnection(ctx context.Context, apiKey string) (*PineconeConnect
 	}, nil
 }
 
-// Close closes the Pinecone client connection, if needed.
 func (p *PineconeConnection) Close() error {
-	// p.client.Close() // if Pinecone supports a Close()
 	return nil
 }

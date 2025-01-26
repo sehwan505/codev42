@@ -88,7 +88,7 @@ func main() {
 	}
 
 	agentHandler := &handler.AgentHandler{Config: *config}
-	codeHandler := &handler.CodeHandler{Config: *config, VectorDB: vectorDB}
+	codeHandler := &handler.CodeHandler{Config: *config, VectorDB: vectorDB, RdbConnection: rdbConnection}
 	grpcServer := grpc.NewServer()
 	pb.RegisterCodeServiceServer(grpcServer, codeHandler)
 	pb.RegisterAgentServiceServer(grpcServer, agentHandler)

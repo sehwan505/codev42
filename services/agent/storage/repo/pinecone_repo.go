@@ -52,7 +52,7 @@ func (r *PineconeRepo) InitCollection(ctx context.Context, collectionName string
 	// idx, err := r.Client.CreatePodIndex(ctx, &createReq)
 	idx, err := r.Client.CreateServerlessIndex(ctx, &pinecone.CreateServerlessIndexRequest{
 		Name:      collectionName,
-		Dimension: 3,
+		Dimension: 128,
 		Metric:    pinecone.Cosine,
 		Cloud:     pinecone.Aws,
 		Region:    "us-east-1",

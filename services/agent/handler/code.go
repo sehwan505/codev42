@@ -3,16 +3,19 @@ package handler
 import (
 	"context"
 	"fmt"
+	"strconv"
 
 	"codev42/services/agent/configs"
 	"codev42/services/agent/pb"
 	"codev42/services/agent/service"
+	"codev42/services/agent/storage"
 )
 
 type CodeHandler struct {
 	pb.UnimplementedCodeServiceServer
-	Config   configs.Config
-	VectorDB VectorDB
+	Config        configs.Config
+	VectorDB      VectorDB
+	RdbConnection *storage.RDBConnection
 }
 
 type VectorDB interface {
@@ -22,24 +25,23 @@ type VectorDB interface {
 	Close() error
 }
 
-func (c *CodeHandler) SaveCodeInVectordb(ctx context.Context, request *pb.SaveCodeRequest) (*pb.SaveCodeResponse, error) {
-	// Create embeddings using the OpenAI agent
+func (c *CodeHandler) SaveCode(ctx context.Context, request *pb.SaveCodeRequest) (*pb.SaveCodeResponse, error) {
 	agent := service.NewEmbeddingAgent(c.Config.OpenAiKey)
-	embedding, err := agent.GetEmbedding(request.Plans)
+
+	codes, err := service.SaveCode(request.FilePath, request.Code, c.RdbConnection)
+	if err != nil {
+		return nil, fmt.Errorf("failed to save code: %v", err)
+	}
+	embeddings, err := agent.GetEmbedding(codes) // add plan after
 	if err != nil {
 		return nil, fmt.Errorf("failed to get embedding: %v", err)
 	}
-
-	// Print embedding for debugging
-	fmt.Printf("Generated Embedding: %v\n", embedding)
-
-	// Insert the embedding into VectorDB
-	// err = c.VectorDB.InsertEmbedding(ctx, "code", request.Filename, embedding)
-	// if err != nil {
-	// 	return nil, fmt.Errorf("failed to insert embedding into VectorDB: %v", err)
-	// }
-
-	// Return success response
+	for id, embedding := range embeddings {
+		err = c.VectorDB.InsertEmbedding(ctx, "code", strconv.FormatInt(id, 10), embedding)
+		if err != nil {
+			return nil, fmt.Errorf("failed to insert embedding into VectorDB: %v", err)
+		}
+	}
 	return &pb.SaveCodeResponse{
 		Status: "success",
 	}, nil
