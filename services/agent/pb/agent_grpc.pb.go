@@ -159,14 +159,14 @@ var AgentService_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	CodeService_SaveCodeInVectordb_FullMethodName = "/pb.CodeService/saveCodeInVectordb"
+	CodeService_SaveCode_FullMethodName = "/pb.CodeService/saveCode"
 )
 
 // CodeServiceClient is the client API for CodeService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CodeServiceClient interface {
-	SaveCodeInVectordb(ctx context.Context, in *SaveCodeRequest, opts ...grpc.CallOption) (*SaveCodeResponse, error)
+	SaveCode(ctx context.Context, in *SaveCodeRequest, opts ...grpc.CallOption) (*SaveCodeResponse, error)
 }
 
 type codeServiceClient struct {
@@ -177,10 +177,10 @@ func NewCodeServiceClient(cc grpc.ClientConnInterface) CodeServiceClient {
 	return &codeServiceClient{cc}
 }
 
-func (c *codeServiceClient) SaveCodeInVectordb(ctx context.Context, in *SaveCodeRequest, opts ...grpc.CallOption) (*SaveCodeResponse, error) {
+func (c *codeServiceClient) SaveCode(ctx context.Context, in *SaveCodeRequest, opts ...grpc.CallOption) (*SaveCodeResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SaveCodeResponse)
-	err := c.cc.Invoke(ctx, CodeService_SaveCodeInVectordb_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, CodeService_SaveCode_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -191,7 +191,7 @@ func (c *codeServiceClient) SaveCodeInVectordb(ctx context.Context, in *SaveCode
 // All implementations must embed UnimplementedCodeServiceServer
 // for forward compatibility.
 type CodeServiceServer interface {
-	SaveCodeInVectordb(context.Context, *SaveCodeRequest) (*SaveCodeResponse, error)
+	SaveCode(context.Context, *SaveCodeRequest) (*SaveCodeResponse, error)
 	mustEmbedUnimplementedCodeServiceServer()
 }
 
@@ -202,8 +202,8 @@ type CodeServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedCodeServiceServer struct{}
 
-func (UnimplementedCodeServiceServer) SaveCodeInVectordb(context.Context, *SaveCodeRequest) (*SaveCodeResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SaveCodeInVectordb not implemented")
+func (UnimplementedCodeServiceServer) SaveCode(context.Context, *SaveCodeRequest) (*SaveCodeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SaveCode not implemented")
 }
 func (UnimplementedCodeServiceServer) mustEmbedUnimplementedCodeServiceServer() {}
 func (UnimplementedCodeServiceServer) testEmbeddedByValue()                     {}
@@ -226,20 +226,20 @@ func RegisterCodeServiceServer(s grpc.ServiceRegistrar, srv CodeServiceServer) {
 	s.RegisterService(&CodeService_ServiceDesc, srv)
 }
 
-func _CodeService_SaveCodeInVectordb_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _CodeService_SaveCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SaveCodeRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CodeServiceServer).SaveCodeInVectordb(ctx, in)
+		return srv.(CodeServiceServer).SaveCode(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: CodeService_SaveCodeInVectordb_FullMethodName,
+		FullMethod: CodeService_SaveCode_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CodeServiceServer).SaveCodeInVectordb(ctx, req.(*SaveCodeRequest))
+		return srv.(CodeServiceServer).SaveCode(ctx, req.(*SaveCodeRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -252,8 +252,8 @@ var CodeService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*CodeServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "saveCodeInVectordb",
-			Handler:    _CodeService_SaveCodeInVectordb_Handler,
+			MethodName: "saveCode",
+			Handler:    _CodeService_SaveCode_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

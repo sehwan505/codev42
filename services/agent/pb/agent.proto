@@ -33,13 +33,12 @@ message DevResult {
 }
 
 service CodeService {
-  rpc saveCodeInVectordb(SaveCodeRequest) returns (SaveCodeResponse);
+  rpc saveCode(SaveCodeRequest) returns (SaveCodeResponse);
 }
 
 message SaveCodeRequest {
-  string Filename = 1;          
-  repeated string Plans = 2;
-  repeated string Codes = 3;
+  string FilePath = 1;          
+  string Code = 2;
 }
 
 message SaveCodeResponse {
