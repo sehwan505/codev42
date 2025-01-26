@@ -12,19 +12,14 @@ import (
 	"github.com/milvus-io/milvus-sdk-go/v2/entity"
 )
 
-// ---------------------------------------------------------
-
-// MilvusRepo : Implements the VectorDB interface using Milvus.
 type MilvusRepo struct {
 	milvusConn *storage.MilvusConnection
 }
 
-// NewMilvusRepo : Constructor
 func NewMilvusRepo(milvusConn *storage.MilvusConnection) *MilvusRepo {
 	return &MilvusRepo{milvusConn: milvusConn}
 }
 
-// InitCollection implements VectorDB.InitCollection
 func (r *MilvusRepo) InitCollection(ctx context.Context, collectionName string, vectorDim int) error {
 	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
 	defer cancel()
@@ -34,7 +29,6 @@ func (r *MilvusRepo) InitCollection(ctx context.Context, collectionName string, 
 		return fmt.Errorf("failed to check milvus collection: %w", err)
 	}
 	if has {
-		// Collection already exists, load it
 		err = r.milvusConn.Client.LoadCollection(ctx, collectionName, false)
 		if err != nil {
 			return fmt.Errorf("failed to load milvus collection: %w", err)
