@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-config
+data:
+  config.json: |
+    {
+      "OPENAI_API_KEY": "{{ .Values.config.OPENAI_API_KEY }}",
+      "MYSQL_USER": "{{ .Values.config.MYSQL_USER }}",
+      "MYSQL_PASSWORD": "{{ .Values.config.MYSQL_PASSWORD }}",
+      "MYSQL_HOST": "{{ .Values.config.MYSQL_HOST }}",
+      "MYSQL_PORT": "{{ .Values.config.MYSQL_PORT }}",
+      "MYSQL_DB": "{{ .Values.config.MYSQL_DB }}",
+      "MILVUS_HOST": "{{ .Values.config.MILVUS_HOST }}",
+      "MILVUS_PORT": "{{ .Values.config.MILVUS_PORT }}",
+      "GRPC_PORT": "{{ .Values.config.GRPC_PORT }}"
+    }

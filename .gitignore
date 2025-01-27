@@ -17,5 +17,7 @@
 go.work
 go.work.sum
 
+deployments/**/values.yaml
+
 # env file
 .env

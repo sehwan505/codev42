@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "gin-gateway.fullname" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "gin-gateway.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "gin-gateway.name" . }}
+    spec:
+      containers:
+        - name: gin-gateway
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy | default "IfNotPresent" }}
+          ports:
+            - containerPort: {{ .Values.service.port }}
+              name: http
+          env:
+            - name: AGENT_SERVER_HOST
+              value: {{ .Values.agentServer.host }}
+            - name: AGENT_SERVER_PORT
+              value: "{{ .Values.agentServer.port }}"
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
