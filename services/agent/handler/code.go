@@ -28,11 +28,11 @@ type VectorDB interface {
 func (c *CodeHandler) SaveCode(ctx context.Context, request *pb.SaveCodeRequest) (*pb.SaveCodeResponse, error) {
 	agent := service.NewEmbeddingAgent(c.Config.OpenAiKey)
 
-	codes, err := service.SaveCode(request.FilePath, request.Code, c.RdbConnection)
+	codes, err := service.SaveCode(request.Code, request.FilePath, c.RdbConnection)
 	if err != nil {
 		return nil, fmt.Errorf("failed to save code: %v", err)
 	}
-	embeddings, err := agent.GetEmbedding(codes) // add plan after
+	embeddings, err := agent.GenerateEmbedding(codes) // add plan after
 	if err != nil {
 		return nil, fmt.Errorf("failed to get embedding: %v", err)
 	}

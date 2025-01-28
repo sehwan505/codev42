@@ -29,7 +29,7 @@ func float64ToFloat32(input []float64) []float32 {
 	return output
 }
 
-func (agent embeddingAgent) GetEmbedding(codes map[int64]string) (map[int64][]float32, error) {
+func (agent embeddingAgent) GenerateEmbedding(codes map[int64]string) (map[int64][]float32, error) {
 	type embeddingResult struct {
 		ID        int64
 		Embedding []float32
@@ -63,7 +63,7 @@ func (agent embeddingAgent) GetEmbedding(codes map[int64]string) (map[int64][]fl
 	wg.Wait()
 	close(resultChan)
 	close(errorChan)
-	var results map[int64][]float32
+	results := make(map[int64][]float32, len(resultChan))
 	for result := range resultChan {
 		results[result.ID] = result.Embedding
 	}
