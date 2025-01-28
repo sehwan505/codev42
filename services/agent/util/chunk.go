@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
+	"path/filepath"
 	"regexp"
 	"strings"
 	"unicode"
@@ -18,7 +19,8 @@ var languageKeywords = map[string][]string{
 }
 
 // 파일 확장자를 기반으로 키워드 가져오기
-func GetKeywordsByExtension(extension string) ([]string, error) {
+func GetKeywordsByExtension(path string) ([]string, error) {
+	extension := filepath.Ext(path)
 	if keywords, exists := languageKeywords[extension]; exists {
 		return keywords, nil
 	}
@@ -27,9 +29,25 @@ func GetKeywordsByExtension(extension string) ([]string, error) {
 
 // 키워드로 코드를 분리하는 함수
 func SplitByKeywords(code string, keywords []string) []string {
-	keywordRegex := fmt.Sprintf(`(?m)(?=(%s))`, strings.Join(keywords, "|"))
-	re := regexp.MustCompile(keywordRegex)
-	return re.Split(code, -1)
+	keywordPattern := strings.Join(keywords, "|")
+	re := regexp.MustCompile(fmt.Sprintf(`(%s)`, keywordPattern))
+
+	var chunks []string
+	lastIndex := 0
+
+	matches := re.FindAllStringIndex(code, -1)
+	for _, match := range matches {
+		if lastIndex < match[0] {
+			chunks = append(chunks, code[lastIndex:match[0]])
+		}
+		lastIndex = match[0]
+	}
+
+	if lastIndex < len(code) {
+		chunks = append(chunks, code[lastIndex:])
+	}
+
+	return chunks
 }
 
 // ExtractName은 코드 청크에서 함수/클래스 이름을 추출
