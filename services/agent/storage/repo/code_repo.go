@@ -30,9 +30,9 @@ func (r *CodeRepo) InsertCode(ctx context.Context, fn *model.Code) (int64, error
 // GetCodeByID : 함수 단건 조회
 func (r *CodeRepo) GetCodeByFileIdAndName(ctx context.Context, fileID int64, funcName string) (*model.Code, error) {
 	var fn model.Code
-	err := r.dbConn.DB.WithContext(ctx).First(&fn, "file_id = ? AND func_name = ?", fileID, funcName).Error
+	err := r.dbConn.DB.WithContext(ctx).Where("file_id = ? AND func_name = ?", fileID, funcName).First(&fn).Error
 	if err != nil {
-		return nil, fmt.Errorf("failed to find Code: %w", err)
+		return nil, fmt.Errorf("record not found")
 	}
 	return &fn, nil
 }

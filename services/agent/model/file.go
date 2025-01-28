@@ -2,7 +2,7 @@ package model
 
 type File struct {
 	ID        int64  `gorm:"primaryKey"`
-	ProjectID int64  `gorm:"not null;index"`
+	ProjectID *int64 `gorm:"default:null"`
 	FilePath  string `gorm:"not null"`
 	Directory string `gorm:"not null"`
 	CreatedAt uint64 `gorm:"autoCreateTime"`

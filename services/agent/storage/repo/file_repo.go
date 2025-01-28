@@ -17,14 +17,22 @@ func NewFileRepo(dbConn *storage.RDBConnection) *FileRepo {
 	return &FileRepo{dbConn: dbConn}
 }
 
-func (r *FileRepo) InsertFile(ctx context.Context, f *model.File) error {
-	return r.dbConn.DB.WithContext(ctx).Create(f).Error
+func (r *FileRepo) InsertFile(ctx context.Context, f *model.File) (int64, error) {
+	if f.FilePath == "" {
+		return 0, fmt.Errorf("file path is required")
+	}
+	err := r.dbConn.DB.WithContext(ctx).Create(f).Error
+	if err != nil {
+		return 0, err
+	}
+	return f.ID, nil
 }
+
 func (r *FileRepo) GetFileByPath(ctx context.Context, filePath string) (*model.File, error) {
 	var file model.File
-	err := r.dbConn.DB.WithContext(ctx).First(&file, filePath).Error
+	err := r.dbConn.DB.WithContext(ctx).Where("file_path = ?", filePath).First(&file).Error
 	if err != nil {
-		return nil, fmt.Errorf("failed to find file: %w", err)
+		return nil, err
 	}
 	return &file, nil
 }
