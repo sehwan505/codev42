@@ -1,6 +1,7 @@
 package main
 
 import (
+	"codev42/services/agent/configs"
 	"context"
 	"fmt"
 	"log"
@@ -8,12 +9,12 @@ import (
 	"net/url"
 	"time"
 
-	"codev42/services/agent/configs"
+	_ "ariga.io/atlas-provider-gorm/gormschema"
+
+	"codev42/services/agent/handler"
 	pb "codev42/services/agent/pb"
 	"codev42/services/agent/storage"
 	"codev42/services/agent/storage/repo"
-
-	"codev42/services/agent/handler"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
@@ -69,8 +70,8 @@ func setStorage(config *configs.Config) (VectorDB, *storage.RDBConnection) {
 	if err != nil {
 		log.Fatalf("Couldn't connect to MySQL %v", err)
 	}
-	// 자동 마이그레이션
-	rdbConnection.AutoMigrate()
+	// // 자동 마이그레이션
+	// rdbConnection.AutoMigrate()
 
 	return vectorDB, rdbConnection
 }
