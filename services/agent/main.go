@@ -24,6 +24,7 @@ type VectorDB interface {
 	InitCollection(ctx context.Context, collectionName string, vectorDim int) error
 	InsertEmbedding(ctx context.Context, collectionName string, id string, embedding []float32) error
 	SearchByVector(ctx context.Context, collectionName string, searchVector []float32, topK int) ([]int64, error)
+	DeleteByID(ctx context.Context, collectionName string, id string) error
 	Close() error
 }
 

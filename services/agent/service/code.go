@@ -12,7 +12,14 @@ import (
 	"codev42/services/agent/util"
 )
 
-func SaveCode(code string, filePath string, db *storage.RDBConnection) (map[int64]string, error) {
+type SaveCodeResult struct {
+	Chunk     string
+	FuncName  string
+	IsNew     bool
+	IsUpdated bool
+}
+
+func SaveCode(code string, filePath string, db *storage.RDBConnection) (map[int64]SaveCodeResult, error) {
 	extension := filepath.Ext(filePath)
 	keywords, err := util.GetKeywordsByExtension(extension)
 	if err != nil {
@@ -44,7 +51,8 @@ func SaveCode(code string, filePath string, db *storage.RDBConnection) (map[int6
 	} else {
 		id = file.ID
 	}
-	var ret = make(map[int64]string)
+
+	var ret = make(map[int64]SaveCodeResult)
 	for _, chunk := range chunks {
 		if strings.TrimSpace(chunk) != "" {
 			funcName := util.ExtractName(chunk, keywords)
@@ -63,7 +71,12 @@ func SaveCode(code string, filePath string, db *storage.RDBConnection) (map[int6
 					if err != nil {
 						return nil, fmt.Errorf("failed to insert code: %v", err)
 					}
-					ret[id] = chunk
+					ret[id] = SaveCodeResult{
+						Chunk:     chunk,
+						FuncName:  funcName,
+						IsNew:     true,
+						IsUpdated: false,
+					}
 				} else {
 					return nil, fmt.Errorf("failed to get code: %v", err)
 				}
@@ -71,11 +84,17 @@ func SaveCode(code string, filePath string, db *storage.RDBConnection) (map[int6
 				code.FuncName = funcName
 				code.CodeChunk = chunk
 				code.ChunkHash = chunkHash
+				isUpdated := code.ChunkHash != chunkHash
 				err := codeRepo.UpdateCode(context.Background(), code)
 				if err != nil {
 					return nil, fmt.Errorf("failed to update code: %v", err)
 				}
-				ret[code.ID] = chunk
+				ret[code.ID] = SaveCodeResult{
+					Chunk:     chunk,
+					FuncName:  funcName,
+					IsNew:     false,
+					IsUpdated: isUpdated,
+				}
 			}
 		}
 	}

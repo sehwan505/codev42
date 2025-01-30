@@ -93,6 +93,13 @@ func (r *PineconeRepo) InsertEmbedding(ctx context.Context, collectionName strin
 	return nil
 }
 
+func (r *PineconeRepo) DeleteByID(ctx context.Context, collectionName string, id string) error {
+	if err := r.idxConnection.DeleteVectorsById(ctx, []string{id}); err != nil {
+		return fmt.Errorf("벡터 삭제 실패: %w", err)
+	}
+	return nil
+}
+
 func (r *PineconeRepo) SearchByVector(ctx context.Context, collectionName string, searchVector []float32, topK int) ([]int64, error) {
 
 	metadataMap := map[string]interface{}{

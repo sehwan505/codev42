@@ -139,6 +139,14 @@ func (r *MilvusRepo) SearchByVector(ctx context.Context, collectionName string, 
 	return ids, nil
 }
 
+func (r *MilvusRepo) DeleteByID(ctx context.Context, collectionName string, id string) error {
+	// if err := r.milvusConn.Client.Delete(ctx, collectionName, ids); err != nil {
+	// 	return fmt.Errorf("벡터 삭제 실패: %w", err)
+	// }
+	// TODO: implement
+	return nil
+}
+
 // Close implements VectorDB.Close
 func (r *MilvusRepo) Close() error {
 	if r.milvusConn != nil {
