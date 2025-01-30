@@ -11,12 +11,14 @@ image-agent:
 image-gateway:
 	docker build -f deployments/Dockerfile.gateway -t codev42/gin-gateway .
 
+db-apply:
+	atlas migrate apply --env "gorm"
+
+db-diff:
+	atlas migrate diff --env "gorm"
 
 db_docs:
 	dbdocs build doc/db.dbml
-
-db_schema:
-	dbml2sql --postgres -o doc/schema.sql doc/db.dbml
 
 sqlc:
 	sqlc generate
