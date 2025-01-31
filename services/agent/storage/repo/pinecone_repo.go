@@ -22,7 +22,7 @@ func NewPineconeRepo(conn *storage.PineconeConnection) *PineconeRepo {
 	return &PineconeRepo{conn, nil}
 }
 
-func (r *PineconeRepo) InitCollection(ctx context.Context, collectionName string, vectorDim int) error {
+func (r *PineconeRepo) InitCollection(ctx context.Context, collectionName string, vectorDim int32) error {
 	desc, err := r.Client.DescribeIndex(ctx, collectionName)
 	if err == nil && desc != nil {
 		log.Printf("Pinecone index '%s' already exists. Dimension: %d", collectionName, desc.Dimension)
@@ -52,7 +52,7 @@ func (r *PineconeRepo) InitCollection(ctx context.Context, collectionName string
 	// idx, err := r.Client.CreatePodIndex(ctx, &createReq)
 	idx, err := r.Client.CreateServerlessIndex(ctx, &pinecone.CreateServerlessIndexRequest{
 		Name:      collectionName,
-		Dimension: 128,
+		Dimension: vectorDim,
 		Metric:    pinecone.Cosine,
 		Cloud:     pinecone.Aws,
 		Region:    "us-east-1",

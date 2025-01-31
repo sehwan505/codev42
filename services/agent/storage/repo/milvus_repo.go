@@ -20,7 +20,7 @@ func NewMilvusRepo(milvusConn *storage.MilvusConnection) *MilvusRepo {
 	return &MilvusRepo{milvusConn: milvusConn}
 }
 
-func (r *MilvusRepo) InitCollection(ctx context.Context, collectionName string, vectorDim int) error {
+func (r *MilvusRepo) InitCollection(ctx context.Context, collectionName string, vectorDim int32) error {
 	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
 	defer cancel()
 

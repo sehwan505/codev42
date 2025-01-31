@@ -44,7 +44,6 @@ func SaveCode(code string, filePath string, db *storage.RDBConnection) (map[int6
 			if err != nil {
 				return nil, fmt.Errorf("failed to insert file: %v", err)
 			}
-
 		} else {
 			return nil, fmt.Errorf("failed to get file: %v", err)
 		}
@@ -65,7 +64,6 @@ func SaveCode(code string, filePath string, db *storage.RDBConnection) (map[int6
 				ChunkHash: chunkHash,
 			}
 			if err != nil {
-				fmt.Println("err", err.Error())
 				if err.Error() == "record not found" {
 					id, err := codeRepo.InsertCode(context.Background(), newCodeModel)
 					if err != nil {
@@ -81,13 +79,15 @@ func SaveCode(code string, filePath string, db *storage.RDBConnection) (map[int6
 					return nil, fmt.Errorf("failed to get code: %v", err)
 				}
 			} else {
-				code.FuncName = funcName
-				code.CodeChunk = chunk
-				code.ChunkHash = chunkHash
 				isUpdated := code.ChunkHash != chunkHash
-				err := codeRepo.UpdateCode(context.Background(), code)
-				if err != nil {
-					return nil, fmt.Errorf("failed to update code: %v", err)
+				if isUpdated {
+					code.FuncName = funcName
+					code.CodeChunk = chunk
+					code.ChunkHash = chunkHash
+					err := codeRepo.UpdateCode(context.Background(), code)
+					if err != nil {
+						return nil, fmt.Errorf("failed to update code: %v", err)
+					}
 				}
 				ret[code.ID] = SaveCodeResult{
 					Chunk:     chunk,

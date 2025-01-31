@@ -19,7 +19,7 @@ type CodeHandler struct {
 }
 
 type VectorDB interface {
-	InitCollection(ctx context.Context, collectionName string, vectorDim int) error
+	InitCollection(ctx context.Context, collectionName string, vectorDim int32) error
 	InsertEmbedding(ctx context.Context, collectionName string, id string, embedding []float32) error
 	SearchByVector(ctx context.Context, collectionName string, searchVector []float32, topK int) ([]int64, error)
 	DeleteByID(ctx context.Context, collectionName string, id string) error
@@ -35,7 +35,7 @@ func (c *CodeHandler) SaveCode(ctx context.Context, request *pb.SaveCodeRequest)
 	}
 	codes := make(map[int64]string)
 	for id, result := range saveCodeResult {
-		if result.IsNew && result.IsUpdated {
+		if result.IsNew || result.IsUpdated {
 			codes[id] = result.Chunk
 		}
 		if result.IsUpdated {
