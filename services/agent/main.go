@@ -21,7 +21,7 @@ import (
 )
 
 type VectorDB interface {
-	InitCollection(ctx context.Context, collectionName string, vectorDim int) error
+	InitCollection(ctx context.Context, collectionName string, vectorDim int32) error
 	InsertEmbedding(ctx context.Context, collectionName string, id string, embedding []float32) error
 	SearchByVector(ctx context.Context, collectionName string, searchVector []float32, topK int) ([]int64, error)
 	DeleteByID(ctx context.Context, collectionName string, id string) error
@@ -53,7 +53,7 @@ func setStorage(config *configs.Config) (VectorDB, *storage.RDBConnection) {
 	}
 
 	ctx := context.Background()
-	if err := vectorDB.InitCollection(ctx, "my-collection1", 384); err != nil {
+	if err := vectorDB.InitCollection(ctx, "code", 128); err != nil {
 		log.Fatalf("Failed to init collection: %v", err)
 	}
 
