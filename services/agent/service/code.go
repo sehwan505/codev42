@@ -6,17 +6,17 @@ import (
 	"path/filepath"
 	"strings"
 
-	"codev42/services/agent/model"
-	"codev42/services/agent/storage"
-	"codev42/services/agent/storage/repo"
-	"codev42/services/agent/util"
+	"codev42/agent/model"
+	"codev42/agent/storage"
+	"codev42/agent/storage/repo"
+	"codev42/agent/util"
 )
 
 type SaveCodeResult struct {
-	Chunk     string
-	FuncName  string
-	IsNew     bool
-	IsUpdated bool
+	Chunk           string
+	FuncDeclaration string
+	IsNew           bool
+	IsUpdated       bool
 }
 
 func SaveCode(code string, filePath string, db *storage.RDBConnection) (map[int64]SaveCodeResult, error) {
@@ -54,14 +54,14 @@ func SaveCode(code string, filePath string, db *storage.RDBConnection) (map[int6
 	var ret = make(map[int64]SaveCodeResult)
 	for _, chunk := range chunks {
 		if strings.TrimSpace(chunk) != "" {
-			funcName := util.ExtractName(chunk, keywords)
+			funcDeclaration := util.ExtractDeclaration(chunk, extension)
 			chunkHash := util.HashChunk(chunk)
-			code, err := codeRepo.GetCodeByFileIdAndName(context.Background(), id, funcName)
+			code, err := codeRepo.GetCodeByFileIdAndName(context.Background(), id, funcDeclaration)
 			newCodeModel := &model.Code{
-				FileID:    id,
-				FuncName:  funcName,
-				CodeChunk: chunk,
-				ChunkHash: chunkHash,
+				FileID:          id,
+				FuncDeclaration: funcDeclaration,
+				CodeChunk:       chunk,
+				ChunkHash:       chunkHash,
 			}
 			if err != nil {
 				if err.Error() == "record not found" {
@@ -70,10 +70,10 @@ func SaveCode(code string, filePath string, db *storage.RDBConnection) (map[int6
 						return nil, fmt.Errorf("failed to insert code: %v", err)
 					}
 					ret[id] = SaveCodeResult{
-						Chunk:     chunk,
-						FuncName:  funcName,
-						IsNew:     true,
-						IsUpdated: false,
+						Chunk:           chunk,
+						FuncDeclaration: funcDeclaration,
+						IsNew:           true,
+						IsUpdated:       false,
 					}
 				} else {
 					return nil, fmt.Errorf("failed to get code: %v", err)
@@ -81,7 +81,7 @@ func SaveCode(code string, filePath string, db *storage.RDBConnection) (map[int6
 			} else {
 				isUpdated := code.ChunkHash != chunkHash
 				if isUpdated {
-					code.FuncName = funcName
+					code.FuncDeclaration = funcDeclaration
 					code.CodeChunk = chunk
 					code.ChunkHash = chunkHash
 					err := codeRepo.UpdateCode(context.Background(), code)
@@ -90,10 +90,10 @@ func SaveCode(code string, filePath string, db *storage.RDBConnection) (map[int6
 					}
 				}
 				ret[code.ID] = SaveCodeResult{
-					Chunk:     chunk,
-					FuncName:  funcName,
-					IsNew:     false,
-					IsUpdated: isUpdated,
+					Chunk:           chunk,
+					FuncDeclaration: funcDeclaration,
+					IsNew:           false,
+					IsUpdated:       isUpdated,
 				}
 			}
 		}

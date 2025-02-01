@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	"codev42/services/agent/model"
+	"codev42/agent/model"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"

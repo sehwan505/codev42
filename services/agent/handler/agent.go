@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"codev42/services/agent/configs"
-	"codev42/services/agent/pb"
-	"codev42/services/agent/service"
+	"codev42/agent/configs"
+	"codev42/agent/pb"
+	"codev42/agent/service"
 )
 
 type AgentHandler struct {

@@ -12,8 +12,8 @@ data "external_schema" "gorm" {
 
 env "gorm" {
   src = data.external_schema.gorm.url
-  url = "mysql://mainuser:${getenv("MYSQL_PASSWORD")}@localhost:3306/codev"
-  dev = "docker://mysql/8/dev"
+  url = "mysql://mainuser:${getenv("MYSQL_PASSWORD")}@localhost:3306/codev?charset=utf8mb4&collation=utf8mb4_general_ci"
+  dev = "docker://maria/latest/schema"
 
   migration {
     dir = "file://services/agent/storage/migrations"

@@ -6,7 +6,7 @@ import (
 	"log"
 	"strconv"
 
-	"codev42/services/agent/storage"
+	"codev42/agent/storage"
 
 	pinecone "github.com/pinecone-io/go-pinecone/pinecone"
 	"google.golang.org/protobuf/types/known/structpb"

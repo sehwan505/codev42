@@ -7,7 +7,6 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
-	"unicode"
 )
 
 var languageKeywords = map[string][]string{
@@ -18,7 +17,7 @@ var languageKeywords = map[string][]string{
 	".cpp":  {"class", "void", "int"}, // C++
 }
 
-// 파일 확장자를 기반으로 키워드 가져오기
+// GetKeywordsByExtension은 파일 확장자를 기반으로 키워드를 가져온다.
 func GetKeywordsByExtension(path string) ([]string, error) {
 	extension := filepath.Ext(path)
 	if keywords, exists := languageKeywords[extension]; exists {
@@ -27,7 +26,7 @@ func GetKeywordsByExtension(path string) ([]string, error) {
 	return nil, fmt.Errorf("unsupported file extension: %s", extension)
 }
 
-// 키워드로 코드를 분리하는 함수
+// SplitByKeywords는 키워드로 코드를 분리한다.
 func SplitByKeywords(code string, keywords []string) []string {
 	keywordPattern := strings.Join(keywords, "|")
 	re := regexp.MustCompile(fmt.Sprintf(`(%s)`, keywordPattern))
@@ -50,32 +49,49 @@ func SplitByKeywords(code string, keywords []string) []string {
 	return chunks
 }
 
-// ExtractName은 코드 청크에서 함수/클래스 이름을 추출
-func ExtractName(chunk string, keywords []string) string {
-	lines := strings.Split(strings.TrimSpace(chunk), "\n")
-	if len(lines) == 0 {
+func NormalizeDeclaration(declaration string) string {
+	return strings.Join(strings.Fields(declaration), " ")
+}
+
+// ExtractDeclaration은 코드 청크에서 함수 또는 클래스의 선언부(헤더)만을 추출하고 정규화한다.
+func ExtractDeclaration(chunk string, extension string) string {
+	chunk = strings.TrimSpace(chunk)
+	if chunk == "" {
 		return ""
 	}
 
-	firstLine := lines[0]
-	for _, keyword := range keywords {
-		if strings.Contains(firstLine, keyword) {
-			parts := strings.Fields(firstLine)
-			for i, part := range parts {
-				if part == keyword && i+1 < len(parts) {
-					name := parts[i+1]
-					// 괄호나 기타 기호 제거
-					return strings.TrimFunc(name, func(r rune) bool {
-						return !unicode.IsLetter(r) && !unicode.IsNumber(r)
-					})
-				}
+	var declaration string
+	lines := strings.Split(chunk, "\n")
+	var declarationParts []string
+
+	for _, line := range lines {
+		trimmed := strings.TrimSpace(line)
+		if trimmed == "" {
+			continue
+		}
+
+		declarationParts = append(declarationParts, trimmed)
+
+		// Python의 경우 ':'로 끝나는 부분까지가 선언부
+		if extension == ".py" && strings.HasSuffix(trimmed, ":") {
+			declaration = strings.Join(declarationParts, " ")
+			break
+		} else if extension == ".go" || extension == ".java" || extension == ".cpp" || extension == ".js" {
+			// 다른 언어들은 '{'가 나오는 부분까지가 선언부
+			if idx := strings.Index(trimmed, "{"); idx >= 0 {
+				declarationParts[len(declarationParts)-1] = trimmed[:idx]
+				declaration = strings.Join(declarationParts, " ")
+				break
 			}
+		} else if extension == "" {
+			declaration = strings.Join(declarationParts, " ")
+			break
 		}
 	}
-	return ""
+
+	return NormalizeDeclaration(declaration)
 }
 
-// HashChunk은 코드 청크를 해시
 func HashChunk(chunk string) string {
 	hash := sha256.New()
 	hash.Write([]byte(chunk))

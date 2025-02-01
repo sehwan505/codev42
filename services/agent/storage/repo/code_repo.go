@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"codev42/services/agent/model"
-	"codev42/services/agent/storage"
+	"codev42/agent/model"
+	"codev42/agent/storage"
 )
 
 // CodeRepo : Code 엔티티에 대한 MySQL Repo
@@ -28,9 +28,9 @@ func (r *CodeRepo) InsertCode(ctx context.Context, fn *model.Code) (int64, error
 }
 
 // GetCodeByID : 함수 단건 조회
-func (r *CodeRepo) GetCodeByFileIdAndName(ctx context.Context, fileID int64, funcName string) (*model.Code, error) {
+func (r *CodeRepo) GetCodeByFileIdAndName(ctx context.Context, fileID int64, funcDeclaration string) (*model.Code, error) {
 	var fn model.Code
-	err := r.dbConn.DB.WithContext(ctx).Where("file_id = ? AND func_name = ?", fileID, funcName).First(&fn).Error
+	err := r.dbConn.DB.WithContext(ctx).Where("file_id = ? AND func_declaration = ?", fileID, funcDeclaration).First(&fn).Error
 	if err != nil {
 		return nil, fmt.Errorf("record not found")
 	}
