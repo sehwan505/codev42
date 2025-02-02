@@ -2,11 +2,11 @@ DB_URL=postgresql://root:secret@localhost:5432/simple_bank?sslmode=disable
 
 
 image:
-	docker build -f deployments/Dockerfile.agent -t codev42/agent-server .
+	docker build -f deployments/Dockerfile.agent -t codev42-agent-server .
 	docker build -f deployments/Dockerfile.gateway -t codev42/gin-gateway .
 
 image-agent:
-	docker build -f deployments/Dockerfile.agent -t codev42/agent-server .
+	docker build -f deployments/Dockerfile.agent -t codev42-agent-server .
 
 image-gateway:
 	docker build -f deployments/Dockerfile.gateway -t codev42/gin-gateway .

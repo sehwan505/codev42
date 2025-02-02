@@ -6,10 +6,10 @@ import (
 	"path/filepath"
 	"strings"
 
-	"codev42/agent/model"
-	"codev42/agent/storage"
-	"codev42/agent/storage/repo"
-	"codev42/agent/util"
+	"codev42-agent/model"
+	"codev42-agent/storage"
+	"codev42-agent/storage/repo"
+	"codev42-agent/util"
 )
 
 type SaveCodeResult struct {

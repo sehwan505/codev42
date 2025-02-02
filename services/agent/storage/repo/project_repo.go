@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"codev42/agent/model"
-	"codev42/agent/storage"
+	"codev42-agent/model"
+	"codev42-agent/storage"
 )
 
 // ProjectRepo : Project 엔티티에 대한 MySQL Repo

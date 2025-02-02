@@ -1,4 +1,4 @@
-module codev42/agent
+module codev42-agent
 
 go 1.23.4
 
