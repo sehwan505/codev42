@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = "codev42-gitcontrol/pb";
+
+service gitcontrolService {
+  rpc generatePlan (GeneratePlanRequest) returns (GeneratePlanResponse);
+  rpc implementPlan (ImplementPlanRequest) returns (ImplementPlanResponse);
+}
+
+message GeneratePlanRequest {
+  string Prompt = 1;
+}
+
+message GeneratePlanResponse {
+  string Language = 1;
+  repeated string Plans = 2;
+}
+
+message ImplementPlanRequest {
+  string Language = 1;
+  repeated string Plans = 2;
+}
+
+message ImplementPlanResponse {
+  repeated DevResult DevResults = 1;
+}
+
+message DevResult {
+  string Description = 1;
+  string Code = 2;
+}

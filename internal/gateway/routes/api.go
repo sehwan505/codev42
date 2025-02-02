@@ -3,8 +3,8 @@ package routes
 import (
 	"log"
 
-	"codev42/services/agent/pb"
-	"codev42/services/gateway/handler"
+	"codev42-agent/pb"
+	"codev42/internal/gateway/handler"
 
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
