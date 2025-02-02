@@ -5,11 +5,11 @@ WORKDIR /app
 
 RUN apk add --no-cache ca-certificates
 
-COPY ./go.mod ./go.sum ./
+COPY ./services/agent/go.mod ./services/agent/go.sum ./
 RUN go mod download
 
-COPY ./ ./
-RUN go build -o main ./services/agent/main.go
+COPY ./services/agent/ ./
+RUN go build -o main ./main.go
 
 EXPOSE 8080
 
