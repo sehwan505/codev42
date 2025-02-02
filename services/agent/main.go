@@ -1,7 +1,7 @@
 package main
 
 import (
-	"codev42/agent/configs"
+	"codev42-agent/configs"
 	"context"
 	"fmt"
 	"log"
@@ -11,10 +11,10 @@ import (
 
 	_ "ariga.io/atlas-provider-gorm/gormschema"
 
-	"codev42/agent/handler"
-	pb "codev42/agent/pb"
-	"codev42/agent/storage"
-	"codev42/agent/storage/repo"
+	"codev42-agent/handler"
+	pb "codev42-agent/pb"
+	"codev42-agent/storage"
+	"codev42-agent/storage/repo"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
@@ -80,6 +80,9 @@ func setStorage(config *configs.Config) (VectorDB, *storage.RDBConnection) {
 func main() {
 	config, err := configs.GetConfig()
 	vectorDB, rdbConnection := setStorage(config)
+	defer rdbConnection.Close()
+	defer vectorDB.Close()
+
 	if err != nil {
 		log.Fatalf("Couldn't get config %v", err)
 	}
@@ -97,5 +100,4 @@ func main() {
 	reflection.Register(grpcServer)
 	log.Printf("Server start at port %s", config.GRPCPort)
 	grpcServer.Serve(listener)
-	rdbConnection.Close()
 }
