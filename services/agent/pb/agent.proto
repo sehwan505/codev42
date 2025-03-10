@@ -13,9 +13,21 @@ message GeneratePlanRequest {
   string Prompt = 1;
 }
 
+message Annotation {
+  string Name = 1;
+  string Params = 2;
+  string Returns = 3;
+  string Description = 4;
+}
+
+message Plan {
+  string ClassName = 1;
+  repeated Annotation Annotations = 2;
+}
+
 message GeneratePlanResponse {
   string Language = 1;
-  repeated string Plans = 2;
+  repeated Plan Plans = 2;
 }
 
 message ImplementPlanRequest {

@@ -9,16 +9,22 @@ import (
 	"github.com/openai/openai-go"
 )
 
-type DevPlan struct {
-	Language string   `json:"language" jsonschema_description:"The programming language for development"`
-	Plans    []string `json:"annotations" jsonschema_description:"annotations of functions and classes for planning development with params, returns, and description"`
+type Annotation struct {
+	Name        string `json:"name" jsonschema_description:"The name of the function or method"`
+	Params      string `json:"params" jsonschema_description:"The parameters of the function with types"`
+	Returns     string `json:"returns" jsonschema_description:"The return value of the function with type"`
+	Description string `json:"description" jsonschema_description:"The description of the function"`
 }
 
-// type Annotation struct {
-// 	params      string `json:"params" jsonschema_description:"The parameters of the function with types"`
-// 	returns     string `json:"returns" jsonschema_description:"The return value of the function with type"`
-// 	description string `json:"description" jsonschema_description:"The description of the function"`
-// }
+type Plan struct {
+	ClassName   string       `json:"class_name" jsonschema_description:"class name if empty then it is function"`
+	Annotations []Annotation `json:"annotations" jsonschema_description:"Structured annotations for functions and class methods"`
+}
+
+type DevPlan struct {
+	Language string `json:"language" jsonschema_description:"The programming language for development"`
+	Plans    []Plan `json:"plans" jsonschema_description:"List of development plans with class Name and annotations"`
+}
 
 type MasterAgent struct {
 	Client *openai.Client
@@ -49,10 +55,9 @@ func (agent MasterAgent) Call(prompt string) (*DevPlan, error) {
 	prompt += `
 	you should follow the rules to make a development plan
 	rule: make a development plan about prompt with annotations of functions and classes as a list
-	function annotation follow @name, @params, @returns, @description
-	for example, function @name: add_function @params: x: int, y: int @returns: int @description: add x and y
-	class annotation must contains @name @description, @attribute, @methods with annotations of functions
-	for example, class @name: calculator @description: class_name @attribute: x: int, y: int @methods: @name: add_method @params: x: int, y: int @returns: int @description: add x and y
+	annotation follow @name, @params, @returns, @description, 
+	if the development is for a class, ClassName should be given, then annotations should be list of methods
+	or if the development is for a function, ClassName should be empty, then annotations should be list with only one item
 	`
 	print("> ")
 	println(prompt)
