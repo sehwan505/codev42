@@ -5,18 +5,18 @@ data "external_schema" "gorm" {
     "-mod=mod",
     "ariga.io/atlas-provider-gorm",
     "load",
-    "--path", "./services/agent/model",
+    "--path", "./model",
     "--dialect", "mysql"
   ]
 }
 
 env "gorm" {
   src = data.external_schema.gorm.url
-  url = "mysql://mainuser:${getenv("MYSQL_PASSWORD")}@localhost:3306/codev?charset=utf8mb4&collation=utf8mb4_general_ci"
-  dev = "docker://maria/latest/schema"
+  url = "mysql://mainuser:${getenv("MYSQL_PASSWORD")}@localhost:3306/codev?charset=utf8mb4&collation=utf8mb4_general_ci&tls=false"
+  dev = "docker://maria/10.7/schema"
 
   migration {
-    dir = "file://services/agent/storage/migrations"
+    dir = "file://storage/migrations"
     format = golang-migrate
   }
 
