@@ -11,6 +11,8 @@ service agentService {
 
 message GeneratePlanRequest {
   string Prompt = 1;
+  string ProjectId = 2;
+  string Branch = 3;
 }
 
 message Annotation {

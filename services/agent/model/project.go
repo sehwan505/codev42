@@ -5,10 +5,11 @@ import (
 )
 
 type Project struct {
-	ID          int64  `gorm:"primaryKey"`
-	Name        string `gorm:"size:100;not null"`
-	Description string `gorm:"type:text"`
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
-	Files       []File `gorm:"foreignKey:ProjectID"`
+	ID          string    `gorm:"primaryKey;type:varchar(255)"`
+	Branch      string    `gorm:"primaryKey;type:varchar(100)"`
+	Name        string    `gorm:"type:varchar(255);not null"`
+	Description string    `gorm:"type:text"`
+	CreatedAt   time.Time `gorm:"autoCreateTime"`
+	UpdatedAt   time.Time `gorm:"autoUpdateTime"`
+	Files       []File    `gorm:"foreignKey:ProjectID,ProjectBranch;references:ID,Branch"`
 }
