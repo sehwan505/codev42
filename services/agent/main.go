@@ -92,7 +92,7 @@ func main() {
 		log.Fatalf("Couldn't create connection tcp %v", err)
 	}
 
-	agentHandler := &handler.AgentHandler{Config: *config}
+	agentHandler := &handler.AgentHandler{Config: *config, VectorDB: vectorDB, RdbConnection: rdbConnection}
 	codeHandler := &handler.CodeHandler{Config: *config, VectorDB: vectorDB, RdbConnection: rdbConnection}
 	grpcServer := grpc.NewServer()
 	pb.RegisterCodeServiceServer(grpcServer, codeHandler)

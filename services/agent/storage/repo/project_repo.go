@@ -18,17 +18,16 @@ func NewProjectRepo(dbConn *storage.RDBConnection) *ProjectRepo {
 	return &ProjectRepo{dbConn: dbConn}
 }
 
-// InsertProject : 프로젝트 저장
-func (r *ProjectRepo) InsertProject(ctx context.Context, p *model.Project) error {
+// CreateProject : 프로젝트 저장
+func (r *ProjectRepo) CreateProject(ctx context.Context, p *model.Project) error {
 	return r.dbConn.DB.WithContext(ctx).Create(p).Error
 }
 
 // GetProjectByID : 프로젝트 단건 조회
-func (r *ProjectRepo) GetProjectByID(ctx context.Context, projectID int64) (*model.Project, error) {
+func (r *ProjectRepo) GetProjectByID(ctx context.Context, id string, branch string) (*model.Project, error) {
 	var project model.Project
 	err := r.dbConn.DB.WithContext(ctx).
-		Preload("Files.Functions"). // 연관된 Files 및 Functions도 함께 로드
-		First(&project, projectID).Error
+		First(&project, "id = ? AND branch = ?", id, branch).Error
 	if err != nil {
 		return nil, fmt.Errorf("failed to find project: %w", err)
 	}
