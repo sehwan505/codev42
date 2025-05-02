@@ -92,5 +92,6 @@ func (agent MasterAgent) Call(prompt string) (*DevPlan, error) {
 	if err != nil {
 		return nil, err
 	}
+	// DevPlan을 model.DevPlan으로 변환
 	return devPlan, nil
 }

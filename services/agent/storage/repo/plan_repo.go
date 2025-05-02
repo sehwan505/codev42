@@ -5,199 +5,86 @@ import (
 
 	"codev42-agent/model"
 	"codev42-agent/storage"
-
-	"gorm.io/gorm"
 )
 
+// PlanRepository defines operations for Plan entity
 type PlanRepository interface {
-	// CreateDevPlanWithDetails는 DevPlan, Plan, Annotation을 한 번에 생성합니다.
-	CreateDevPlanWithDetails(ctx context.Context, devPlan *model.DevPlan) error
+	// CreatePlan creates a new Plan
+	CreatePlan(ctx context.Context, plan *model.Plan) error
 
-	// UpdateDevPlanWithDetails는 DevPlan과 관련 Plan, Annotation을 업데이트합니다.
-	UpdateDevPlanWithDetails(ctx context.Context, devPlan *model.DevPlan) error
+	// UpdatePlan updates an existing Plan
+	UpdatePlan(ctx context.Context, plan *model.Plan) error
 
-	// GetDevPlanByID는 ID로 DevPlan을 조회합니다.
-	GetDevPlanByID(ctx context.Context, id int64) (*model.DevPlan, error)
+	// GetPlanByID retrieves a Plan by its ID
+	GetPlanByID(ctx context.Context, id int64) (*model.Plan, error)
 
-	// GetDevPlansByProjectID는 프로젝트 ID로 DevPlan 목록을 조회합니다.
-	GetDevPlansByProjectID(ctx context.Context, projectID string) ([]model.DevPlan, error)
+	// GetPlansByDevPlanID retrieves all Plans for a DevPlan
+	GetPlansByDevPlanID(ctx context.Context, devPlanID int64) ([]model.Plan, error)
 
-	// DeleteDevPlan은 DevPlan과 관련 Plan, Annotation을 삭제합니다.
-	DeleteDevPlan(ctx context.Context, id int64) error
+	// DeletePlan deletes a Plan by its ID
+	DeletePlan(ctx context.Context, id int64) error
+
+	// DeletePlansByDevPlanID deletes all Plans for a DevPlan
+	DeletePlansByDevPlanID(ctx context.Context, devPlanID int64) error
 }
 
-type PlanRepo struct {
+// PlanEntityRepo is the implementation of PlanRepository
+type PlanEntityRepo struct {
 	dbConn *storage.RDBConnection
 }
 
-// NewPlanRepository는 새로운 PlanRepository 인스턴스를 생성합니다.
+// NewPlanRepository creates a new PlanRepository
 func NewPlanRepository(dbConn *storage.RDBConnection) PlanRepository {
-	return &PlanRepo{dbConn: dbConn}
+	return &PlanEntityRepo{dbConn: dbConn}
 }
 
-// CreateDevPlanWithDetails는 DevPlan, Plan, Annotation을 한 번에 생성합니다.
-func (r *PlanRepo) CreateDevPlanWithDetails(ctx context.Context, devPlan *model.DevPlan) error {
-	return r.dbConn.DB.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
-		if err := tx.Create(devPlan).Error; err != nil {
-			return err
-		}
-
-		// Plans 생성 시 ID 필드를 제외
-		for i := range devPlan.Plans {
-			devPlan.Plans[i].DevPlanID = devPlan.ID
-			if err := tx.Omit("id").Create(&devPlan.Plans[i]).Error; err != nil {
-				return err
-			}
-
-			// Annotations 생성
-			for j := range devPlan.Plans[i].Annotations {
-				devPlan.Plans[i].Annotations[j].PlanID = devPlan.Plans[i].ID
-				if err := tx.Omit("id").Create(&devPlan.Plans[i].Annotations[j]).Error; err != nil {
-					return err
-				}
-			}
-		}
-
-		return nil
-	})
+// CreatePlan creates a new Plan
+func (r *PlanEntityRepo) CreatePlan(ctx context.Context, plan *model.Plan) error {
+	return r.dbConn.DB.WithContext(ctx).Omit("id").Create(plan).Error
 }
 
-// UpdateDevPlanWithDetails는 DevPlan과 관련 Plan, Annotation을 업데이트합니다.
-func (r *PlanRepo) UpdateDevPlanWithDetails(ctx context.Context, devPlan *model.DevPlan) error {
-	return r.dbConn.DB.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
-		if err := tx.Save(devPlan).Error; err != nil {
-			return err
-		}
-
-		var existingPlans []model.Plan
-		if err := tx.Where("dev_plan_id = ?", devPlan.ID).Find(&existingPlans).Error; err != nil {
-			return err
-		}
-
-		existingPlanIDs := make(map[int64]bool)
-		for _, plan := range existingPlans {
-			existingPlanIDs[plan.ID] = true
-		}
-
-		for i := range devPlan.Plans {
-			devPlan.Plans[i].DevPlanID = devPlan.ID
-
-			if devPlan.Plans[i].ID > 0 && existingPlanIDs[devPlan.Plans[i].ID] {
-				if err := tx.Save(&devPlan.Plans[i]).Error; err != nil {
-					return err
-				}
-
-				var existingAnnotations []model.Annotation
-				if err := tx.Where("plan_id = ?", devPlan.Plans[i].ID).Find(&existingAnnotations).Error; err != nil {
-					return err
-				}
-
-				existingAnnotationIDs := make(map[int64]bool)
-				for _, annotation := range existingAnnotations {
-					existingAnnotationIDs[annotation.ID] = true
-				}
-
-				for j := range devPlan.Plans[i].Annotations {
-					devPlan.Plans[i].Annotations[j].PlanID = devPlan.Plans[i].ID
-
-					if devPlan.Plans[i].Annotations[j].ID > 0 && existingAnnotationIDs[devPlan.Plans[i].Annotations[j].ID] {
-						if err := tx.Save(&devPlan.Plans[i].Annotations[j]).Error; err != nil {
-							return err
-						}
-
-						delete(existingAnnotationIDs, devPlan.Plans[i].Annotations[j].ID)
-					} else {
-						if err := tx.Create(&devPlan.Plans[i].Annotations[j]).Error; err != nil {
-							return err
-						}
-					}
-				}
-
-				for annotationID := range existingAnnotationIDs {
-					if err := tx.Delete(&model.Annotation{}, annotationID).Error; err != nil {
-						return err
-					}
-				}
-
-				delete(existingPlanIDs, devPlan.Plans[i].ID)
-			} else {
-				if err := tx.Create(&devPlan.Plans[i]).Error; err != nil {
-					return err
-				}
-
-				for j := range devPlan.Plans[i].Annotations {
-					devPlan.Plans[i].Annotations[j].PlanID = devPlan.Plans[i].ID
-					if err := tx.Create(&devPlan.Plans[i].Annotations[j]).Error; err != nil {
-						return err
-					}
-				}
-			}
-		}
-
-		for planID := range existingPlanIDs {
-			if err := tx.Delete(&model.Plan{}, planID).Error; err != nil {
-				return err
-			}
-		}
-
-		return nil
-	})
+// UpdatePlan updates an existing Plan
+func (r *PlanEntityRepo) UpdatePlan(ctx context.Context, plan *model.Plan) error {
+	return r.dbConn.DB.WithContext(ctx).Save(plan).Error
 }
 
-// GetDevPlanByID는 ID로 DevPlan을 조회합니다.
-func (r *PlanRepo) GetDevPlanByID(ctx context.Context, id int64) (*model.DevPlan, error) {
-	var devPlan model.DevPlan
+// GetPlanByID retrieves a Plan by its ID
+func (r *PlanEntityRepo) GetPlanByID(ctx context.Context, id int64) (*model.Plan, error) {
+	var plan model.Plan
 	err := r.dbConn.DB.WithContext(ctx).
-		Preload("Plans").
-		Preload("Plans.Annotations").
 		Where("id = ?", id).
-		First(&devPlan).Error
+		First(&plan).Error
 
 	if err != nil {
 		return nil, err
 	}
 
-	return &devPlan, nil
+	return &plan, nil
 }
 
-// GetDevPlansByProjectID는 프로젝트 ID로 DevPlan 목록을 조회합니다.
-func (r *PlanRepo) GetDevPlansByProjectID(ctx context.Context, projectID string) ([]model.DevPlan, error) {
-	var devPlans []model.DevPlan
+// GetPlansByDevPlanID retrieves all Plans for a DevPlan
+func (r *PlanEntityRepo) GetPlansByDevPlanID(ctx context.Context, devPlanID int64) ([]model.Plan, error) {
+	var plans []model.Plan
 	err := r.dbConn.DB.WithContext(ctx).
-		Preload("Plans").
-		Preload("Plans.Annotations").
-		Where("project_id = ?", projectID).
-		Find(&devPlans).Error
+		Where("dev_plan_id = ?", devPlanID).
+		Find(&plans).Error
 
 	if err != nil {
 		return nil, err
 	}
 
-	return devPlans, nil
+	return plans, nil
 }
 
-// DeleteDevPlan은 DevPlan과 관련 Plan, Annotation을 삭제합니다.
-func (r *PlanRepo) DeleteDevPlan(ctx context.Context, id int64) error {
-	return r.dbConn.DB.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
-		var plans []model.Plan
-		if err := tx.Where("dev_plan_id = ?", id).Find(&plans).Error; err != nil {
-			return err
-		}
-
-		for _, plan := range plans {
-			if err := tx.Where("plan_id = ?", plan.ID).Delete(&model.Annotation{}).Error; err != nil {
-				return err
-			}
-		}
-
-		if err := tx.Where("dev_plan_id = ?", id).Delete(&model.Plan{}).Error; err != nil {
-			return err
-		}
-
-		if err := tx.Delete(&model.DevPlan{}, id).Error; err != nil {
-			return err
-		}
-
-		return nil
-	})
+// DeletePlan deletes a Plan by its ID
+func (r *PlanEntityRepo) DeletePlan(ctx context.Context, id int64) error {
+	return r.dbConn.DB.WithContext(ctx).
+		Delete(&model.Plan{}, id).Error
 }
+
+// DeletePlansByDevPlanID deletes all Plans for a DevPlan
+func (r *PlanEntityRepo) DeletePlansByDevPlanID(ctx context.Context, devPlanID int64) error {
+	return r.dbConn.DB.WithContext(ctx).
+		Where("dev_plan_id = ?", devPlanID).
+		Delete(&model.Plan{}).Error
+} 
