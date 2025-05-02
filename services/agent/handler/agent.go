@@ -27,7 +27,6 @@ type AgentHandler struct {
 	RdbConnection *storage.RDBConnection
 }
 
-// createPlanService creates and returns a new PlanService instance
 func (a *AgentHandler) createPlanService() *service.PlanService {
 	devPlanRepo := repo.NewDevPlanRepository(a.RdbConnection)
 	planRepo := repo.NewPlanRepository(a.RdbConnection)
@@ -64,7 +63,7 @@ func convertServiceDevPlanToModelDevPlan(projectID, branch string, devPlan *serv
 	}
 }
 
-func createPBResponse(devPlan *service.DevPlan) *pb.GeneratePlanResponse {
+func createPBResponse(devPlan *model.DevPlan) *pb.GeneratePlanResponse {
 	plans := make([]*pb.Plan, len(devPlan.Plans))
 	for i, plan := range devPlan.Plans {
 		annotations := make([]*pb.Annotation, len(plan.Annotations))
@@ -84,8 +83,9 @@ func createPBResponse(devPlan *service.DevPlan) *pb.GeneratePlanResponse {
 	}
 
 	return &pb.GeneratePlanResponse{
-		Language: devPlan.Language,
-		Plans:    plans,
+		DevPlanId: devPlan.ID,
+		Language:  devPlan.Language,
+		Plans:     plans,
 	}
 }
 
@@ -121,33 +121,31 @@ func (a *AgentHandler) GeneratePlan(ctx context.Context, request *pb.GeneratePla
 		return nil, fmt.Errorf("failed to save dev plan: %v", err)
 	}
 
-	return createPBResponse(devPlan), nil
+	return createPBResponse(modelDevPlan), nil
 }
 
-func (a *AgentHandler) UpdatePlan(ctx context.Context, request *pb.UpdatePlanRequest) (*pb.UpdatePlanResponse, error) {
+func (a *AgentHandler) ModifyPlan(ctx context.Context, request *pb.ModifyPlanRequest) (*pb.ModifyPlanResponse, error) {
 	planService := a.createPlanService()
 
-	existingPlan, err := planService.GetDevPlanByID(ctx, request.PlanId)
+	existingPlan, err := planService.GetDevPlanByID(ctx, request.DevPlanId)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get existing dev plan: %v", err)
 	}
 
 	updatedPlanData := &model.DevPlan{
-		ID:        request.PlanId,
+		ID:        request.DevPlanId,
 		ProjectID: existingPlan.ProjectID,
 		Branch:    existingPlan.Branch,
 		Language:  request.Language,
 		Plans:     make([]model.Plan, len(request.Plans)),
 	}
 
-	// 3. Update plan data preserving IDs when appropriate
 	for i, plan := range request.Plans {
 		modelPlan := model.Plan{
 			ClassName:   plan.ClassName,
 			Annotations: make([]model.Annotation, len(plan.Annotations)),
 		}
 
-		// If we have a matching index in the existing plan, preserve the ID
 		if i < len(existingPlan.Plans) {
 			modelPlan.ID = existingPlan.Plans[i].ID
 		}
@@ -160,7 +158,6 @@ func (a *AgentHandler) UpdatePlan(ctx context.Context, request *pb.UpdatePlanReq
 				Description: ann.Description,
 			}
 
-			// If we have a matching annotation index, preserve the ID
 			if i < len(existingPlan.Plans) && j < len(existingPlan.Plans[i].Annotations) {
 				modelAnnotation.ID = existingPlan.Plans[i].Annotations[j].ID
 			}
@@ -170,21 +167,47 @@ func (a *AgentHandler) UpdatePlan(ctx context.Context, request *pb.UpdatePlanReq
 		updatedPlanData.Plans[i] = modelPlan
 	}
 
-	// 4. Update the plan
 	err = planService.UpdateDevPlanWithDetails(ctx, updatedPlanData)
 	if err != nil {
 		return nil, fmt.Errorf("failed to update dev plan: %v", err)
 	}
 
-	return &pb.UpdatePlanResponse{
-		Success: true,
+	return &pb.ModifyPlanResponse{Status: "success"}, nil
+}
+
+func (a *AgentHandler) ImplementPlan(ctx context.Context, request *pb.ImplementPlanRequest) (*pb.ImplementPlanResponse, error) {
+	workerAgent := service.NewWorkerAgent(a.Config.OpenAiKey)
+	planService := a.createPlanService()
+	existingPlan, err := planService.GetDevPlanByID(ctx, request.DevPlanId)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get existing dev plan: %v", err)
+	}
+	results, err := workerAgent.ImplementPlan(existingPlan.Language, existingPlan.Plans)
+	if err != nil {
+		return nil, fmt.Errorf("failed to implement plan: %v", err)
+	}
+	code := ""
+	for _, result := range results {
+		code += result.Code + "\n"
+	}
+	diagram, err := workerAgent.ImplementDiagram(code)
+	if err != nil {
+		return nil, fmt.Errorf("failed to implement diagram: %v", err)
+	}
+	var pbResults []string
+	for _, result := range results {
+		pbResults = append(pbResults, result.Code)
+	}
+	return &pb.ImplementPlanResponse{
+		Codes:   pbResults,
+		Diagram: diagram,
 	}, nil
 }
 
 func (a *AgentHandler) GetPlanById(ctx context.Context, request *pb.GetPlanByIdRequest) (*pb.GetPlanByIdResponse, error) {
 	planService := a.createPlanService()
 
-	devPlan, err := planService.GetDevPlanByID(ctx, request.PlanId)
+	devPlan, err := planService.GetDevPlanByID(ctx, request.DevPlanId)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get dev plan: %v", err)
 	}
@@ -209,30 +232,10 @@ func (a *AgentHandler) GetPlanById(ctx context.Context, request *pb.GetPlanByIdR
 	}
 
 	return &pb.GetPlanByIdResponse{
-		PlanId:    devPlan.ID,
+		DevPlanId: devPlan.ID,
 		ProjectId: devPlan.ProjectID,
 		Branch:    devPlan.Branch,
 		Language:  devPlan.Language,
 		Plans:     plans,
 	}, nil
-}
-
-func (a *AgentHandler) ImplementPlan(ctx context.Context, request *pb.ImplementPlanRequest) (*pb.ImplementPlanResponse, error) {
-	workerAgent := service.NewWorkerAgent(a.Config.OpenAiKey)
-	results, err := workerAgent.ImplementPlan(request.Language, request.Plans)
-	if err != nil {
-		return nil, fmt.Errorf("failed to implement plan: %v", err)
-	}
-	var pbResults []*pb.DevResult
-	for _, result := range results {
-		pbResult := &pb.DevResult{
-			Description: result.Description,
-			Code:        result.Code,
-		}
-		pbResults = append(pbResults, pbResult)
-	}
-	response := &pb.ImplementPlanResponse{
-		DevResults: pbResults,
-	}
-	return response, nil
 }
