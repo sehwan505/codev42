@@ -5,8 +5,10 @@ package pb;
 option go_package = "codev42-agent/pb";
 
 service agentService {
-  rpc generatePlan (GeneratePlanRequest) returns (GeneratePlanResponse);
-  rpc implementPlan (ImplementPlanRequest) returns (ImplementPlanResponse);
+  rpc generatePlan(GeneratePlanRequest) returns (GeneratePlanResponse);
+  rpc modifyPlan(ModifyPlanRequest) returns (ModifyPlanResponse);
+  rpc getPlanById(GetPlanByIdRequest) returns (GetPlanByIdResponse);
+  rpc implementPlan(ImplementPlanRequest) returns (ImplementPlanResponse);
 }
 
 message GeneratePlanRequest {
@@ -57,4 +59,26 @@ message SaveCodeRequest {
 
 message SaveCodeResponse {
   string status = 1;
+}
+
+message ModifyPlanRequest {
+  int64 PlanId = 1;
+  string Language = 2;
+  repeated Plan Plans = 3;
+}
+
+message ModifyPlanResponse {
+  bool Success = 1;
+}
+
+message GetPlanByIdRequest {
+  int64 PlanId = 1;
+}
+
+message GetPlanByIdResponse {
+  int64 PlanId = 1;
+  string ProjectId = 2;
+  string Branch = 3;
+  string Language = 4;
+  repeated Plan Plans = 5;
 }
