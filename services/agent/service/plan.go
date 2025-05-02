@@ -132,7 +132,9 @@ func (s *PlanService) UpdateDevPlanWithDetails(ctx context.Context, devPlan *mod
 
 	// Delete Plans that were not in the update
 	for planID := range existingPlanIDs {
-		// We don't need to delete Annotations here, as they will be cascaded by the foreign key constraint
+		if err := s.annotationRepo.DeleteAnnotationsByPlanID(ctx, planID); err != nil {
+			return err
+		}
 		if err := s.planRepo.DeletePlan(ctx, planID); err != nil {
 			return err
 		}

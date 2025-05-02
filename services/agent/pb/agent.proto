@@ -30,22 +30,9 @@ message Plan {
 }
 
 message GeneratePlanResponse {
-  string Language = 1;
-  repeated Plan Plans = 2;
-}
-
-message ImplementPlanRequest {
-  string Language = 1;
-  repeated string Plans = 2;
-}
-
-message ImplementPlanResponse {
-  repeated DevResult DevResults = 1;
-}
-
-message DevResult {
-  string Description = 1;
-  string Code = 2;
+  int64 DevPlanId = 1;
+  string Language = 2;
+  repeated Plan Plans = 3;
 }
 
 service CodeService {
@@ -61,22 +48,31 @@ message SaveCodeResponse {
   string status = 1;
 }
 
+message ImplementPlanRequest {
+  int64 DevPlanId = 1;
+}
+
+message ImplementPlanResponse {
+  repeated string Codes = 1;
+  string Diagram = 2;
+}
+
 message ModifyPlanRequest {
-  int64 PlanId = 1;
+  int64 DevPlanId = 1;
   string Language = 2;
   repeated Plan Plans = 3;
 }
 
 message ModifyPlanResponse {
-  bool Success = 1;
+  string Status = 1;
 }
 
 message GetPlanByIdRequest {
-  int64 PlanId = 1;
+  int64 DevPlanId = 1;
 }
 
 message GetPlanByIdResponse {
-  int64 PlanId = 1;
+  int64 DevPlanId = 1;
   string ProjectId = 2;
   string Branch = 3;
   string Language = 4;
