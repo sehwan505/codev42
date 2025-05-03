@@ -34,11 +34,12 @@ func (a *AgentHandler) createPlanService() *service.PlanService {
 	return service.NewPlanService(devPlanRepo, planRepo, annotationRepo)
 }
 
-func convertServiceDevPlanToModelDevPlan(projectID, branch string, devPlan *service.DevPlan) *model.DevPlan {
+func convertServiceDevPlanToModelDevPlan(projectID, branch string, devPlan *service.DevPlan, prompt string) *model.DevPlan {
 	return &model.DevPlan{
 		ProjectID: projectID,
 		Branch:    branch,
 		Language:  devPlan.Language,
+		Prompt:    prompt,
 		Plans: func() []model.Plan {
 			plans := make([]model.Plan, len(devPlan.Plans))
 			for i, plan := range devPlan.Plans {
@@ -115,7 +116,7 @@ func (a *AgentHandler) GeneratePlan(ctx context.Context, request *pb.GeneratePla
 		}
 	}
 	planService := a.createPlanService()
-	modelDevPlan := convertServiceDevPlanToModelDevPlan(project.ID, project.Branch, devPlan)
+	modelDevPlan := convertServiceDevPlanToModelDevPlan(project.ID, project.Branch, devPlan, request.Prompt)
 	err = planService.CreateDevPlanWithDetails(ctx, modelDevPlan)
 	if err != nil {
 		return nil, fmt.Errorf("failed to save dev plan: %v", err)
@@ -201,6 +202,27 @@ func (a *AgentHandler) ImplementPlan(ctx context.Context, request *pb.ImplementP
 	return &pb.ImplementPlanResponse{
 		Codes:   pbResults,
 		Diagram: diagram,
+	}, nil
+}
+
+func (a *AgentHandler) GetPlanList(ctx context.Context, request *pb.GetPlanListRequest) (*pb.GetPlanListResponse, error) {
+	planService := a.createPlanService()
+	devPlans, err := planService.GetDevPlansByProjectID(ctx, request.ProjectId, request.Branch)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get dev plan list: %v", err)
+	}
+
+	// DevPlan 목록을 PB 형식으로 변환
+	var pbDevPlans []*pb.PlanListElement
+	for _, plan := range devPlans {
+		pbDevPlans = append(pbDevPlans, &pb.PlanListElement{
+			DevPlanId: plan.ID,
+			Prompt:    plan.Prompt,
+		})
+	}
+
+	return &pb.GetPlanListResponse{
+		DevPlanList: pbDevPlans,
 	}, nil
 }
 
