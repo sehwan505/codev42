@@ -31,6 +31,7 @@ type DevPlan struct {
 	ProjectID string    `gorm:"type:varchar(255);not null"`
 	Branch    string    `gorm:"type:varchar(100);not null"`
 	Project   Project   `gorm:"foreignKey:ProjectID,Branch;references:ID,Branch"`
+	Prompt    string    `gorm:"type:text"`
 	CreatedAt time.Time `gorm:"autoCreateTime"`
 	UpdatedAt time.Time `gorm:"autoUpdateTime"`
 	Language  string    `gorm:"type:varchar(255);not null"`
