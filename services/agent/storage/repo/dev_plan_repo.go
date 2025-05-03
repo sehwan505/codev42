@@ -19,10 +19,15 @@ type DevPlanRepository interface {
 	GetDevPlanByID(ctx context.Context, id int64) (*model.DevPlan, error)
 
 	// GetDevPlansByProjectID retrieves all DevPlans for a project
-	GetDevPlansByProjectID(ctx context.Context, projectID string) ([]model.DevPlan, error)
+	GetDevPlansByProjectID(ctx context.Context, projectID string, branch string) ([]DevPlanListElement, error)
 
 	// DeleteDevPlan deletes a DevPlan by its ID
 	DeleteDevPlan(ctx context.Context, id int64) error
+}
+
+type DevPlanListElement struct {
+	ID     int64  `json:"id"`
+	Prompt string `json:"prompt"`
 }
 
 // DevPlanRepo is the implementation of DevPlanRepository
@@ -60,21 +65,22 @@ func (r *DevPlanRepo) GetDevPlanByID(ctx context.Context, id int64) (*model.DevP
 }
 
 // GetDevPlansByProjectID retrieves all DevPlans for a project
-func (r *DevPlanRepo) GetDevPlansByProjectID(ctx context.Context, projectID string) ([]model.DevPlan, error) {
-	var devPlans []model.DevPlan
+func (r *DevPlanRepo) GetDevPlansByProjectID(ctx context.Context, projectID string, branch string) ([]DevPlanListElement, error) {
+	var devPlanList []DevPlanListElement
 	err := r.dbConn.DB.WithContext(ctx).
-		Where("project_id = ?", projectID).
-		Find(&devPlans).Error
+		Model(&model.DevPlan{}).
+		Select("id", "prompt").
+		Where("project_id = ? AND branch = ?", projectID, branch).
+		Find(&devPlanList).Error
 
 	if err != nil {
 		return nil, err
 	}
-
-	return devPlans, nil
+	return devPlanList, nil
 }
 
 // DeleteDevPlan deletes a DevPlan by its ID
 func (r *DevPlanRepo) DeleteDevPlan(ctx context.Context, id int64) error {
 	return r.dbConn.DB.WithContext(ctx).
 		Delete(&model.DevPlan{}, id).Error
-} 
+}

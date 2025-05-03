@@ -170,26 +170,10 @@ func (s *PlanService) GetDevPlanByID(ctx context.Context, id int64) (*model.DevP
 	return devPlan, nil
 }
 
-func (s *PlanService) GetDevPlansByProjectID(ctx context.Context, projectID string) ([]model.DevPlan, error) {
-	devPlans, err := s.devPlanRepo.GetDevPlansByProjectID(ctx, projectID)
+func (s *PlanService) GetDevPlansByProjectID(ctx context.Context, projectID string, branch string) ([]repo.DevPlanListElement, error) {
+	devPlans, err := s.devPlanRepo.GetDevPlansByProjectID(ctx, projectID, branch)
 	if err != nil {
 		return nil, err
-	}
-
-	for i := range devPlans {
-		plans, err := s.planRepo.GetPlansByDevPlanID(ctx, devPlans[i].ID)
-		if err != nil {
-			return nil, err
-		}
-
-		for j := range plans {
-			annotations, err := s.annotationRepo.GetAnnotationsByPlanID(ctx, plans[j].ID)
-			if err != nil {
-				return nil, err
-			}
-			plans[j].Annotations = annotations
-		}
-		devPlans[i].Plans = plans
 	}
 
 	return devPlans, nil

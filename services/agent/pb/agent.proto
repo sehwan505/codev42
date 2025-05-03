@@ -9,6 +9,7 @@ service agentService {
   rpc modifyPlan(ModifyPlanRequest) returns (ModifyPlanResponse);
   rpc getPlanById(GetPlanByIdRequest) returns (GetPlanByIdResponse);
   rpc implementPlan(ImplementPlanRequest) returns (ImplementPlanResponse);
+  rpc getPlanList(GetPlanListRequest) returns (GetPlanListResponse);
 }
 
 message GeneratePlanRequest {
@@ -65,6 +66,20 @@ message ModifyPlanRequest {
 
 message ModifyPlanResponse {
   string Status = 1;
+}
+
+message GetPlanListRequest {
+  string ProjectId = 1;
+  string Branch = 2;
+}
+
+message PlanListElement {
+  int64 DevPlanId = 1;
+  string Prompt = 2;
+}
+
+message GetPlanListResponse {
+  repeated PlanListElement DevPlanList = 1;
 }
 
 message GetPlanByIdRequest {

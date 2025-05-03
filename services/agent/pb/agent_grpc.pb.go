@@ -23,6 +23,7 @@ const (
 	AgentService_ModifyPlan_FullMethodName    = "/pb.agentService/modifyPlan"
 	AgentService_GetPlanById_FullMethodName   = "/pb.agentService/getPlanById"
 	AgentService_ImplementPlan_FullMethodName = "/pb.agentService/implementPlan"
+	AgentService_GetPlanList_FullMethodName   = "/pb.agentService/getPlanList"
 )
 
 // AgentServiceClient is the client API for AgentService service.
@@ -33,6 +34,7 @@ type AgentServiceClient interface {
 	ModifyPlan(ctx context.Context, in *ModifyPlanRequest, opts ...grpc.CallOption) (*ModifyPlanResponse, error)
 	GetPlanById(ctx context.Context, in *GetPlanByIdRequest, opts ...grpc.CallOption) (*GetPlanByIdResponse, error)
 	ImplementPlan(ctx context.Context, in *ImplementPlanRequest, opts ...grpc.CallOption) (*ImplementPlanResponse, error)
+	GetPlanList(ctx context.Context, in *GetPlanListRequest, opts ...grpc.CallOption) (*GetPlanListResponse, error)
 }
 
 type agentServiceClient struct {
@@ -83,6 +85,16 @@ func (c *agentServiceClient) ImplementPlan(ctx context.Context, in *ImplementPla
 	return out, nil
 }
 
+func (c *agentServiceClient) GetPlanList(ctx context.Context, in *GetPlanListRequest, opts ...grpc.CallOption) (*GetPlanListResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetPlanListResponse)
+	err := c.cc.Invoke(ctx, AgentService_GetPlanList_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AgentServiceServer is the server API for AgentService service.
 // All implementations must embed UnimplementedAgentServiceServer
 // for forward compatibility.
@@ -91,6 +103,7 @@ type AgentServiceServer interface {
 	ModifyPlan(context.Context, *ModifyPlanRequest) (*ModifyPlanResponse, error)
 	GetPlanById(context.Context, *GetPlanByIdRequest) (*GetPlanByIdResponse, error)
 	ImplementPlan(context.Context, *ImplementPlanRequest) (*ImplementPlanResponse, error)
+	GetPlanList(context.Context, *GetPlanListRequest) (*GetPlanListResponse, error)
 	mustEmbedUnimplementedAgentServiceServer()
 }
 
@@ -112,6 +125,9 @@ func (UnimplementedAgentServiceServer) GetPlanById(context.Context, *GetPlanById
 }
 func (UnimplementedAgentServiceServer) ImplementPlan(context.Context, *ImplementPlanRequest) (*ImplementPlanResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ImplementPlan not implemented")
+}
+func (UnimplementedAgentServiceServer) GetPlanList(context.Context, *GetPlanListRequest) (*GetPlanListResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPlanList not implemented")
 }
 func (UnimplementedAgentServiceServer) mustEmbedUnimplementedAgentServiceServer() {}
 func (UnimplementedAgentServiceServer) testEmbeddedByValue()                      {}
@@ -206,6 +222,24 @@ func _AgentService_ImplementPlan_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AgentService_GetPlanList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetPlanListRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AgentServiceServer).GetPlanList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AgentService_GetPlanList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AgentServiceServer).GetPlanList(ctx, req.(*GetPlanListRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AgentService_ServiceDesc is the grpc.ServiceDesc for AgentService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -228,6 +262,10 @@ var AgentService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "implementPlan",
 			Handler:    _AgentService_ImplementPlan_Handler,
+		},
+		{
+			MethodName: "getPlanList",
+			Handler:    _AgentService_GetPlanList_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
