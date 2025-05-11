@@ -67,7 +67,7 @@ func (agent WorkerAgent) call(language string, devPlan string) (*ImplementResult
 				JSONSchema: openai.F(schemaParam),
 			},
 		),
-		Model: openai.F(openai.ChatModelGPT4o2024_11_20),
+		Model: openai.F(openai.ChatModelGPT4oMini),
 	})
 
 	if err != nil {
@@ -125,57 +125,4 @@ func (agent WorkerAgent) ImplementPlan(language string, plans []model.Plan) ([]*
 		return nil, fmt.Errorf("failed to implement plan: %v", errors)
 	}
 	return results, nil
-}
-
-type DiagramResult struct {
-	Diagram string `json:"diagram"`
-}
-
-func (agent WorkerAgent) ImplementDiagram(code string) (string, error) {
-	prompt := "Please analyze the following code and create a Mermaid class diagram. Code:\n" + code
-	prompt += `
-	Please follow these rules:
-	1. Clearly show relationships between classes
-	2. Include methods and properties for each class
-	3. Use Mermaid syntax to generate the class diagram
-	4. The output should ONLY contain the Mermaid diagram code, starting with 'classDiagram'
-	5. Do not include any explanatory text or markdown formatting
-	
-	Return the result in JSON format with the following structure:
-	{
-		"diagram": "your mermaid diagram code here"
-	}
-	`
-
-	schemaParam := openai.ResponseFormatJSONSchemaJSONSchemaParam{
-		Name:        openai.F("diagram_result"),
-		Description: openai.F("mermaid diagram code"),
-		Schema:      openai.F(GenerateImplementResultSchema[DiagramResult]()),
-		Strict:      openai.Bool(true),
-	}
-
-	chat, err := agent.Client.Chat.Completions.New(context.TODO(), openai.ChatCompletionNewParams{
-		Messages: openai.F([]openai.ChatCompletionMessageParamUnion{
-			openai.UserMessage(prompt),
-		}),
-		ResponseFormat: openai.F[openai.ChatCompletionNewParamsResponseFormatUnion](
-			openai.ResponseFormatJSONSchemaParam{
-				Type:       openai.F(openai.ResponseFormatJSONSchemaTypeJSONSchema),
-				JSONSchema: openai.F(schemaParam),
-			},
-		),
-		Model: openai.F(openai.ChatModelGPT4o2024_11_20),
-	})
-
-	if err != nil {
-		return "", err
-	}
-
-	var diagramResult DiagramResult
-	err = json.Unmarshal([]byte(chat.Choices[0].Message.Content), &diagramResult)
-	if err != nil {
-		return "", fmt.Errorf("failed to implement diagram: %v", err)
-	}
-
-	return diagramResult.Diagram, nil
 }

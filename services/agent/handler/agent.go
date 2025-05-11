@@ -178,6 +178,7 @@ func (a *AgentHandler) ModifyPlan(ctx context.Context, request *pb.ModifyPlanReq
 
 func (a *AgentHandler) ImplementPlan(ctx context.Context, request *pb.ImplementPlanRequest) (*pb.ImplementPlanResponse, error) {
 	workerAgent := service.NewWorkerAgent(a.Config.OpenAiKey)
+	analyserAgent := service.NewAnalyserAgent(a.Config.OpenAiKey)
 	planService := a.createPlanService()
 	existingPlan, err := planService.GetDevPlanByID(ctx, request.DevPlanId)
 	if err != nil {
@@ -191,7 +192,11 @@ func (a *AgentHandler) ImplementPlan(ctx context.Context, request *pb.ImplementP
 	for _, result := range results {
 		code += result.Code + "\n"
 	}
-	diagram, err := workerAgent.ImplementDiagram(code)
+	combinedResult, err := analyserAgent.CombineImplementation(results, existingPlan.Prompt)
+	if err != nil {
+		return nil, fmt.Errorf("failed to combine implementation: %v", err)
+	}
+	diagram, err := analyserAgent.ImplementDiagram(combinedResult.Code)
 	if err != nil {
 		return nil, fmt.Errorf("failed to implement diagram: %v", err)
 	}
@@ -202,62 +207,5 @@ func (a *AgentHandler) ImplementPlan(ctx context.Context, request *pb.ImplementP
 	return &pb.ImplementPlanResponse{
 		Codes:   pbResults,
 		Diagram: diagram,
-	}, nil
-}
-
-func (a *AgentHandler) GetPlanList(ctx context.Context, request *pb.GetPlanListRequest) (*pb.GetPlanListResponse, error) {
-	planService := a.createPlanService()
-	devPlans, err := planService.GetDevPlansByProjectID(ctx, request.ProjectId, request.Branch)
-	if err != nil {
-		return nil, fmt.Errorf("failed to get dev plan list: %v", err)
-	}
-
-	// DevPlan 목록을 PB 형식으로 변환
-	var pbDevPlans []*pb.PlanListElement
-	for _, plan := range devPlans {
-		pbDevPlans = append(pbDevPlans, &pb.PlanListElement{
-			DevPlanId: plan.ID,
-			Prompt:    plan.Prompt,
-		})
-	}
-
-	return &pb.GetPlanListResponse{
-		DevPlanList: pbDevPlans,
-	}, nil
-}
-
-func (a *AgentHandler) GetPlanById(ctx context.Context, request *pb.GetPlanByIdRequest) (*pb.GetPlanByIdResponse, error) {
-	planService := a.createPlanService()
-
-	devPlan, err := planService.GetDevPlanByID(ctx, request.DevPlanId)
-	if err != nil {
-		return nil, fmt.Errorf("failed to get dev plan: %v", err)
-	}
-
-	// Convert to response
-	plans := make([]*pb.Plan, len(devPlan.Plans))
-	for i, plan := range devPlan.Plans {
-		annotations := make([]*pb.Annotation, len(plan.Annotations))
-		for j, ann := range plan.Annotations {
-			annotations[j] = &pb.Annotation{
-				Name:        ann.Name,
-				Params:      ann.Params,
-				Returns:     ann.Returns,
-				Description: ann.Description,
-			}
-		}
-
-		plans[i] = &pb.Plan{
-			ClassName:   plan.ClassName,
-			Annotations: annotations,
-		}
-	}
-
-	return &pb.GetPlanByIdResponse{
-		DevPlanId: devPlan.ID,
-		ProjectId: devPlan.ProjectID,
-		Branch:    devPlan.Branch,
-		Language:  devPlan.Language,
-		Plans:     plans,
 	}, nil
 }
