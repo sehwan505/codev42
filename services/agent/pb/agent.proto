@@ -39,7 +39,7 @@ message ImplementPlanRequest {
 }
 
 message ImplementPlanResponse {
-  repeated string Codes = 1;
+  string Code = 1;
   string Diagram = 2;
 }
 

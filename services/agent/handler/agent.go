@@ -200,12 +200,8 @@ func (a *AgentHandler) ImplementPlan(ctx context.Context, request *pb.ImplementP
 	if err != nil {
 		return nil, fmt.Errorf("failed to implement diagram: %v", err)
 	}
-	var pbResults []string
-	for _, result := range results {
-		pbResults = append(pbResults, result.Code)
-	}
 	return &pb.ImplementPlanResponse{
-		Codes:   pbResults,
+		Code:    combinedResult.Code,
 		Diagram: diagram,
 	}, nil
 }

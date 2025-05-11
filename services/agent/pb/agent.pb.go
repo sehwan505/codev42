@@ -307,7 +307,7 @@ func (x *ImplementPlanRequest) GetDevPlanId() int64 {
 
 type ImplementPlanResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Codes         []string               `protobuf:"bytes,1,rep,name=Codes,proto3" json:"Codes,omitempty"`
+	Code          string                 `protobuf:"bytes,1,opt,name=Code,proto3" json:"Code,omitempty"`
 	Diagram       string                 `protobuf:"bytes,2,opt,name=Diagram,proto3" json:"Diagram,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -343,11 +343,11 @@ func (*ImplementPlanResponse) Descriptor() ([]byte, []int) {
 	return file_agent_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *ImplementPlanResponse) GetCodes() []string {
+func (x *ImplementPlanResponse) GetCode() string {
 	if x != nil {
-		return x.Codes
+		return x.Code
 	}
-	return nil
+	return ""
 }
 
 func (x *ImplementPlanResponse) GetDiagram() string {
@@ -848,9 +848,9 @@ const file_agent_proto_rawDesc = "" +
 	"\bLanguage\x18\x02 \x01(\tR\bLanguage\x12\x1e\n" +
 	"\x05Plans\x18\x03 \x03(\v2\b.pb.PlanR\x05Plans\"4\n" +
 	"\x14ImplementPlanRequest\x12\x1c\n" +
-	"\tDevPlanId\x18\x01 \x01(\x03R\tDevPlanId\"G\n" +
-	"\x15ImplementPlanResponse\x12\x14\n" +
-	"\x05Codes\x18\x01 \x03(\tR\x05Codes\x12\x18\n" +
+	"\tDevPlanId\x18\x01 \x01(\x03R\tDevPlanId\"E\n" +
+	"\x15ImplementPlanResponse\x12\x12\n" +
+	"\x04Code\x18\x01 \x01(\tR\x04Code\x12\x18\n" +
 	"\aDiagram\x18\x02 \x01(\tR\aDiagram\"m\n" +
 	"\x11ModifyPlanRequest\x12\x1c\n" +
 	"\tDevPlanId\x18\x01 \x01(\x03R\tDevPlanId\x12\x1a\n" +
