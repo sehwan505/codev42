@@ -21,9 +21,7 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	AgentService_GeneratePlan_FullMethodName  = "/pb.agentService/generatePlan"
 	AgentService_ModifyPlan_FullMethodName    = "/pb.agentService/modifyPlan"
-	AgentService_GetPlanById_FullMethodName   = "/pb.agentService/getPlanById"
 	AgentService_ImplementPlan_FullMethodName = "/pb.agentService/implementPlan"
-	AgentService_GetPlanList_FullMethodName   = "/pb.agentService/getPlanList"
 )
 
 // AgentServiceClient is the client API for AgentService service.
@@ -32,9 +30,7 @@ const (
 type AgentServiceClient interface {
 	GeneratePlan(ctx context.Context, in *GeneratePlanRequest, opts ...grpc.CallOption) (*GeneratePlanResponse, error)
 	ModifyPlan(ctx context.Context, in *ModifyPlanRequest, opts ...grpc.CallOption) (*ModifyPlanResponse, error)
-	GetPlanById(ctx context.Context, in *GetPlanByIdRequest, opts ...grpc.CallOption) (*GetPlanByIdResponse, error)
 	ImplementPlan(ctx context.Context, in *ImplementPlanRequest, opts ...grpc.CallOption) (*ImplementPlanResponse, error)
-	GetPlanList(ctx context.Context, in *GetPlanListRequest, opts ...grpc.CallOption) (*GetPlanListResponse, error)
 }
 
 type agentServiceClient struct {
@@ -65,30 +61,10 @@ func (c *agentServiceClient) ModifyPlan(ctx context.Context, in *ModifyPlanReque
 	return out, nil
 }
 
-func (c *agentServiceClient) GetPlanById(ctx context.Context, in *GetPlanByIdRequest, opts ...grpc.CallOption) (*GetPlanByIdResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetPlanByIdResponse)
-	err := c.cc.Invoke(ctx, AgentService_GetPlanById_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *agentServiceClient) ImplementPlan(ctx context.Context, in *ImplementPlanRequest, opts ...grpc.CallOption) (*ImplementPlanResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ImplementPlanResponse)
 	err := c.cc.Invoke(ctx, AgentService_ImplementPlan_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *agentServiceClient) GetPlanList(ctx context.Context, in *GetPlanListRequest, opts ...grpc.CallOption) (*GetPlanListResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetPlanListResponse)
-	err := c.cc.Invoke(ctx, AgentService_GetPlanList_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -101,9 +77,7 @@ func (c *agentServiceClient) GetPlanList(ctx context.Context, in *GetPlanListReq
 type AgentServiceServer interface {
 	GeneratePlan(context.Context, *GeneratePlanRequest) (*GeneratePlanResponse, error)
 	ModifyPlan(context.Context, *ModifyPlanRequest) (*ModifyPlanResponse, error)
-	GetPlanById(context.Context, *GetPlanByIdRequest) (*GetPlanByIdResponse, error)
 	ImplementPlan(context.Context, *ImplementPlanRequest) (*ImplementPlanResponse, error)
-	GetPlanList(context.Context, *GetPlanListRequest) (*GetPlanListResponse, error)
 	mustEmbedUnimplementedAgentServiceServer()
 }
 
@@ -120,14 +94,8 @@ func (UnimplementedAgentServiceServer) GeneratePlan(context.Context, *GeneratePl
 func (UnimplementedAgentServiceServer) ModifyPlan(context.Context, *ModifyPlanRequest) (*ModifyPlanResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ModifyPlan not implemented")
 }
-func (UnimplementedAgentServiceServer) GetPlanById(context.Context, *GetPlanByIdRequest) (*GetPlanByIdResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetPlanById not implemented")
-}
 func (UnimplementedAgentServiceServer) ImplementPlan(context.Context, *ImplementPlanRequest) (*ImplementPlanResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ImplementPlan not implemented")
-}
-func (UnimplementedAgentServiceServer) GetPlanList(context.Context, *GetPlanListRequest) (*GetPlanListResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetPlanList not implemented")
 }
 func (UnimplementedAgentServiceServer) mustEmbedUnimplementedAgentServiceServer() {}
 func (UnimplementedAgentServiceServer) testEmbeddedByValue()                      {}
@@ -186,24 +154,6 @@ func _AgentService_ModifyPlan_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AgentService_GetPlanById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetPlanByIdRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AgentServiceServer).GetPlanById(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: AgentService_GetPlanById_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AgentServiceServer).GetPlanById(ctx, req.(*GetPlanByIdRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _AgentService_ImplementPlan_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ImplementPlanRequest)
 	if err := dec(in); err != nil {
@@ -218,24 +168,6 @@ func _AgentService_ImplementPlan_Handler(srv interface{}, ctx context.Context, d
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AgentServiceServer).ImplementPlan(ctx, req.(*ImplementPlanRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _AgentService_GetPlanList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetPlanListRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AgentServiceServer).GetPlanList(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: AgentService_GetPlanList_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AgentServiceServer).GetPlanList(ctx, req.(*GetPlanListRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -256,16 +188,148 @@ var AgentService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _AgentService_ModifyPlan_Handler,
 		},
 		{
-			MethodName: "getPlanById",
-			Handler:    _AgentService_GetPlanById_Handler,
-		},
-		{
 			MethodName: "implementPlan",
 			Handler:    _AgentService_ImplementPlan_Handler,
 		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "agent.proto",
+}
+
+const (
+	PlanService_GetPlanById_FullMethodName = "/pb.planService/getPlanById"
+	PlanService_GetPlanList_FullMethodName = "/pb.planService/getPlanList"
+)
+
+// PlanServiceClient is the client API for PlanService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type PlanServiceClient interface {
+	GetPlanById(ctx context.Context, in *GetPlanByIdRequest, opts ...grpc.CallOption) (*GetPlanByIdResponse, error)
+	GetPlanList(ctx context.Context, in *GetPlanListRequest, opts ...grpc.CallOption) (*GetPlanListResponse, error)
+}
+
+type planServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewPlanServiceClient(cc grpc.ClientConnInterface) PlanServiceClient {
+	return &planServiceClient{cc}
+}
+
+func (c *planServiceClient) GetPlanById(ctx context.Context, in *GetPlanByIdRequest, opts ...grpc.CallOption) (*GetPlanByIdResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetPlanByIdResponse)
+	err := c.cc.Invoke(ctx, PlanService_GetPlanById_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *planServiceClient) GetPlanList(ctx context.Context, in *GetPlanListRequest, opts ...grpc.CallOption) (*GetPlanListResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetPlanListResponse)
+	err := c.cc.Invoke(ctx, PlanService_GetPlanList_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// PlanServiceServer is the server API for PlanService service.
+// All implementations must embed UnimplementedPlanServiceServer
+// for forward compatibility.
+type PlanServiceServer interface {
+	GetPlanById(context.Context, *GetPlanByIdRequest) (*GetPlanByIdResponse, error)
+	GetPlanList(context.Context, *GetPlanListRequest) (*GetPlanListResponse, error)
+	mustEmbedUnimplementedPlanServiceServer()
+}
+
+// UnimplementedPlanServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedPlanServiceServer struct{}
+
+func (UnimplementedPlanServiceServer) GetPlanById(context.Context, *GetPlanByIdRequest) (*GetPlanByIdResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPlanById not implemented")
+}
+func (UnimplementedPlanServiceServer) GetPlanList(context.Context, *GetPlanListRequest) (*GetPlanListResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPlanList not implemented")
+}
+func (UnimplementedPlanServiceServer) mustEmbedUnimplementedPlanServiceServer() {}
+func (UnimplementedPlanServiceServer) testEmbeddedByValue()                     {}
+
+// UnsafePlanServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to PlanServiceServer will
+// result in compilation errors.
+type UnsafePlanServiceServer interface {
+	mustEmbedUnimplementedPlanServiceServer()
+}
+
+func RegisterPlanServiceServer(s grpc.ServiceRegistrar, srv PlanServiceServer) {
+	// If the following call pancis, it indicates UnimplementedPlanServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&PlanService_ServiceDesc, srv)
+}
+
+func _PlanService_GetPlanById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetPlanByIdRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PlanServiceServer).GetPlanById(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PlanService_GetPlanById_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PlanServiceServer).GetPlanById(ctx, req.(*GetPlanByIdRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PlanService_GetPlanList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetPlanListRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PlanServiceServer).GetPlanList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PlanService_GetPlanList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PlanServiceServer).GetPlanList(ctx, req.(*GetPlanListRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// PlanService_ServiceDesc is the grpc.ServiceDesc for PlanService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var PlanService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "pb.planService",
+	HandlerType: (*PlanServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "getPlanById",
+			Handler:    _PlanService_GetPlanById_Handler,
+		},
 		{
 			MethodName: "getPlanList",
-			Handler:    _AgentService_GetPlanList_Handler,
+			Handler:    _PlanService_GetPlanList_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

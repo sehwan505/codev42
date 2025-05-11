@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"strconv"
 
 	pb "codev42-agent/pb"
 
@@ -63,44 +62,6 @@ func (h *AgentHandler) ModifyPlan(c *gin.Context) {
 	fmt.Println("ModifyPlan request:", req)
 
 	resp, err := h.grpcClient.ModifyPlan(context.Background(), &req)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-
-	c.JSON(http.StatusOK, resp)
-}
-
-func (h *AgentHandler) GetPlanList(c *gin.Context) {
-	projectID := c.Query("ProjectId")
-	branch := c.Query("Branch")
-
-	req := &pb.GetPlanListRequest{
-		ProjectId: projectID,
-		Branch:    branch,
-	}
-
-	resp, err := h.grpcClient.GetPlanList(context.Background(), req)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-
-	c.JSON(http.StatusOK, resp)
-}
-
-func (h *AgentHandler) GetPlanById(c *gin.Context) {
-	DevPlanID := c.Query("DevPlanId")
-	DevPlanIDInt, err := strconv.ParseInt(DevPlanID, 10, 64)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-	req := &pb.GetPlanByIdRequest{
-		DevPlanId: DevPlanIDInt,
-	}
-
-	resp, err := h.grpcClient.GetPlanById(context.Background(), req)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

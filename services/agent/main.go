@@ -94,9 +94,11 @@ func main() {
 
 	agentHandler := &handler.AgentHandler{Config: *config, VectorDB: vectorDB, RdbConnection: rdbConnection}
 	codeHandler := &handler.CodeHandler{Config: *config, VectorDB: vectorDB, RdbConnection: rdbConnection}
+	planHandler := &handler.PlanHandler{Config: *config, RdbConnection: rdbConnection}
 	grpcServer := grpc.NewServer()
 	pb.RegisterCodeServiceServer(grpcServer, codeHandler)
 	pb.RegisterAgentServiceServer(grpcServer, agentHandler)
+	pb.RegisterPlanServiceServer(grpcServer, planHandler)
 	reflection.Register(grpcServer)
 	log.Printf("Server start at port %s", config.GRPCPort)
 	grpcServer.Serve(listener)

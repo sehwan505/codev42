@@ -7,9 +7,7 @@ option go_package = "codev42-agent/pb";
 service agentService {
   rpc generatePlan(GeneratePlanRequest) returns (GeneratePlanResponse);
   rpc modifyPlan(ModifyPlanRequest) returns (ModifyPlanResponse);
-  rpc getPlanById(GetPlanByIdRequest) returns (GetPlanByIdResponse);
   rpc implementPlan(ImplementPlanRequest) returns (ImplementPlanResponse);
-  rpc getPlanList(GetPlanListRequest) returns (GetPlanListResponse);
 }
 
 message GeneratePlanRequest {
@@ -36,19 +34,6 @@ message GeneratePlanResponse {
   repeated Plan Plans = 3;
 }
 
-service CodeService {
-  rpc saveCode(SaveCodeRequest) returns (SaveCodeResponse);
-}
-
-message SaveCodeRequest {
-  string FilePath = 1;          
-  string Code = 2;
-}
-
-message SaveCodeResponse {
-  string status = 1;
-}
-
 message ImplementPlanRequest {
   int64 DevPlanId = 1;
 }
@@ -66,6 +51,13 @@ message ModifyPlanRequest {
 
 message ModifyPlanResponse {
   string Status = 1;
+}
+
+
+
+service planService {
+  rpc getPlanById(GetPlanByIdRequest) returns (GetPlanByIdResponse);
+  rpc getPlanList(GetPlanListRequest) returns (GetPlanListResponse);
 }
 
 message GetPlanListRequest {
@@ -92,4 +84,19 @@ message GetPlanByIdResponse {
   string Branch = 3;
   string Language = 4;
   repeated Plan Plans = 5;
+}
+
+
+
+service CodeService {
+  rpc saveCode(SaveCodeRequest) returns (SaveCodeResponse);
+}
+
+message SaveCodeRequest {
+  string FilePath = 1;          
+  string Code = 2;
+}
+
+message SaveCodeResponse {
+  string status = 1;
 }
