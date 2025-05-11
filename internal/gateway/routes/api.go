@@ -23,10 +23,13 @@ func SetupRoutes() (*grpc.ClientConn, *gin.Engine) {
 	agentClient := pb.NewAgentServiceClient(conn)
 	agentHandler := handler.NewAgentHandler(agentClient)
 
+	planClient := pb.NewPlanServiceClient(conn)
+	planHandler := handler.NewPlanHandler(planClient)
+
 	router.POST("/generate-plan", agentHandler.GeneratePlan)
 	router.POST("/implement-plan", agentHandler.ImplementPlan)
 	router.POST("/modify-plan", agentHandler.ModifyPlan)
-	router.GET("/get-plan-list", agentHandler.GetPlanList)
-	router.GET("/get-plan-by-id", agentHandler.GetPlanById)
+	router.GET("/get-plan-list", planHandler.GetPlanList)
+	router.GET("/get-plan-by-id", planHandler.GetPlanById)
 	return conn, router
 }
