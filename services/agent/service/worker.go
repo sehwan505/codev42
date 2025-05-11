@@ -44,6 +44,7 @@ func (agent WorkerAgent) call(language string, devPlan string) (*ImplementResult
 	you should follow the dev plan to make a development result
 	follow the dev plan to make a development result
 	development result must contains the code and description of the development result by following the dev plan
+	you should not add any other information without code and description
 	`
 	print("> ")
 	println(prompt)
@@ -75,7 +76,6 @@ func (agent WorkerAgent) call(language string, devPlan string) (*ImplementResult
 	}
 
 	ImplementResult := &ImplementResult{}
-	fmt.Printf("Chat: %v\n", chat)
 	err = json.Unmarshal([]byte(chat.Choices[0].Message.Content), ImplementResult)
 	if err != nil {
 		return nil, err
