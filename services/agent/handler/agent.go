@@ -179,6 +179,7 @@ func (a *AgentHandler) ModifyPlan(ctx context.Context, request *pb.ModifyPlanReq
 func (a *AgentHandler) ImplementPlan(ctx context.Context, request *pb.ImplementPlanRequest) (*pb.ImplementPlanResponse, error) {
 	workerAgent := service.NewWorkerAgent(a.Config.OpenAiKey)
 	analyserAgent := service.NewAnalyserAgent(a.Config.OpenAiKey)
+	diagramAgent := service.NewDiagramAgent(a.Config.OpenAiKey)
 	planService := a.createPlanService()
 	existingPlan, err := planService.GetDevPlanByID(ctx, request.DevPlanId)
 	if err != nil {
@@ -196,12 +197,23 @@ func (a *AgentHandler) ImplementPlan(ctx context.Context, request *pb.ImplementP
 	if err != nil {
 		return nil, fmt.Errorf("failed to combine implementation: %v", err)
 	}
-	diagram, err := analyserAgent.ImplementDiagram(combinedResult.Code)
+	selectOptimalDiagramType, err := diagramAgent.SelectOptimalDiagramType(combinedResult.Code)
+	if err != nil {
+		return nil, fmt.Errorf("failed to select optimal diagram type: %v", err)
+	}
+	diagrams, err := diagramAgent.ImplementDiagrams(combinedResult.Code, existingPlan.Prompt, selectOptimalDiagramType.SelectedType)
 	if err != nil {
 		return nil, fmt.Errorf("failed to implement diagram: %v", err)
 	}
+	diagramsPB := make([]*pb.Diagram, len(diagrams))
+	for i, diagram := range diagrams {
+		diagramsPB[i] = &pb.Diagram{
+			Diagram: diagram.Diagram,
+			Type:    string(diagram.Type),
+		}
+	}
 	return &pb.ImplementPlanResponse{
-		Code:    combinedResult.Code,
-		Diagram: diagram,
+		Code:     combinedResult.Code,
+		Diagrams: diagramsPB,
 	}, nil
 }
