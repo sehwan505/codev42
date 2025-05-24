@@ -28,6 +28,11 @@ message Plan {
   repeated Annotation Annotations = 2;
 }
 
+message Diagram {
+  string Diagram = 1;
+  string Type = 2;
+}
+
 message GeneratePlanResponse {
   int64 DevPlanId = 1;
   string Language = 2;
@@ -40,7 +45,7 @@ message ImplementPlanRequest {
 
 message ImplementPlanResponse {
   string Code = 1;
-  string Diagram = 2;
+  repeated Diagram Diagrams = 2;
 }
 
 message ModifyPlanRequest {
@@ -85,7 +90,6 @@ message GetPlanByIdResponse {
   string Language = 4;
   repeated Plan Plans = 5;
 }
-
 
 
 service CodeService {

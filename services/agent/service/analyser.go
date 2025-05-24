@@ -9,10 +9,6 @@ import (
 	"github.com/openai/openai-go"
 )
 
-type CombinedResult struct {
-	Code string `json:"code" jsonschema_description:"the result of combining the codes"`
-}
-
 type AnalyserAgent struct {
 	Client *openai.Client
 }
@@ -23,6 +19,10 @@ func NewAnalyserAgent(apiKey string) *AnalyserAgent {
 	return &AnalyserAgent{
 		Client: openaiClient.Client(),
 	}
+}
+
+type CombinedResult struct {
+	Code string `json:"code" jsonschema_description:"the result of combining the codes"`
 }
 
 func (agent AnalyserAgent) call(codes []string, purpose string) (*CombinedResult, error) {
@@ -84,34 +84,41 @@ func (agent AnalyserAgent) CombineImplementation(implementResults []*ImplementRe
 	return agent.call(codes, purpose)
 }
 
-type DiagramResult struct {
-	Diagram string `json:"flow chart diagram"`
+type CodeSegment struct {
+	StartLine   int    `json:"startLine"`   // 시작 라인
+	EndLine     int    `json:"endLine"`     // 끝 라인
+	Description string `json:"description"` // 세그먼트 설명
 }
 
-func (agent AnalyserAgent) ImplementDiagram(code string) (string, error) {
-	prompt := "Please analyze the following code and create a Mermaid flowchart diagram showing function relationships. Code:\n" + code
-	prompt += `
-	Please follow these rules:
-	1. Create a flowchart showing all functions and their relationships/dependencies
-	2. Include a brief description of each function's purpose
-	3. Show the flow of data/control between functions using arrows
-	4. Use Mermaid syntax to generate the flowchart, starting with 'flowchart TD'
-	5. Add notes or subgraphs to group related functions
-	6. The output should ONLY contain the Mermaid diagram code
-	7. Do not include any explanatory text or markdown formatting
-	
-	Return the result in JSON format with the following structure:
-	{
-		"diagram": "your mermaid diagram code here"
-	}
-	`
+// CodeSegmentAnalysisResult는 코드 세그먼트 분석 결과를 나타내는 구조체입니다
+type CodeSegmentAnalysisResult struct {
+	CodeSegments []CodeSegment `json:"codeSegments"` // 코드 세그먼트 설명
+}
 
-	schemaParam := openai.ResponseFormatJSONSchemaJSONSchemaParam{
-		Name:        openai.F("diagram_result"),
-		Description: openai.F("mermaid diagram code"),
-		Schema:      openai.F(GenerateImplementResultSchema[DiagramResult]()),
-		Strict:      openai.Bool(true),
-	}
+// AnalyzeCodeSegments는 코드를 분석하여 중요한 세그먼트들을 식별하고 설명합니다
+func (agent AnalyserAgent) AnalyzeCodeSegments(code, language string) ([]CodeSegment, error) {
+	prompt := fmt.Sprintf(`Please analyze the following %s code and identify important segments:
+
+Code:
+%s
+
+Please identify important segments of the code and provide explanations:
+- For each important segment, identify the line number range (e.g., lines 12-30)
+- Explain what each segment does and its purpose
+- Focus on key logic, functions, or structural elements
+
+Return the result in JSON format with the following structure:
+{
+	"codeSegments": [
+		{
+			"startLine": 12,
+			"endLine": 30,
+			"description": "This segment implements the parsing logic for..."
+		}
+	]
+}`, language, code)
+
+	var segmentResultSchema = GenerateImplementResultSchema[CodeSegmentAnalysisResult]()
 
 	chat, err := agent.Client.Chat.Completions.New(context.TODO(), openai.ChatCompletionNewParams{
 		Messages: openai.F([]openai.ChatCompletionMessageParamUnion{
@@ -119,22 +126,27 @@ func (agent AnalyserAgent) ImplementDiagram(code string) (string, error) {
 		}),
 		ResponseFormat: openai.F[openai.ChatCompletionNewParamsResponseFormatUnion](
 			openai.ResponseFormatJSONSchemaParam{
-				Type:       openai.F(openai.ResponseFormatJSONSchemaTypeJSONSchema),
-				JSONSchema: openai.F(schemaParam),
+				Type: openai.F(openai.ResponseFormatJSONSchemaTypeJSONSchema),
+				JSONSchema: openai.F(openai.ResponseFormatJSONSchemaJSONSchemaParam{
+					Name:        openai.F("code_segment_analysis"),
+					Description: openai.F("analysis of important code segments with explanations"),
+					Schema:      openai.F(segmentResultSchema),
+					Strict:      openai.Bool(true),
+				}),
 			},
 		),
 		Model: openai.F(openai.ChatModelGPT4o2024_11_20),
 	})
 
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	var diagramResult DiagramResult
-	err = json.Unmarshal([]byte(chat.Choices[0].Message.Content), &diagramResult)
+	var result CodeSegmentAnalysisResult
+	err = json.Unmarshal([]byte(chat.Choices[0].Message.Content), &result)
 	if err != nil {
-		return "", fmt.Errorf("failed to implement diagram: %v", err)
+		return nil, fmt.Errorf("failed to parse code segment analysis result: %v", err)
 	}
 
-	return diagramResult.Diagram, nil
+	return result.CodeSegments, nil
 }

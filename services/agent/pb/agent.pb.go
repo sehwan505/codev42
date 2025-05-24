@@ -201,6 +201,58 @@ func (x *Plan) GetAnnotations() []*Annotation {
 	return nil
 }
 
+type Diagram struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Diagram       string                 `protobuf:"bytes,1,opt,name=Diagram,proto3" json:"Diagram,omitempty"`
+	Type          string                 `protobuf:"bytes,2,opt,name=Type,proto3" json:"Type,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Diagram) Reset() {
+	*x = Diagram{}
+	mi := &file_agent_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Diagram) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Diagram) ProtoMessage() {}
+
+func (x *Diagram) ProtoReflect() protoreflect.Message {
+	mi := &file_agent_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Diagram.ProtoReflect.Descriptor instead.
+func (*Diagram) Descriptor() ([]byte, []int) {
+	return file_agent_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *Diagram) GetDiagram() string {
+	if x != nil {
+		return x.Diagram
+	}
+	return ""
+}
+
+func (x *Diagram) GetType() string {
+	if x != nil {
+		return x.Type
+	}
+	return ""
+}
+
 type GeneratePlanResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	DevPlanId     int64                  `protobuf:"varint,1,opt,name=DevPlanId,proto3" json:"DevPlanId,omitempty"`
@@ -212,7 +264,7 @@ type GeneratePlanResponse struct {
 
 func (x *GeneratePlanResponse) Reset() {
 	*x = GeneratePlanResponse{}
-	mi := &file_agent_proto_msgTypes[3]
+	mi := &file_agent_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -224,7 +276,7 @@ func (x *GeneratePlanResponse) String() string {
 func (*GeneratePlanResponse) ProtoMessage() {}
 
 func (x *GeneratePlanResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_agent_proto_msgTypes[3]
+	mi := &file_agent_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -237,7 +289,7 @@ func (x *GeneratePlanResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GeneratePlanResponse.ProtoReflect.Descriptor instead.
 func (*GeneratePlanResponse) Descriptor() ([]byte, []int) {
-	return file_agent_proto_rawDescGZIP(), []int{3}
+	return file_agent_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *GeneratePlanResponse) GetDevPlanId() int64 {
@@ -270,7 +322,7 @@ type ImplementPlanRequest struct {
 
 func (x *ImplementPlanRequest) Reset() {
 	*x = ImplementPlanRequest{}
-	mi := &file_agent_proto_msgTypes[4]
+	mi := &file_agent_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -282,7 +334,7 @@ func (x *ImplementPlanRequest) String() string {
 func (*ImplementPlanRequest) ProtoMessage() {}
 
 func (x *ImplementPlanRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_agent_proto_msgTypes[4]
+	mi := &file_agent_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -295,7 +347,7 @@ func (x *ImplementPlanRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ImplementPlanRequest.ProtoReflect.Descriptor instead.
 func (*ImplementPlanRequest) Descriptor() ([]byte, []int) {
-	return file_agent_proto_rawDescGZIP(), []int{4}
+	return file_agent_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *ImplementPlanRequest) GetDevPlanId() int64 {
@@ -308,14 +360,14 @@ func (x *ImplementPlanRequest) GetDevPlanId() int64 {
 type ImplementPlanResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Code          string                 `protobuf:"bytes,1,opt,name=Code,proto3" json:"Code,omitempty"`
-	Diagram       string                 `protobuf:"bytes,2,opt,name=Diagram,proto3" json:"Diagram,omitempty"`
+	Diagrams      []*Diagram             `protobuf:"bytes,2,rep,name=Diagrams,proto3" json:"Diagrams,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ImplementPlanResponse) Reset() {
 	*x = ImplementPlanResponse{}
-	mi := &file_agent_proto_msgTypes[5]
+	mi := &file_agent_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -327,7 +379,7 @@ func (x *ImplementPlanResponse) String() string {
 func (*ImplementPlanResponse) ProtoMessage() {}
 
 func (x *ImplementPlanResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_agent_proto_msgTypes[5]
+	mi := &file_agent_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -340,7 +392,7 @@ func (x *ImplementPlanResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ImplementPlanResponse.ProtoReflect.Descriptor instead.
 func (*ImplementPlanResponse) Descriptor() ([]byte, []int) {
-	return file_agent_proto_rawDescGZIP(), []int{5}
+	return file_agent_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *ImplementPlanResponse) GetCode() string {
@@ -350,11 +402,11 @@ func (x *ImplementPlanResponse) GetCode() string {
 	return ""
 }
 
-func (x *ImplementPlanResponse) GetDiagram() string {
+func (x *ImplementPlanResponse) GetDiagrams() []*Diagram {
 	if x != nil {
-		return x.Diagram
+		return x.Diagrams
 	}
-	return ""
+	return nil
 }
 
 type ModifyPlanRequest struct {
@@ -368,7 +420,7 @@ type ModifyPlanRequest struct {
 
 func (x *ModifyPlanRequest) Reset() {
 	*x = ModifyPlanRequest{}
-	mi := &file_agent_proto_msgTypes[6]
+	mi := &file_agent_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -380,7 +432,7 @@ func (x *ModifyPlanRequest) String() string {
 func (*ModifyPlanRequest) ProtoMessage() {}
 
 func (x *ModifyPlanRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_agent_proto_msgTypes[6]
+	mi := &file_agent_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -393,7 +445,7 @@ func (x *ModifyPlanRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ModifyPlanRequest.ProtoReflect.Descriptor instead.
 func (*ModifyPlanRequest) Descriptor() ([]byte, []int) {
-	return file_agent_proto_rawDescGZIP(), []int{6}
+	return file_agent_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *ModifyPlanRequest) GetDevPlanId() int64 {
@@ -426,7 +478,7 @@ type ModifyPlanResponse struct {
 
 func (x *ModifyPlanResponse) Reset() {
 	*x = ModifyPlanResponse{}
-	mi := &file_agent_proto_msgTypes[7]
+	mi := &file_agent_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -438,7 +490,7 @@ func (x *ModifyPlanResponse) String() string {
 func (*ModifyPlanResponse) ProtoMessage() {}
 
 func (x *ModifyPlanResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_agent_proto_msgTypes[7]
+	mi := &file_agent_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -451,7 +503,7 @@ func (x *ModifyPlanResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ModifyPlanResponse.ProtoReflect.Descriptor instead.
 func (*ModifyPlanResponse) Descriptor() ([]byte, []int) {
-	return file_agent_proto_rawDescGZIP(), []int{7}
+	return file_agent_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *ModifyPlanResponse) GetStatus() string {
@@ -471,7 +523,7 @@ type GetPlanListRequest struct {
 
 func (x *GetPlanListRequest) Reset() {
 	*x = GetPlanListRequest{}
-	mi := &file_agent_proto_msgTypes[8]
+	mi := &file_agent_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -483,7 +535,7 @@ func (x *GetPlanListRequest) String() string {
 func (*GetPlanListRequest) ProtoMessage() {}
 
 func (x *GetPlanListRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_agent_proto_msgTypes[8]
+	mi := &file_agent_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -496,7 +548,7 @@ func (x *GetPlanListRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetPlanListRequest.ProtoReflect.Descriptor instead.
 func (*GetPlanListRequest) Descriptor() ([]byte, []int) {
-	return file_agent_proto_rawDescGZIP(), []int{8}
+	return file_agent_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *GetPlanListRequest) GetProjectId() string {
@@ -523,7 +575,7 @@ type PlanListElement struct {
 
 func (x *PlanListElement) Reset() {
 	*x = PlanListElement{}
-	mi := &file_agent_proto_msgTypes[9]
+	mi := &file_agent_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -535,7 +587,7 @@ func (x *PlanListElement) String() string {
 func (*PlanListElement) ProtoMessage() {}
 
 func (x *PlanListElement) ProtoReflect() protoreflect.Message {
-	mi := &file_agent_proto_msgTypes[9]
+	mi := &file_agent_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -548,7 +600,7 @@ func (x *PlanListElement) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PlanListElement.ProtoReflect.Descriptor instead.
 func (*PlanListElement) Descriptor() ([]byte, []int) {
-	return file_agent_proto_rawDescGZIP(), []int{9}
+	return file_agent_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *PlanListElement) GetDevPlanId() int64 {
@@ -574,7 +626,7 @@ type GetPlanListResponse struct {
 
 func (x *GetPlanListResponse) Reset() {
 	*x = GetPlanListResponse{}
-	mi := &file_agent_proto_msgTypes[10]
+	mi := &file_agent_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -586,7 +638,7 @@ func (x *GetPlanListResponse) String() string {
 func (*GetPlanListResponse) ProtoMessage() {}
 
 func (x *GetPlanListResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_agent_proto_msgTypes[10]
+	mi := &file_agent_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -599,7 +651,7 @@ func (x *GetPlanListResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetPlanListResponse.ProtoReflect.Descriptor instead.
 func (*GetPlanListResponse) Descriptor() ([]byte, []int) {
-	return file_agent_proto_rawDescGZIP(), []int{10}
+	return file_agent_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *GetPlanListResponse) GetDevPlanList() []*PlanListElement {
@@ -618,7 +670,7 @@ type GetPlanByIdRequest struct {
 
 func (x *GetPlanByIdRequest) Reset() {
 	*x = GetPlanByIdRequest{}
-	mi := &file_agent_proto_msgTypes[11]
+	mi := &file_agent_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -630,7 +682,7 @@ func (x *GetPlanByIdRequest) String() string {
 func (*GetPlanByIdRequest) ProtoMessage() {}
 
 func (x *GetPlanByIdRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_agent_proto_msgTypes[11]
+	mi := &file_agent_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -643,7 +695,7 @@ func (x *GetPlanByIdRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetPlanByIdRequest.ProtoReflect.Descriptor instead.
 func (*GetPlanByIdRequest) Descriptor() ([]byte, []int) {
-	return file_agent_proto_rawDescGZIP(), []int{11}
+	return file_agent_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *GetPlanByIdRequest) GetDevPlanId() int64 {
@@ -666,7 +718,7 @@ type GetPlanByIdResponse struct {
 
 func (x *GetPlanByIdResponse) Reset() {
 	*x = GetPlanByIdResponse{}
-	mi := &file_agent_proto_msgTypes[12]
+	mi := &file_agent_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -678,7 +730,7 @@ func (x *GetPlanByIdResponse) String() string {
 func (*GetPlanByIdResponse) ProtoMessage() {}
 
 func (x *GetPlanByIdResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_agent_proto_msgTypes[12]
+	mi := &file_agent_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -691,7 +743,7 @@ func (x *GetPlanByIdResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetPlanByIdResponse.ProtoReflect.Descriptor instead.
 func (*GetPlanByIdResponse) Descriptor() ([]byte, []int) {
-	return file_agent_proto_rawDescGZIP(), []int{12}
+	return file_agent_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *GetPlanByIdResponse) GetDevPlanId() int64 {
@@ -739,7 +791,7 @@ type SaveCodeRequest struct {
 
 func (x *SaveCodeRequest) Reset() {
 	*x = SaveCodeRequest{}
-	mi := &file_agent_proto_msgTypes[13]
+	mi := &file_agent_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -751,7 +803,7 @@ func (x *SaveCodeRequest) String() string {
 func (*SaveCodeRequest) ProtoMessage() {}
 
 func (x *SaveCodeRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_agent_proto_msgTypes[13]
+	mi := &file_agent_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -764,7 +816,7 @@ func (x *SaveCodeRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SaveCodeRequest.ProtoReflect.Descriptor instead.
 func (*SaveCodeRequest) Descriptor() ([]byte, []int) {
-	return file_agent_proto_rawDescGZIP(), []int{13}
+	return file_agent_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *SaveCodeRequest) GetFilePath() string {
@@ -790,7 +842,7 @@ type SaveCodeResponse struct {
 
 func (x *SaveCodeResponse) Reset() {
 	*x = SaveCodeResponse{}
-	mi := &file_agent_proto_msgTypes[14]
+	mi := &file_agent_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -802,7 +854,7 @@ func (x *SaveCodeResponse) String() string {
 func (*SaveCodeResponse) ProtoMessage() {}
 
 func (x *SaveCodeResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_agent_proto_msgTypes[14]
+	mi := &file_agent_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -815,7 +867,7 @@ func (x *SaveCodeResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SaveCodeResponse.ProtoReflect.Descriptor instead.
 func (*SaveCodeResponse) Descriptor() ([]byte, []int) {
-	return file_agent_proto_rawDescGZIP(), []int{14}
+	return file_agent_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *SaveCodeResponse) GetStatus() string {
@@ -842,16 +894,19 @@ const file_agent_proto_rawDesc = "" +
 	"\vDescription\x18\x04 \x01(\tR\vDescription\"V\n" +
 	"\x04Plan\x12\x1c\n" +
 	"\tClassName\x18\x01 \x01(\tR\tClassName\x120\n" +
-	"\vAnnotations\x18\x02 \x03(\v2\x0e.pb.AnnotationR\vAnnotations\"p\n" +
+	"\vAnnotations\x18\x02 \x03(\v2\x0e.pb.AnnotationR\vAnnotations\"7\n" +
+	"\aDiagram\x12\x18\n" +
+	"\aDiagram\x18\x01 \x01(\tR\aDiagram\x12\x12\n" +
+	"\x04Type\x18\x02 \x01(\tR\x04Type\"p\n" +
 	"\x14GeneratePlanResponse\x12\x1c\n" +
 	"\tDevPlanId\x18\x01 \x01(\x03R\tDevPlanId\x12\x1a\n" +
 	"\bLanguage\x18\x02 \x01(\tR\bLanguage\x12\x1e\n" +
 	"\x05Plans\x18\x03 \x03(\v2\b.pb.PlanR\x05Plans\"4\n" +
 	"\x14ImplementPlanRequest\x12\x1c\n" +
-	"\tDevPlanId\x18\x01 \x01(\x03R\tDevPlanId\"E\n" +
+	"\tDevPlanId\x18\x01 \x01(\x03R\tDevPlanId\"T\n" +
 	"\x15ImplementPlanResponse\x12\x12\n" +
-	"\x04Code\x18\x01 \x01(\tR\x04Code\x12\x18\n" +
-	"\aDiagram\x18\x02 \x01(\tR\aDiagram\"m\n" +
+	"\x04Code\x18\x01 \x01(\tR\x04Code\x12'\n" +
+	"\bDiagrams\x18\x02 \x03(\v2\v.pb.DiagramR\bDiagrams\"m\n" +
 	"\x11ModifyPlanRequest\x12\x1c\n" +
 	"\tDevPlanId\x18\x01 \x01(\x03R\tDevPlanId\x12\x1a\n" +
 	"\bLanguage\x18\x02 \x01(\tR\bLanguage\x12\x1e\n" +
@@ -902,47 +957,49 @@ func file_agent_proto_rawDescGZIP() []byte {
 	return file_agent_proto_rawDescData
 }
 
-var file_agent_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
+var file_agent_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
 var file_agent_proto_goTypes = []any{
 	(*GeneratePlanRequest)(nil),   // 0: pb.GeneratePlanRequest
 	(*Annotation)(nil),            // 1: pb.Annotation
 	(*Plan)(nil),                  // 2: pb.Plan
-	(*GeneratePlanResponse)(nil),  // 3: pb.GeneratePlanResponse
-	(*ImplementPlanRequest)(nil),  // 4: pb.ImplementPlanRequest
-	(*ImplementPlanResponse)(nil), // 5: pb.ImplementPlanResponse
-	(*ModifyPlanRequest)(nil),     // 6: pb.ModifyPlanRequest
-	(*ModifyPlanResponse)(nil),    // 7: pb.ModifyPlanResponse
-	(*GetPlanListRequest)(nil),    // 8: pb.GetPlanListRequest
-	(*PlanListElement)(nil),       // 9: pb.PlanListElement
-	(*GetPlanListResponse)(nil),   // 10: pb.GetPlanListResponse
-	(*GetPlanByIdRequest)(nil),    // 11: pb.GetPlanByIdRequest
-	(*GetPlanByIdResponse)(nil),   // 12: pb.GetPlanByIdResponse
-	(*SaveCodeRequest)(nil),       // 13: pb.SaveCodeRequest
-	(*SaveCodeResponse)(nil),      // 14: pb.SaveCodeResponse
+	(*Diagram)(nil),               // 3: pb.Diagram
+	(*GeneratePlanResponse)(nil),  // 4: pb.GeneratePlanResponse
+	(*ImplementPlanRequest)(nil),  // 5: pb.ImplementPlanRequest
+	(*ImplementPlanResponse)(nil), // 6: pb.ImplementPlanResponse
+	(*ModifyPlanRequest)(nil),     // 7: pb.ModifyPlanRequest
+	(*ModifyPlanResponse)(nil),    // 8: pb.ModifyPlanResponse
+	(*GetPlanListRequest)(nil),    // 9: pb.GetPlanListRequest
+	(*PlanListElement)(nil),       // 10: pb.PlanListElement
+	(*GetPlanListResponse)(nil),   // 11: pb.GetPlanListResponse
+	(*GetPlanByIdRequest)(nil),    // 12: pb.GetPlanByIdRequest
+	(*GetPlanByIdResponse)(nil),   // 13: pb.GetPlanByIdResponse
+	(*SaveCodeRequest)(nil),       // 14: pb.SaveCodeRequest
+	(*SaveCodeResponse)(nil),      // 15: pb.SaveCodeResponse
 }
 var file_agent_proto_depIdxs = []int32{
 	1,  // 0: pb.Plan.Annotations:type_name -> pb.Annotation
 	2,  // 1: pb.GeneratePlanResponse.Plans:type_name -> pb.Plan
-	2,  // 2: pb.ModifyPlanRequest.Plans:type_name -> pb.Plan
-	9,  // 3: pb.GetPlanListResponse.DevPlanList:type_name -> pb.PlanListElement
-	2,  // 4: pb.GetPlanByIdResponse.Plans:type_name -> pb.Plan
-	0,  // 5: pb.agentService.generatePlan:input_type -> pb.GeneratePlanRequest
-	6,  // 6: pb.agentService.modifyPlan:input_type -> pb.ModifyPlanRequest
-	4,  // 7: pb.agentService.implementPlan:input_type -> pb.ImplementPlanRequest
-	11, // 8: pb.planService.getPlanById:input_type -> pb.GetPlanByIdRequest
-	8,  // 9: pb.planService.getPlanList:input_type -> pb.GetPlanListRequest
-	13, // 10: pb.CodeService.saveCode:input_type -> pb.SaveCodeRequest
-	3,  // 11: pb.agentService.generatePlan:output_type -> pb.GeneratePlanResponse
-	7,  // 12: pb.agentService.modifyPlan:output_type -> pb.ModifyPlanResponse
-	5,  // 13: pb.agentService.implementPlan:output_type -> pb.ImplementPlanResponse
-	12, // 14: pb.planService.getPlanById:output_type -> pb.GetPlanByIdResponse
-	10, // 15: pb.planService.getPlanList:output_type -> pb.GetPlanListResponse
-	14, // 16: pb.CodeService.saveCode:output_type -> pb.SaveCodeResponse
-	11, // [11:17] is the sub-list for method output_type
-	5,  // [5:11] is the sub-list for method input_type
-	5,  // [5:5] is the sub-list for extension type_name
-	5,  // [5:5] is the sub-list for extension extendee
-	0,  // [0:5] is the sub-list for field type_name
+	3,  // 2: pb.ImplementPlanResponse.Diagrams:type_name -> pb.Diagram
+	2,  // 3: pb.ModifyPlanRequest.Plans:type_name -> pb.Plan
+	10, // 4: pb.GetPlanListResponse.DevPlanList:type_name -> pb.PlanListElement
+	2,  // 5: pb.GetPlanByIdResponse.Plans:type_name -> pb.Plan
+	0,  // 6: pb.agentService.generatePlan:input_type -> pb.GeneratePlanRequest
+	7,  // 7: pb.agentService.modifyPlan:input_type -> pb.ModifyPlanRequest
+	5,  // 8: pb.agentService.implementPlan:input_type -> pb.ImplementPlanRequest
+	12, // 9: pb.planService.getPlanById:input_type -> pb.GetPlanByIdRequest
+	9,  // 10: pb.planService.getPlanList:input_type -> pb.GetPlanListRequest
+	14, // 11: pb.CodeService.saveCode:input_type -> pb.SaveCodeRequest
+	4,  // 12: pb.agentService.generatePlan:output_type -> pb.GeneratePlanResponse
+	8,  // 13: pb.agentService.modifyPlan:output_type -> pb.ModifyPlanResponse
+	6,  // 14: pb.agentService.implementPlan:output_type -> pb.ImplementPlanResponse
+	13, // 15: pb.planService.getPlanById:output_type -> pb.GetPlanByIdResponse
+	11, // 16: pb.planService.getPlanList:output_type -> pb.GetPlanListResponse
+	15, // 17: pb.CodeService.saveCode:output_type -> pb.SaveCodeResponse
+	12, // [12:18] is the sub-list for method output_type
+	6,  // [6:12] is the sub-list for method input_type
+	6,  // [6:6] is the sub-list for extension type_name
+	6,  // [6:6] is the sub-list for extension extendee
+	0,  // [0:6] is the sub-list for field type_name
 }
 
 func init() { file_agent_proto_init() }
@@ -956,7 +1013,7 @@ func file_agent_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_agent_proto_rawDesc), len(file_agent_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   15,
+			NumMessages:   16,
 			NumExtensions: 0,
 			NumServices:   3,
 		},
