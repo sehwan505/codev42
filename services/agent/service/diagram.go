@@ -122,7 +122,7 @@ func (agent DiagramAgent) call(code string, purpose string, diagramType DiagramT
 			fmt.Printf("Attempt %d validation failed, retrying: %v\n", attempt, err)
 			continue
 		}
-
+		fmt.Println("result: ", result, "attempt: ", attempt)
 		return result, nil
 	}
 
@@ -133,23 +133,24 @@ func (agent DiagramAgent) call(code string, purpose string, diagramType DiagramT
 func (agent DiagramAgent) callOnce(code string, purpose string, diagramType DiagramType, attempt int) (*DiagramResult, error) {
 	retryNote := ""
 	if attempt > 1 {
-		retryNote = fmt.Sprintf("\n\nThis is attempt #%d. Please ensure the diagram follows proper Mermaid syntax and includes meaningful content.", attempt)
+		retryNote = fmt.Sprintf("\n\n이것은 %d번째 시도입니다. 다이어그램이 적절한 Mermaid 문법을 따르고 의미있는 내용을 포함하도록 해주세요.", attempt)
 	}
 
-	prompt := fmt.Sprintf(`Please analyze the following code and create a Mermaid %s diagram.
-				Code:
+	prompt := fmt.Sprintf(`다음 코드를 분석하여 Mermaid %s 다이어그램을 생성해주세요.
+				코드:
 				%s
 
-				Purpose: %s
+				목적: %s
 
-				Please follow these rules:
-				1. Create a %s diagram that clearly visualizes the code structure
-				2. Show relationships between components/functions appropriately
-				3. Use Mermaid syntax starting with '%s'
-				4. Ensure the diagram is syntactically correct and meaningful
-				5. Include proper node names and connections%s
+				다음 규칙을 따라주세요:
+				1. 코드 구조를 명확하게 시각화하는 %s 다이어그램을 생성해주세요
+				2. 컴포넌트/함수 간의 관계를 적절하게 보여주세요
+				3. '%s'로 시작하는 Mermaid 문법을 사용해주세요
+				4. 다이어그램이 문법적으로 올바르고 의미있는지 확인해주세요
+				5. 적절한 노드 이름과 연결을 포함해주세요
+				6. 모든 노드 이름과 라벨은 한국어로 작성해주세요%s
 
-				Return ONLY the mermaid diagram code as a string, without any additional formatting or explanation.`,
+				mermaid 다이어그램 코드만을 문자열로 반환해주세요. 추가적인 형식이나 설명은 포함하지 마세요.`,
 		diagramType, code, purpose, diagramType, getMermaidPrefix(diagramType), retryNote)
 
 	// 간단한 스키마 정의 - 다이어그램 코드만 받기
@@ -238,52 +239,41 @@ func (agent DiagramAgent) SelectOptimalDiagramType(code string) (DiagramTypeSele
 	options := []DiagramTypeOption{
 		{
 			Type:        DiagramTypeFlowchart,
-			Description: "Flowchart diagram for visualizing control flow and function calls",
-			UseCase:     "Use when code shows primarily function calls and control flow logic",
+			Description: "제어 흐름과 함수 호출을 시각화하는 플로우차트 다이어그램",
+			UseCase:     "코드가 주로 함수 호출과 제어 흐름 로직을 보여줄 때 사용",
 		},
 		{
 			Type:        DiagramTypeSequence,
-			Description: "Sequence diagram for showing interactions between components over time",
-			UseCase:     "Use when code shows sequences of interactions between different components or objects",
+			Description: "시간에 따른 컴포넌트 간 상호작용을 보여주는 시퀀스 다이어그램",
+			UseCase:     "코드가 서로 다른 컴포넌트나 객체 간의 상호작용 시퀀스를 보여줄 때 사용",
 		},
 		{
 			Type:        DiagramTypeClass,
-			Description: "Class diagram for showing object-oriented relationships",
-			UseCase:     "Use when code defines many classes/structs with inheritance or composition relationships",
-		},
-		{
-			Type:        DiagramTypeER,
-			Description: "Entity-Relationship diagram for data modeling",
-			UseCase:     "Use when code deals primarily with data relationships and database structures",
-		},
-		{
-			Type:        DiagramTypeComponent,
-			Description: "Component diagram for system architecture",
-			UseCase:     "Use when code defines a system with multiple distinct components or modules",
+			Description: "객체지향 관계를 보여주는 클래스 다이어그램",
+			UseCase:     "코드가 상속이나 구성 관계를 가진 많은 클래스/구조체를 정의할 때 사용",
 		},
 		{
 			Type:        DiagramTypeState,
-			Description: "State diagram for state machines and state transitions",
-			UseCase:     "Use when code implements state machines or has clear state transitions",
+			Description: "상태 머신과 상태 전환을 위한 상태 다이어그램",
+			UseCase:     "코드가 상태 머신을 구현하거나 명확한 상태 전환이 있을 때 사용",
 		},
 	}
 
 	optionsJSON, _ := json.Marshal(options)
 
-	prompt := fmt.Sprintf(`Analyze the following code and determine the most appropriate Mermaid diagram type to visualize it:
+	prompt := fmt.Sprintf(`다음 코드를 분석하여 시각화하기에 가장 적절한 Mermaid 다이어그램 타입을 결정해주세요:
 
-			Code:
+			코드:
 			%s
 
-			Available diagram type options:
+			사용 가능한 다이어그램 타입 옵션:
 			%s
 
-			Based on the code structure, content, and complexity, select the ONE most appropriate diagram type from the options above.
+			코드 구조, 내용, 복잡성을 바탕으로 위 옵션 중에서 가장 적절한 두 개의 다이어그램 타입을 선택해주세요.
 
-			Return your selection in JSON format with the following structure:
+			다음 JSON 형식으로 선택 결과를 반환해주세요:
 			{
-				"selectedType": "the_selected_diagram_type",
-				"reason": "explanation of why this type is most suitable for the given code"
+				"selectedType": "선택된_다이어그램_타입",
 			}`, code, string(optionsJSON))
 
 	var selectionSchema = GenerateImplementResultSchema[DiagramTypeSelectionResult]()
@@ -332,10 +322,6 @@ func getMermaidPrefix(diagramType DiagramType) string {
 		return "sequenceDiagram"
 	case DiagramTypeClass:
 		return "classDiagram"
-	case DiagramTypeER:
-		return "erDiagram"
-	case DiagramTypeComponent:
-		return "componentDiagram"
 	case DiagramTypeState:
 		return "stateDiagram-v2"
 	default:

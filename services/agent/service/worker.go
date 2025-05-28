@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"sync"
+	"time"
 
 	"github.com/invopop/jsonschema"
 	"github.com/openai/openai-go"
@@ -38,13 +39,12 @@ func GenerateImplementResultSchema[T any]() interface{} {
 }
 
 func (agent WorkerAgent) call(language string, devPlan string) (*ImplementResult, error) {
-	prompt := "dev plan: " + devPlan
-	prompt += "language: " + language
+	prompt := "개발 계획: " + devPlan
+	prompt += "언어: " + language
 	prompt += `
-	you should follow the dev plan to make a development result
-	follow the dev plan to make a development result
-	development result must contains the code and description of the development result by following the dev plan
-	you should not add any other information without code and description
+	개발 계획에 따라 개발 결과물을 만들어야 합니다.
+	개발 계획에 따라 개발 결과물을 만드세요.
+	코드와 외에 다른 정보는 추가하지 마세요.
 	`
 	print("> ")
 	println(prompt)
@@ -88,9 +88,9 @@ func (agent WorkerAgent) ImplementPlan(language string, plans []model.Plan) ([]*
 	resultChan := make(chan *ImplementResult, len(plans))
 	errorChan := make(chan error, len(plans))
 
-	for _, plan := range plans {
+	for i, plan := range plans {
 		wg.Add(1)
-		go func(plan model.Plan) {
+		go func(plan model.Plan, index int) {
 			defer wg.Done()
 			fmt.Printf("Processing: %s\n", plan.Annotations)
 			planString := "className: " + plan.ClassName + "\n"
@@ -100,13 +100,18 @@ func (agent WorkerAgent) ImplementPlan(language string, plans []model.Plan) ([]*
 				planString += "functionParameters: " + annotation.Params + "\n"
 				planString += "functionReturnType: " + annotation.Returns + "\n"
 			}
+			fmt.Printf("Plan %d started\n", index)
+			startTime := time.Now()
 			ImplementResult, err := agent.call(language, planString)
+			endTime := time.Now()
+			elapsedTime := endTime.Sub(startTime)
+			fmt.Printf("Plan %d completed in %s\n", index, elapsedTime)
 			if err != nil {
 				errorChan <- err
 				return
 			}
 			resultChan <- ImplementResult
-		}(plan)
+		}(plan, i)
 	}
 
 	wg.Wait()
@@ -117,6 +122,7 @@ func (agent WorkerAgent) ImplementPlan(language string, plans []model.Plan) ([]*
 	for result := range resultChan {
 		results = append(results, result)
 	}
+	fmt.Println("results: ", results)
 	if len(errorChan) > 0 {
 		var errors []string
 		for err := range errorChan {
