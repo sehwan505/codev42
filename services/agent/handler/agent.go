@@ -197,6 +197,18 @@ func (a *AgentHandler) ImplementPlan(ctx context.Context, request *pb.ImplementP
 	if err != nil {
 		return nil, fmt.Errorf("failed to combine implementation: %v", err)
 	}
+	explainedSegments, err := analyserAgent.AnalyzeCodeSegments(combinedResult.Code, existingPlan.Language)
+	if err != nil {
+		return nil, fmt.Errorf("failed to analyze code segments: %v", err)
+	}
+	segmentsPB := make([]*pb.ExplainedSegment, len(explainedSegments))
+	for i, segment := range explainedSegments {
+		segmentsPB[i] = &pb.ExplainedSegment{
+			StartLine:   int32(segment.StartLine),
+			EndLine:     int32(segment.EndLine),
+			Explanation: segment.Explanation,
+		}
+	}
 	selectOptimalDiagramType, err := diagramAgent.SelectOptimalDiagramType(combinedResult.Code)
 	if err != nil {
 		return nil, fmt.Errorf("failed to select optimal diagram type: %v", err)
@@ -213,7 +225,8 @@ func (a *AgentHandler) ImplementPlan(ctx context.Context, request *pb.ImplementP
 		}
 	}
 	return &pb.ImplementPlanResponse{
-		Code:     combinedResult.Code,
-		Diagrams: diagramsPB,
+		Code:              combinedResult.Code,
+		Diagrams:          diagramsPB,
+		ExplainedSegments: segmentsPB,
 	}, nil
 }

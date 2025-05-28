@@ -33,6 +33,12 @@ message Diagram {
   string Type = 2;
 }
 
+message ExplainedSegment {
+  int32 StartLine = 1;
+  int32 EndLine = 2;
+  string Explanation = 3;
+}
+
 message GeneratePlanResponse {
   int64 DevPlanId = 1;
   string Language = 2;
@@ -46,6 +52,7 @@ message ImplementPlanRequest {
 message ImplementPlanResponse {
   string Code = 1;
   repeated Diagram Diagrams = 2;
+  repeated ExplainedSegment ExplainedSegments = 3;
 }
 
 message ModifyPlanRequest {

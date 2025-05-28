@@ -10,20 +10,20 @@ import (
 )
 
 type Annotation struct {
-	Name        string `json:"name" jsonschema_description:"The name of the function or method"`
-	Params      string `json:"params" jsonschema_description:"The parameters of the function with types"`
-	Returns     string `json:"returns" jsonschema_description:"The return value of the function with type"`
-	Description string `json:"description" jsonschema_description:"The description of the function"`
+	Name        string `json:"name" jsonschema_description:"함수나 메서드의 이름"`
+	Params      string `json:"params" jsonschema_description:"타입이 포함된 함수의 매개변수들"`
+	Returns     string `json:"returns" jsonschema_description:"타입이 포함된 함수의 반환값"`
+	Description string `json:"description" jsonschema_description:"함수에 대한 설명"`
 }
 
 type Plan struct {
-	ClassName   string       `json:"class_name" jsonschema_description:"class name if empty then it is function"`
-	Annotations []Annotation `json:"annotations" jsonschema_description:"Structured annotations for functions and class methods"`
+	ClassName   string       `json:"class_name" jsonschema_description:"클래스 이름 (비어있으면 함수)"`
+	Annotations []Annotation `json:"annotations" jsonschema_description:"함수와 클래스 메서드에 대한 구조화된 어노테이션"`
 }
 
 type DevPlan struct {
-	Language string `json:"language" jsonschema_description:"The programming language for development"`
-	Plans    []Plan `json:"plans" jsonschema_description:"List of development plans with class Name and annotations"`
+	Language string `json:"language" jsonschema_description:"개발에 사용될 프로그래밍 언어"`
+	Plans    []Plan `json:"plans" jsonschema_description:"클래스 이름과 어노테이션이 포함된 개발 계획 목록"`
 }
 
 type MasterAgent struct {
@@ -51,13 +51,13 @@ func GenerateDevPlanSchema[T any]() interface{} {
 var DevPlanResponseSchema = GenerateDevPlanSchema[DevPlan]()
 
 func (agent MasterAgent) Call(prompt string) (*DevPlan, error) {
-	prompt = "prompt: " + prompt
+	prompt = "프롬프트: " + prompt
 	prompt += `
-	you should follow the rules to make a development plan
-	rule: make a development plan about prompt with annotations of functions and classes as a list
-	annotation follow @name, @params, @returns, @description, 
-	if the development is for a class, ClassName should be given, then annotations should be list of methods
-	or if the development is for a function, ClassName should be empty, then annotations should be list with only one item
+	다음 규칙에 따라 개발 계획을 수립해야 합니다
+	규칙: 프롬프트에 대해 함수와 클래스의 어노테이션을 포함한 개발 계획을 목록으로 작성하세요
+	어노테이션은 @name, @params, @returns, @description을 따릅니다
+	클래스를 위한 개발인 경우, ClassName을 제공하고 어노테이션은 메소드 목록이어야 합니다
+	함수를 위한 개발인 경우, ClassName은 비워두고 어노테이션은 하나의 항목만 포함하는 목록이어야 합니다
 	`
 	print("> ")
 	println(prompt)
