@@ -106,16 +106,19 @@ func (agent AnalyserAgent) AnalyzeCodeSegments(code, language string) ([]CodeSeg
 - 각 세그먼트가 무엇을 하는지와 그 목적을 한국어로 설명해주세요
 - 핵심 로직, 함수, 또는 구조적 요소에 집중해주세요
 
-다음 JSON 형식으로 결과를 반환해주세요:
-{
-	"codeSegments": [
-		{
-			"startLine": 12,
-			"endLine": 30,
-			"explanation": "이 세그먼트는 파싱 로직을 구현합니다..."
-		}
-	]
-}`, language, code)
+## 설명 대상
+- 함수와 메서드의 목적과 역할
+- 복잡한 논리 구조나 알고리즘
+- 중요 변수와 데이터 구조의 용도
+- 예외 처리와 조건문의 의미
+- 코드의 전체적인 흐름을 이해하는 데 도움이 되는 정보
+
+## 추가 지침
+- 설명은 간결하면서도 명확하게 작성해주세요
+- 특히 복잡한 로직이나 이해하기 어려운 부분에 대해 자세히 설명해주세요
+- 전체 코드의 흐름과 구조를 이해할 수 있도록 도와주세요
+- 언어나 프레임워크 특정 기능에 대해서는 필요할 경우 추가 설명을 제공해주세요
+`, language, code)
 
 	var segmentResultSchema = GenerateImplementResultSchema[CodeSegmentAnalysisResult]()
 

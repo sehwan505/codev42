@@ -10,20 +10,20 @@ import (
 )
 
 type Annotation struct {
-	Name        string `json:"name" jsonschema_description:"함수나 메서드의 이름"`
-	Params      string `json:"params" jsonschema_description:"타입이 포함된 함수의 매개변수들"`
-	Returns     string `json:"returns" jsonschema_description:"타입이 포함된 함수의 반환값"`
-	Description string `json:"description" jsonschema_description:"함수에 대한 설명"`
+	Name        string `json:"이름" jsonschema_description:"함수나 메서드의 이름"`
+	Params      string `json:"파라미터" jsonschema_description:"타입이 포함된 함수의 매개변수들"`
+	Returns     string `json:"반환값" jsonschema_description:"타입이 포함된 함수의 반환값"`
+	Description string `json:"설명" jsonschema_description:"함수에 대한 설명"`
 }
 
 type Plan struct {
-	ClassName   string       `json:"class_name" jsonschema_description:"클래스 이름 (비어있으면 함수)"`
-	Annotations []Annotation `json:"annotations" jsonschema_description:"함수와 클래스 메서드에 대한 구조화된 어노테이션"`
+	ClassName   string       `json:"클래스 이름" jsonschema_description:"클래스 이름 (비어있으면 함수)"`
+	Annotations []Annotation `json:"어노테이션" jsonschema_description:"함수와 클래스 메서드에 대한 구조화된 어노테이션"`
 }
 
 type DevPlan struct {
-	Language string `json:"language" jsonschema_description:"개발에 사용될 프로그래밍 언어"`
-	Plans    []Plan `json:"plans" jsonschema_description:"클래스 이름과 어노테이션이 포함된 개발 계획 목록"`
+	Language string `json:"언어" jsonschema_description:"개발에 사용될 프로그래밍 언어"`
+	Plans    []Plan `json:"계획" jsonschema_description:"클래스 이름과 어노테이션이 포함된 개발 계획 목록"`
 }
 
 type MasterAgent struct {

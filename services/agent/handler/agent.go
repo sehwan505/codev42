@@ -209,11 +209,7 @@ func (a *AgentHandler) ImplementPlan(ctx context.Context, request *pb.ImplementP
 			Explanation: segment.Explanation,
 		}
 	}
-	selectOptimalDiagramType, err := diagramAgent.SelectOptimalDiagramType(combinedResult.Code)
-	if err != nil {
-		return nil, fmt.Errorf("failed to select optimal diagram type: %v", err)
-	}
-	diagrams, err := diagramAgent.ImplementDiagrams(combinedResult.Code, existingPlan.Prompt, selectOptimalDiagramType.SelectedType)
+	diagrams, err := diagramAgent.ImplementDiagrams(combinedResult.Code, existingPlan.Prompt)
 	if err != nil {
 		return nil, fmt.Errorf("failed to implement diagram: %v", err)
 	}
