@@ -54,87 +54,94 @@ func (s *PlanService) UpdateDevPlanWithDetails(ctx context.Context, devPlan *mod
 		return err
 	}
 
+	// 1. 기존 Plan들을 가져옵니다
 	existingPlans, err := s.planRepo.GetPlansByDevPlanID(ctx, devPlan.ID)
 	if err != nil {
 		return err
 	}
 
+	// 2. 기존 Plan들의 map을 만듭니다
 	existingPlanIDs := make(map[int64]*model.Plan)
-	for i, plan := range existingPlans {
-		existingPlanIDs[plan.ID] = &existingPlans[i]
+	for i := range existingPlans {
+		existingPlanIDs[existingPlans[i].ID] = &existingPlans[i]
 	}
 
-	// 3. Process each Plan in the updated DevPlan
+	// 3. 새로운 Plan들을 처리합니다
 	for i := range devPlan.Plans {
 		devPlan.Plans[i].DevPlanID = devPlan.ID
 
 		if devPlan.Plans[i].ID > 0 && existingPlanIDs[devPlan.Plans[i].ID] != nil {
-			// Update existing Plan
+			// 3.1 기존 Plan 업데이트
 			if err := s.planRepo.UpdatePlan(ctx, &devPlan.Plans[i]); err != nil {
 				return err
 			}
 
-			// Get existing Annotations for this Plan
+			// 3.2 기존 Annotation들을 가져옵니다
 			existingAnnotations, err := s.annotationRepo.GetAnnotationsByPlanID(ctx, devPlan.Plans[i].ID)
 			if err != nil {
 				return err
 			}
 
-			// Make a map of existing Annotation IDs
-			existingAnnotationIDs := make(map[int64]*model.Annotation)
-			for j, annotation := range existingAnnotations {
-				existingAnnotationIDs[annotation.ID] = &existingAnnotations[j]
+			// 3.3 기존 Annotation들의 map을 만듭니다
+			existingAnnotationIDs := make(map[int64]bool)
+			for _, annotation := range existingAnnotations {
+				existingAnnotationIDs[annotation.ID] = true
 			}
 
-			// Process each Annotation
+			// 3.4 새로운 Annotation들을 처리합니다
 			for j := range devPlan.Plans[i].Annotations {
-				devPlan.Plans[i].Annotations[j].PlanID = devPlan.Plans[i].ID
+				annotation := &devPlan.Plans[i].Annotations[j]
+				annotation.PlanID = devPlan.Plans[i].ID
 
-				if devPlan.Plans[i].Annotations[j].ID > 0 && existingAnnotationIDs[devPlan.Plans[i].Annotations[j].ID] != nil {
-					// Update existing Annotation
-					if err := s.annotationRepo.UpdateAnnotation(ctx, &devPlan.Plans[i].Annotations[j]); err != nil {
+				if annotation.ID > 0 && existingAnnotationIDs[annotation.ID] {
+					// 기존 Annotation 업데이트
+					if err := s.annotationRepo.UpdateAnnotation(ctx, annotation); err != nil {
 						return err
 					}
-					// Remove from map to track which ones to delete later
-					delete(existingAnnotationIDs, devPlan.Plans[i].Annotations[j].ID)
+					delete(existingAnnotationIDs, annotation.ID)
 				} else {
-					// Create new Annotation
-					if err := s.annotationRepo.CreateAnnotation(ctx, &devPlan.Plans[i].Annotations[j]); err != nil {
+					// 새로운 Annotation 생성
+					annotation.ID = 0 // ID 초기화
+					if err := s.annotationRepo.CreateAnnotation(ctx, annotation); err != nil {
 						return err
 					}
 				}
 			}
 
-			// Delete Annotations that were not in the update
+			// 3.5 남은 Annotation들을 삭제합니다
 			for annotationID := range existingAnnotationIDs {
 				if err := s.annotationRepo.DeleteAnnotation(ctx, annotationID); err != nil {
 					return err
 				}
 			}
 
-			// Remove from map to track which Plans to delete later
 			delete(existingPlanIDs, devPlan.Plans[i].ID)
 		} else {
-			// Create new Plan
+			// 3.6 새로운 Plan 생성
+			devPlan.Plans[i].ID = 0 // ID 초기화
 			if err := s.planRepo.CreatePlan(ctx, &devPlan.Plans[i]); err != nil {
 				return err
 			}
 
-			// Create Annotations for the new Plan
+			// 3.7 새로운 Plan의 Annotation들을 생성합니다
 			for j := range devPlan.Plans[i].Annotations {
-				devPlan.Plans[i].Annotations[j].PlanID = devPlan.Plans[i].ID
-				if err := s.annotationRepo.CreateAnnotation(ctx, &devPlan.Plans[i].Annotations[j]); err != nil {
+				annotation := &devPlan.Plans[i].Annotations[j]
+				annotation.PlanID = devPlan.Plans[i].ID
+				annotation.ID = 0 // ID 초기화
+				if err := s.annotationRepo.CreateAnnotation(ctx, annotation); err != nil {
 					return err
 				}
 			}
 		}
 	}
 
-	// Delete Plans that were not in the update
+	// 4. 남은 Plan들과 관련된 모든 Annotation들을 삭제합니다
 	for planID := range existingPlanIDs {
+		// 4.1 먼저 Plan에 속한 모든 Annotation들을 삭제합니다
 		if err := s.annotationRepo.DeleteAnnotationsByPlanID(ctx, planID); err != nil {
 			return err
 		}
+		// 4.2 그 다음 Plan을 삭제합니다
 		if err := s.planRepo.DeletePlan(ctx, planID); err != nil {
 			return err
 		}
