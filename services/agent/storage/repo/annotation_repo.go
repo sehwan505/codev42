@@ -87,4 +87,4 @@ func (r *AnnotationRepo) DeleteAnnotationsByPlanID(ctx context.Context, planID i
 	return r.dbConn.DB.WithContext(ctx).
 		Where("plan_id = ?", planID).
 		Delete(&model.Annotation{}).Error
-} 
+}

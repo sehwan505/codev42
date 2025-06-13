@@ -27,13 +27,11 @@ type CombinedResult struct {
 
 func (agent AnalyserAgent) call(codes []string, purpose string) (*CombinedResult, error) {
 	prompt := "목적: " + purpose + "\n\n"
-	prompt += "다음 코드들을 분석하여 목적에 맞는 효율적인 하나의 코드로 결합해주세요:\n\n"
-
 	for i, code := range codes {
 		prompt += fmt.Sprintf("코드 %d:\n```\n%s\n```\n\n", i+1, code)
 	}
 
-	prompt += "목적에 맞는 효율적인 하나의 코드로 결합해주세요. 모든 설명과 주석은 한국어로 작성해주세요."
+	prompt += "목적에 맞는 효율적인 하나의 코드로 결합해주세요. 최대한 기존 함수나 클래스의 개수를 바꾸지 말아주세요. 모든 설명과 주석은 한국어로 작성해주세요."
 
 	var combinedResultSchema = GenerateImplementResultSchema[CombinedResult]()
 
@@ -96,13 +94,21 @@ type CodeSegmentAnalysisResult struct {
 
 // AnalyzeCodeSegments는 코드를 분석하여 중요한 세그먼트들을 식별하고 설명합니다
 func (agent AnalyserAgent) AnalyzeCodeSegments(code, language string) ([]CodeSegment, error) {
-	prompt := fmt.Sprintf(`다음 %s 코드를 분석하여 중요한 세그먼트들을 식별해주세요:
+	// 코드에 줄 번호 추가
+	lines := strings.Split(code, "\n")
+	numberedCode := ""
+	for i, line := range lines {
+		numberedCode += fmt.Sprintf("%4d | %s\n", i, line)
+	}
+
+	prompt := fmt.Sprintf(`다음 %s 코드를 분석하여 중요한 세그먼트들을 한국어로 설명해주세요:
 
 코드:
 %s
 
 코드의 중요한 세그먼트들을 식별하고 한국어로 설명해주세요:
 - 각 중요한 세그먼트에 대해 라인 번호 범위를 식별해주세요 (예: 12-30번째 줄)
+- 줄 번호는 0부터 시작해주세요.
 - 각 세그먼트가 무엇을 하는지와 그 목적을 한국어로 설명해주세요
 - 핵심 로직, 함수, 또는 구조적 요소에 집중해주세요
 
@@ -118,7 +124,8 @@ func (agent AnalyserAgent) AnalyzeCodeSegments(code, language string) ([]CodeSeg
 - 특히 복잡한 로직이나 이해하기 어려운 부분에 대해 자세히 설명해주세요
 - 전체 코드의 흐름과 구조를 이해할 수 있도록 도와주세요
 - 언어나 프레임워크 특정 기능에 대해서는 필요할 경우 추가 설명을 제공해주세요
-`, language, code)
+`, language, numberedCode)
+	fmt.Println(prompt)
 
 	var segmentResultSchema = GenerateImplementResultSchema[CodeSegmentAnalysisResult]()
 

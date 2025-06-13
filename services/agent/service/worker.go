@@ -42,9 +42,9 @@ func (agent WorkerAgent) call(language string, devPlan string) (*ImplementResult
 	prompt := "개발 계획: " + devPlan
 	prompt += "언어: " + language
 	prompt += `
-	개발 계획에 따라 개발 결과물을 만들어야 합니다.
-	개발 계획에 따라 개발 결과물을 만드세요.
-	코드와 외에 다른 정보는 추가하지 마세요.
+	개발 계획에 따라 개발 결과물을 만들어야 합니다. 정확히 코드가 원하는 Parameters와 ReturnType에 맞춰서 만들어야합니다.
+	개발 계획에 포함되지 않은 어떠한 메소드나 클래스를 추가하지 마세요
+	코드 외에 다른 정보는 추가하지 마세요.
 	`
 	print("> ")
 	println(prompt)
@@ -72,10 +72,12 @@ func (agent WorkerAgent) call(language string, devPlan string) (*ImplementResult
 	})
 
 	if err != nil {
+		fmt.Println("err: ", err)
 		return nil, err
 	}
 
 	ImplementResult := &ImplementResult{}
+	fmt.Println("chat.Choices[0].Message.Content: ", chat.Choices[0].Message)
 	err = json.Unmarshal([]byte(chat.Choices[0].Message.Content), ImplementResult)
 	if err != nil {
 		return nil, err
@@ -103,6 +105,7 @@ func (agent WorkerAgent) ImplementPlan(language string, plans []model.Plan) ([]*
 			fmt.Printf("Plan %d started\n", index)
 			startTime := time.Now()
 			ImplementResult, err := agent.call(language, planString)
+			fmt.Println("ImplementResult: ", ImplementResult)
 			endTime := time.Now()
 			elapsedTime := endTime.Sub(startTime)
 			fmt.Printf("Plan %d completed in %s\n", index, elapsedTime)
