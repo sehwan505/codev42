@@ -229,7 +229,6 @@ func getMermaidPrefix(diagramType DiagramType) string {
 		return "flowchart TD"
 	}
 }
-
 func getDiagramPrompt(code string, purpose string, diagramType DiagramType) string {
 	// 공통 한국어 처리 규칙
 	commonKoreanRules := `
@@ -240,38 +239,38 @@ func getDiagramPrompt(code string, purpose string, diagramType DiagramType) stri
 
 	switch diagramType {
 	case DiagramTypeClass:
-		return fmt.Sprintf(`다음 코드를 분석하여 상세한 클래스 다이어그램을 Mermaid 형식으로 생성해주세요.
+		return fmt.Sprintf(`다음 코드를 분석하여 클래스 다이어그램을 Mermaid 형식으로 생성해주세요.
 
 %s
 
-**클래스 다이어그램 구체적 요구사항:**
-1. 클래스 정의 및 관계:
-   - 모든 클래스: class 클래스명 (언더스코어 활용)
-   - 상속관계: 부모클래스 <|-- 자식클래스
-   - 컴포지션: 전체클래스 *-- 부분클래스
-   - 집합관계: 컨테이너클래스 o-- 요소클래스
-   - 연관관계: 클래스A --> 클래스B : 관계명
-   - 의존관계: 클래스A ..> 클래스B : 사용
+**클래스 다이어그램 필수 요구사항:**
+1. 기본 클래스 정의 (반드시 포함):
+   - class 클래스명 형태로 클래스 정의
+   - 예: class 사용자관리자, class 데이터베이스접속
 
-2. 클래스 내부 구조 표현:
-   - 접근제한자: +공개메소드(), -비공개속성, #보호메소드(), ~패키지속성
-   - 속성정의: +속성명 타입
-   - 메소드정의: +메소드명(매개변수타입) 반환타입
-   - 생성자: +생성자명(매개변수목록)
-   - 정적멤버: +정적메소드()$ 또는 +정적속성$
+2. 클래스 내부 구조 (선택적):
+   - 클래스명 : 메소드명
+   - 클래스명 : +공개메소드()
+   - 클래스명 : -비공개속성
 
-3. 고급 표현 요소:
-   - 추상클래스: class 추상클래스명 followed by 추상클래스명 : <<abstract>>
-   - 인터페이스: class 인터페이스명 followed by 인터페이스명 : <<interface>>
-   - 열거형: class 열거형명 followed by 열거형명 : <<enumeration>>
+3. 클래스 관계 (필요시):
+   - 상속: 부모클래스 <|-- 자식클래스
+   - 연관: 클래스A --> 클래스B
 
-4. 구조화 및 배치:
-   - 관련 클래스들을 그룹핑
-   - 상속 계층은 위에서 아래로 배치
-   - 의존성 화살표 방향 일관성 유지
-5. classDiagram 문법을 사용해주세요
-   - 항상 classDiagram으로 시작해주세요
-   - 한 개 이상의 class를 포함해주세요
+**중요한 검증 규칙:**
+- 반드시 'class 클래스명' 형태의 정의를 하나 이상 포함해야 합니다
+- classDiagram으로 시작해야 합니다
+- 한국어 클래스명은 언더스코어 없이 연속으로 작성하세요
+- 어노테이션 <<interface>>, <<abstract>> 등은 별도 줄에 작성하세요
+
+**예시:**
+classDiagram
+class 사용자관리자
+class 데이터처리서비스
+사용자관리자 : +로그인()
+사용자관리자 : +로그아웃()
+데이터처리서비스 : +데이터조회()
+사용자관리자 --> 데이터처리서비스
 
 코드: %s
 목적: %s

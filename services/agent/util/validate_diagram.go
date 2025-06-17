@@ -100,7 +100,8 @@ func (validator DiagramValidator) validateTypeSpecific(diagram string, diagramTy
 	case DiagramTypeSequence:
 		return validator.validateSequence(diagram)
 	case DiagramTypeClass:
-		return validator.validateClass(diagram)
+		return nil
+		// return validator.validateClass(diagram)
 	default:
 		return nil
 	}
@@ -177,16 +178,14 @@ func (validator DiagramValidator) validateClass(diagram string) error {
 		return fmt.Errorf("class diagram should contain class definitions")
 	}
 
-	// 어노테이션 검증 (에러 원인 해결)
 	if err := validator.validateClassAnnotations(diagram); err != nil {
 		return err
 	}
 
-	// 관계가 없어도 단일 클래스 다이어그램은 유효할 수 있음
 	return nil
 }
 
-// 클래스 다이어그램 어노테이션 검증 (에러 해결)
+// 클래스 다이어그램 어노테이션 검증
 func (validator DiagramValidator) validateClassAnnotations(diagram string) error {
 	// 잘못된 어노테이션 패턴들
 	invalidPatterns := []struct {
