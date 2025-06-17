@@ -138,6 +138,7 @@ func (a *AgentHandler) ModifyPlan(ctx context.Context, request *pb.ModifyPlanReq
 		ProjectID: existingPlan.ProjectID,
 		Branch:    existingPlan.Branch,
 		Language:  request.Language,
+		Prompt:    existingPlan.Prompt,
 		Plans:     make([]model.Plan, len(request.Plans)),
 	}
 
