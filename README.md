@@ -123,29 +123,27 @@
 
 ```mermaid
 flowchart TD
-  C[Client / UI] -->|HTTP| GW[API Gateway\n(Gin)]
+  C[Client / UI] -->|HTTP| GW[API Gateway - gin]
 
   subgraph AgentService[Agent Service]
     AG[gRPC Server]
 
-    MA[MasterAgent\n(GeneratePlan)]
-    PS[PlanService\n(저장/조회)]
-    RDB[(MariaDB)]
+    MA[GeneratePlan]
+    PS[저장 및 조회]
+    RDB[MariaDB]
 
-    WA[WorkerAgent\n(병렬 코드 구현)]
-    AA[AnalyserAgent\n(병합/설명)]
-    DA[DiagramAgent\n(Mermaid 생성)]
-    DV[DiagramValidator]
+    WA[병렬 코드 구현]
+    AA[병합/설명]
+    DA[Mermaid 생성]
+    DV[Diagram 평가]
 
-    OA[(OpenAI API)]
-    VDB[(Pinecone / Milvus)]
+    OA[OpenAI API]
 
     AG --> MA
     MA -->|DevPlan| PS
     PS --> RDB
 
     AG --> WA
-    WA -->|codes[]| AA
     AA -->|combined code + segments| DA
     DA -->|validate| DV
 
@@ -198,5 +196,3 @@ sequenceDiagram
   AG-->>GW: Code + Diagrams + ExplainedSegments
   GW-->>C: HTTP 200 JSON
 ```
-
-Mermaid 미리보기는 GitHub, vscode 확장(추천: "Markdown Preview Mermaid Support") 또는 Mermaid Live Editor를 활용해 확인할 수 있습니다.
