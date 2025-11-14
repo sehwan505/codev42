@@ -94,7 +94,7 @@ func (agent WorkerAgent) ImplementPlan(language string, plans []model.Plan) ([]*
 		wg.Add(1)
 		go func(plan model.Plan, index int) {
 			defer wg.Done()
-			fmt.Printf("Processing: %s\n", plan.Annotations)
+			fmt.Printf("Processing: %s\n", plan.ClassName)
 			planString := "className: " + plan.ClassName + "\n"
 			for _, annotation := range plan.Annotations {
 				planString += "functionName: " + annotation.Name + "\n"

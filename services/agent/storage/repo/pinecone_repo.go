@@ -12,7 +12,7 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
-// PineconeRepo implements the VectorDB interface for Pinecone.
+// PineconeRepo는 Pinecone에 대한 VectorDB 인터페이스를 구현합니다.
 type PineconeRepo struct {
 	*storage.PineconeConnection
 	idxConnection *pinecone.IndexConnection
@@ -25,15 +25,15 @@ func NewPineconeRepo(conn *storage.PineconeConnection) *PineconeRepo {
 func (r *PineconeRepo) InitCollection(ctx context.Context, collectionName string, vectorDim int32) error {
 	desc, err := r.Client.DescribeIndex(ctx, collectionName)
 	if err == nil && desc != nil {
-		log.Printf("Pinecone index '%s' already exists. Dimension: %d", collectionName, desc.Dimension)
+		log.Printf("Pinecone 인덱스 '%s'가 이미 존재합니다. 차원: %d", collectionName, desc.Dimension)
 		idx, err := r.Client.DescribeIndex(ctx, collectionName)
 		if err != nil {
-			log.Fatalf("Failed to describe index \"%v\": %v", idx.Name, err)
+			log.Fatalf("인덱스 \"%v\" 설명에 실패했습니다: %v", idx.Name, err)
 		}
 
 		idxConnection, err := r.Client.Index(pinecone.NewIndexConnParams{Host: idx.Host})
 		if err != nil {
-			log.Fatalf("Failed to create IndexConnection for Host: %v: %v", idx.Host, err)
+			log.Fatalf("호스트에 대한 IndexConnection 생성에 실패했습니다: %v: %v", idx.Host, err)
 		}
 		r.idxConnection = idxConnection
 		return nil
@@ -59,14 +59,14 @@ func (r *PineconeRepo) InitCollection(ctx context.Context, collectionName string
 	})
 
 	if err != nil {
-		return fmt.Errorf("failed to create Pinecone index: %w", err)
+		return fmt.Errorf("Pinecone 인덱스 생성에 실패했습니다: %w", err)
 	}
 	idxConnection, err := r.Client.Index(pinecone.NewIndexConnParams{Host: idx.Host})
 	if err != nil {
-		log.Fatalf("Failed to create IndexConnection for Host: %v: %v", idx.Host, err)
+		log.Fatalf("호스트에 대한 IndexConnection 생성에 실패했습니다: %v: %v", idx.Host, err)
 	}
 	r.idxConnection = idxConnection
-	log.Printf("Created Pinecone index '%s' with dimension %d", collectionName, vectorDim)
+	log.Printf("Pinecone 인덱스 '%s'를 차원 %d로 생성했습니다", collectionName, vectorDim)
 	return nil
 }
 
@@ -76,7 +76,7 @@ func (r *PineconeRepo) InsertEmbedding(ctx context.Context, collectionName strin
 	}
 	metadata, err := structpb.NewStruct(metadataMap)
 	if err != nil {
-		return fmt.Errorf("failed to create metadata: %w", err)
+		return fmt.Errorf("메타데이터 생성에 실패했습니다: %w", err)
 	}
 
 	vectors := []*pinecone.Vector{
@@ -88,7 +88,7 @@ func (r *PineconeRepo) InsertEmbedding(ctx context.Context, collectionName strin
 	}
 
 	if _, err := r.idxConnection.UpsertVectors(ctx, vectors); err != nil {
-		return fmt.Errorf("failed to insert vectors: %w", err)
+		return fmt.Errorf("벡터 삽입에 실패했습니다: %w", err)
 	}
 	return nil
 }
@@ -111,7 +111,7 @@ func (r *PineconeRepo) SearchByVector(ctx context.Context, collectionName string
 
 	metadataFilter, err := structpb.NewStruct(metadataMap)
 	if err != nil {
-		log.Fatalf("Failed to create metadataFilter: %v", err)
+		log.Fatalf("메타데이터 필터 생성에 실패했습니다: %v", err)
 	}
 
 	res, err := r.idxConnection.QueryByVectorValues(ctx, &pinecone.QueryByVectorValuesRequest{
@@ -121,21 +121,21 @@ func (r *PineconeRepo) SearchByVector(ctx context.Context, collectionName string
 		IncludeValues:  true,
 	})
 	if err != nil {
-		log.Fatalf("Error encountered when querying by vector: %v", err)
+		log.Fatalf("벡터로 쿼리하는 동안 오류가 발생했습니다: %v", err)
 	}
 	var ids []int64
 	for _, match := range res.Matches {
 		id, err := strconv.ParseInt(match.Vector.Id, 10, 64)
 		if err != nil {
-			return nil, fmt.Errorf("failed to parse ID: %w", err)
+			return nil, fmt.Errorf("ID 구문 분석에 실패했습니다: %w", err)
 		}
 		ids = append(ids, id)
 	}
 	return ids, nil
 }
 
-// Close cleans up resources associated x the Pinecone client.
+// Close는 Pinecone 클라이언트와 관련된 리소스를 정리합니다.
 func (r *PineconeRepo) Close() error {
-	log.Println("PineconeRepo.Close() called - no resources to close.")
+	log.Println("PineconeRepo.Close()가 호출되었습니다 - 닫을 리소스가 없습니다.")
 	return nil
 }

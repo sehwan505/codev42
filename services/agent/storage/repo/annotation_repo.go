@@ -7,48 +7,48 @@ import (
 	"codev42-agent/storage"
 )
 
-// AnnotationRepository defines operations for Annotation entity
+// AnnotationRepository는 Annotation 엔티티에 대한 작업을 정의합니다.
 type AnnotationRepository interface {
-	// CreateAnnotation creates a new Annotation
+	// CreateAnnotation는 새로운 Annotation을 생성합니다.
 	CreateAnnotation(ctx context.Context, annotation *model.Annotation) error
 
-	// UpdateAnnotation updates an existing Annotation
+	// UpdateAnnotation는 기존 Annotation을 업데이트합니다.
 	UpdateAnnotation(ctx context.Context, annotation *model.Annotation) error
 
-	// GetAnnotationByID retrieves an Annotation by its ID
+	// GetAnnotationByID는 ID로 Annotation을 조회합니다.
 	GetAnnotationByID(ctx context.Context, id int64) (*model.Annotation, error)
 
-	// GetAnnotationsByPlanID retrieves all Annotations for a Plan
+	// GetAnnotationsByPlanID는 Plan에 대한 모든 Annotation을 조회합니다.
 	GetAnnotationsByPlanID(ctx context.Context, planID int64) ([]model.Annotation, error)
 
-	// DeleteAnnotation deletes an Annotation by its ID
+	// DeleteAnnotation는 ID로 Annotation을 삭제합니다.
 	DeleteAnnotation(ctx context.Context, id int64) error
 
-	// DeleteAnnotationsByPlanID deletes all Annotations for a Plan
+	// DeleteAnnotationsByPlanID는 Plan에 대한 모든 Annotation을 삭제합니다.
 	DeleteAnnotationsByPlanID(ctx context.Context, planID int64) error
 }
 
-// AnnotationRepo is the implementation of AnnotationRepository
+// AnnotationRepo는 AnnotationRepository의 구현체입니다.
 type AnnotationRepo struct {
 	dbConn *storage.RDBConnection
 }
 
-// NewAnnotationRepository creates a new AnnotationRepository
+// NewAnnotationRepository는 새로운 AnnotationRepository를 생성합니다.
 func NewAnnotationRepository(dbConn *storage.RDBConnection) AnnotationRepository {
 	return &AnnotationRepo{dbConn: dbConn}
 }
 
-// CreateAnnotation creates a new Annotation
+// CreateAnnotation는 새로운 Annotation을 생성합니다.
 func (r *AnnotationRepo) CreateAnnotation(ctx context.Context, annotation *model.Annotation) error {
 	return r.dbConn.DB.WithContext(ctx).Omit("id").Create(annotation).Error
 }
 
-// UpdateAnnotation updates an existing Annotation
+// UpdateAnnotation는 기존 Annotation을 업데이트합니다.
 func (r *AnnotationRepo) UpdateAnnotation(ctx context.Context, annotation *model.Annotation) error {
 	return r.dbConn.DB.WithContext(ctx).Save(annotation).Error
 }
 
-// GetAnnotationByID retrieves an Annotation by its ID
+// GetAnnotationByID는 ID로 Annotation을 조회합니다.
 func (r *AnnotationRepo) GetAnnotationByID(ctx context.Context, id int64) (*model.Annotation, error) {
 	var annotation model.Annotation
 	err := r.dbConn.DB.WithContext(ctx).
@@ -62,7 +62,7 @@ func (r *AnnotationRepo) GetAnnotationByID(ctx context.Context, id int64) (*mode
 	return &annotation, nil
 }
 
-// GetAnnotationsByPlanID retrieves all Annotations for a Plan
+// GetAnnotationsByPlanID는 Plan에 대한 모든 Annotation을 조회합니다.
 func (r *AnnotationRepo) GetAnnotationsByPlanID(ctx context.Context, planID int64) ([]model.Annotation, error) {
 	var annotations []model.Annotation
 	err := r.dbConn.DB.WithContext(ctx).
@@ -76,13 +76,13 @@ func (r *AnnotationRepo) GetAnnotationsByPlanID(ctx context.Context, planID int6
 	return annotations, nil
 }
 
-// DeleteAnnotation deletes an Annotation by its ID
+// DeleteAnnotation는 ID로 Annotation을 삭제합니다.
 func (r *AnnotationRepo) DeleteAnnotation(ctx context.Context, id int64) error {
 	return r.dbConn.DB.WithContext(ctx).
 		Delete(&model.Annotation{}, id).Error
 }
 
-// DeleteAnnotationsByPlanID deletes all Annotations for a Plan
+// DeleteAnnotationsByPlanID는 Plan에 대한 모든 Annotation을 삭제합니다.
 func (r *AnnotationRepo) DeleteAnnotationsByPlanID(ctx context.Context, planID int64) error {
 	return r.dbConn.DB.WithContext(ctx).
 		Where("plan_id = ?", planID).

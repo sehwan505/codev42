@@ -52,7 +52,7 @@ func (p *PlanHandler) GetPlanById(ctx context.Context, request *pb.GetPlanByIdRe
 		return nil, fmt.Errorf("failed to get dev plan: %v", err)
 	}
 
-	// Convert to response
+	// PB 형식으로 변환
 	plans := make([]*pb.Plan, len(devPlan.Plans))
 	for i, plan := range devPlan.Plans {
 		annotations := make([]*pb.Annotation, len(plan.Annotations))

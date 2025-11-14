@@ -7,48 +7,48 @@ import (
 	"codev42-agent/storage"
 )
 
-// PlanRepository defines operations for Plan entity
+// PlanRepository는 Plan 엔티티에 대한 작업을 정의합니다.
 type PlanRepository interface {
-	// CreatePlan creates a new Plan
+	// CreatePlan는 새로운 Plan을 생성합니다.
 	CreatePlan(ctx context.Context, plan *model.Plan) error
 
-	// UpdatePlan updates an existing Plan
+	// UpdatePlan는 기존 Plan을 업데이트합니다.
 	UpdatePlan(ctx context.Context, plan *model.Plan) error
 
-	// GetPlanByID retrieves a Plan by its ID
+	// GetPlanByID는 ID로 Plan을 조회합니다.
 	GetPlanByID(ctx context.Context, id int64) (*model.Plan, error)
 
-	// GetPlansByDevPlanID retrieves all Plans for a DevPlan
+	// GetPlansByDevPlanID는 DevPlan에 대한 모든 Plan을 조회합니다.
 	GetPlansByDevPlanID(ctx context.Context, devPlanID int64) ([]model.Plan, error)
 
-	// DeletePlan deletes a Plan by its ID
+	// DeletePlan는 ID로 Plan을 삭제합니다.
 	DeletePlan(ctx context.Context, id int64) error
 
-	// DeletePlansByDevPlanID deletes all Plans for a DevPlan
+	// DeletePlansByDevPlanID는 DevPlan에 대한 모든 Plan을 삭제합니다.
 	DeletePlansByDevPlanID(ctx context.Context, devPlanID int64) error
 }
 
-// PlanEntityRepo is the implementation of PlanRepository
+// PlanEntityRepo는 PlanRepository의 구현체입니다.
 type PlanEntityRepo struct {
 	dbConn *storage.RDBConnection
 }
 
-// NewPlanRepository creates a new PlanRepository
+// NewPlanRepository는 새로운 PlanRepository를 생성합니다.
 func NewPlanRepository(dbConn *storage.RDBConnection) PlanRepository {
 	return &PlanEntityRepo{dbConn: dbConn}
 }
 
-// CreatePlan creates a new Plan
+// CreatePlan는 새로운 Plan을 생성합니다.
 func (r *PlanEntityRepo) CreatePlan(ctx context.Context, plan *model.Plan) error {
 	return r.dbConn.DB.WithContext(ctx).Omit("id").Create(plan).Error
 }
 
-// UpdatePlan updates an existing Plan
+// UpdatePlan는 기존 Plan을 업데이트합니다.
 func (r *PlanEntityRepo) UpdatePlan(ctx context.Context, plan *model.Plan) error {
 	return r.dbConn.DB.WithContext(ctx).Save(plan).Error
 }
 
-// GetPlanByID retrieves a Plan by its ID
+// GetPlanByID는 ID로 Plan을 조회합니다.
 func (r *PlanEntityRepo) GetPlanByID(ctx context.Context, id int64) (*model.Plan, error) {
 	var plan model.Plan
 	err := r.dbConn.DB.WithContext(ctx).
@@ -62,7 +62,7 @@ func (r *PlanEntityRepo) GetPlanByID(ctx context.Context, id int64) (*model.Plan
 	return &plan, nil
 }
 
-// GetPlansByDevPlanID retrieves all Plans for a DevPlan
+// GetPlansByDevPlanID는 DevPlan에 대한 모든 Plan을 조회합니다.
 func (r *PlanEntityRepo) GetPlansByDevPlanID(ctx context.Context, devPlanID int64) ([]model.Plan, error) {
 	var plans []model.Plan
 	err := r.dbConn.DB.WithContext(ctx).
@@ -76,13 +76,13 @@ func (r *PlanEntityRepo) GetPlansByDevPlanID(ctx context.Context, devPlanID int6
 	return plans, nil
 }
 
-// DeletePlan deletes a Plan by its ID
+// DeletePlan는 ID로 Plan을 삭제합니다.
 func (r *PlanEntityRepo) DeletePlan(ctx context.Context, id int64) error {
 	return r.dbConn.DB.WithContext(ctx).
 		Delete(&model.Plan{}, id).Error
 }
 
-// DeletePlansByDevPlanID deletes all Plans for a DevPlan
+// DeletePlansByDevPlanID는 DevPlan에 대한 모든 Plan을 삭제합니다.
 func (r *PlanEntityRepo) DeletePlansByDevPlanID(ctx context.Context, devPlanID int64) error {
 	return r.dbConn.DB.WithContext(ctx).
 		Where("dev_plan_id = ?", devPlanID).
