@@ -7,21 +7,21 @@ import (
 	"codev42-agent/storage"
 )
 
-// DevPlanRepository defines operations for DevPlan entity
+// DevPlanRepository는 DevPlan 엔티티에 대한 작업을 정의합니다.
 type DevPlanRepository interface {
-	// CreateDevPlan creates a new DevPlan
+	// CreateDevPlan는 새로운 DevPlan을 생성합니다.
 	CreateDevPlan(ctx context.Context, devPlan *model.DevPlan) error
 
-	// UpdateDevPlan updates an existing DevPlan
+	// UpdateDevPlan는 기존 DevPlan을 업데이트합니다.
 	UpdateDevPlan(ctx context.Context, devPlan *model.DevPlan) error
 
-	// GetDevPlanByID retrieves a DevPlan by its ID
+	// GetDevPlanByID는 ID로 DevPlan을 조회합니다.
 	GetDevPlanByID(ctx context.Context, id int64) (*model.DevPlan, error)
 
-	// GetDevPlansByProjectID retrieves all DevPlans for a project
+	// GetDevPlansByProjectID는 프로젝트의 모든 DevPlan을 조회합니다.
 	GetDevPlansByProjectID(ctx context.Context, projectID string, branch string) ([]DevPlanListElement, error)
 
-	// DeleteDevPlan deletes a DevPlan by its ID
+	// DeleteDevPlan는 ID로 DevPlan을 삭제합니다.
 	DeleteDevPlan(ctx context.Context, id int64) error
 }
 
@@ -30,27 +30,27 @@ type DevPlanListElement struct {
 	Prompt string `json:"prompt"`
 }
 
-// DevPlanRepo is the implementation of DevPlanRepository
+// DevPlanRepo는 DevPlanRepository의 구현체입니다.
 type DevPlanRepo struct {
 	dbConn *storage.RDBConnection
 }
 
-// NewDevPlanRepository creates a new DevPlanRepository
+// NewDevPlanRepository는 새로운 DevPlanRepository를 생성합니다.
 func NewDevPlanRepository(dbConn *storage.RDBConnection) DevPlanRepository {
 	return &DevPlanRepo{dbConn: dbConn}
 }
 
-// CreateDevPlan creates a new DevPlan
+// CreateDevPlan는 새로운 DevPlan을 생성합니다.
 func (r *DevPlanRepo) CreateDevPlan(ctx context.Context, devPlan *model.DevPlan) error {
 	return r.dbConn.DB.WithContext(ctx).Create(devPlan).Error
 }
 
-// UpdateDevPlan updates an existing DevPlan
+// UpdateDevPlan는 기존 DevPlan을 업데이트합니다.
 func (r *DevPlanRepo) UpdateDevPlan(ctx context.Context, devPlan *model.DevPlan) error {
 	return r.dbConn.DB.WithContext(ctx).Save(devPlan).Error
 }
 
-// GetDevPlanByID retrieves a DevPlan by its ID
+// GetDevPlanByID는 ID로 DevPlan을 조회합니다.
 func (r *DevPlanRepo) GetDevPlanByID(ctx context.Context, id int64) (*model.DevPlan, error) {
 	var devPlan model.DevPlan
 	err := r.dbConn.DB.WithContext(ctx).
@@ -64,7 +64,7 @@ func (r *DevPlanRepo) GetDevPlanByID(ctx context.Context, id int64) (*model.DevP
 	return &devPlan, nil
 }
 
-// GetDevPlansByProjectID retrieves all DevPlans for a project
+// GetDevPlansByProjectID는 프로젝트의 모든 DevPlan을 조회합니다.
 func (r *DevPlanRepo) GetDevPlansByProjectID(ctx context.Context, projectID string, branch string) ([]DevPlanListElement, error) {
 	var devPlanList []DevPlanListElement
 	err := r.dbConn.DB.WithContext(ctx).
@@ -79,7 +79,7 @@ func (r *DevPlanRepo) GetDevPlansByProjectID(ctx context.Context, projectID stri
 	return devPlanList, nil
 }
 
-// DeleteDevPlan deletes a DevPlan by its ID
+// DeleteDevPlan는 ID로 DevPlan을 삭제합니다.
 func (r *DevPlanRepo) DeleteDevPlan(ctx context.Context, id int64) error {
 	return r.dbConn.DB.WithContext(ctx).
 		Delete(&model.DevPlan{}, id).Error

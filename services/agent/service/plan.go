@@ -7,14 +7,14 @@ import (
 	"codev42-agent/storage/repo"
 )
 
-// PlanService coordinates operations between DevPlanRepo, PlanRepo, and AnnotationRepo
+// PlanService는 DevPlanRepo, PlanRepo 및 AnnotationRepo 간의 작업을 조정합니다.
 type PlanService struct {
 	devPlanRepo    repo.DevPlanRepository
 	planRepo       repo.PlanRepository
 	annotationRepo repo.AnnotationRepository
 }
 
-// NewPlanService creates a new PlanService instance
+// NewPlanService는 새로운 PlanService 인스턴스를 생성합니다.
 func NewPlanService(
 	devPlanRepo repo.DevPlanRepository,
 	planRepo repo.PlanRepository,
@@ -150,21 +150,21 @@ func (s *PlanService) UpdateDevPlanWithDetails(ctx context.Context, devPlan *mod
 	return nil
 }
 
-// GetDevPlanByID retrieves a DevPlan with its Plans and Annotations
+// GetDevPlanByID는 Plan 및 Annotation과 함께 DevPlan을 검색합니다.
 func (s *PlanService) GetDevPlanByID(ctx context.Context, id int64) (*model.DevPlan, error) {
-	// 1. Get DevPlan
+	// 1. DevPlan 가져오기
 	devPlan, err := s.devPlanRepo.GetDevPlanByID(ctx, id)
 	if err != nil {
 		return nil, err
 	}
 
-	// 2. Get Plans for this DevPlan
+	// 2. 이 DevPlan에 대한 Plan 가져오기
 	plans, err := s.planRepo.GetPlansByDevPlanID(ctx, id)
 	if err != nil {
 		return nil, err
 	}
 
-	// 3. Get Annotations for each Plan and build the complete structure
+	// 3. 각 Plan에 대한 Annotation을 가져와 전체 구조를 빌드합니다.
 	for i := range plans {
 		annotations, err := s.annotationRepo.GetAnnotationsByPlanID(ctx, plans[i].ID)
 		if err != nil {
@@ -186,26 +186,26 @@ func (s *PlanService) GetDevPlansByProjectID(ctx context.Context, projectID stri
 	return devPlans, nil
 }
 
-// DeleteDevPlan deletes a DevPlan and all associated Plans and Annotations
+// DeleteDevPlan은 DevPlan 및 모든 관련 Plan 및 Annotation을 삭제합니다.
 func (s *PlanService) DeleteDevPlan(ctx context.Context, id int64) error {
-	// 1. Get Plans for this DevPlan
+	// 1. 이 DevPlan에 대한 Plan 가져오기
 	plans, err := s.planRepo.GetPlansByDevPlanID(ctx, id)
 	if err != nil {
 		return err
 	}
 
-	// 2. Delete all Annotations for each Plan
+	// 2. 각 Plan에 대한 모든 Annotation 삭제
 	for _, plan := range plans {
 		if err := s.annotationRepo.DeleteAnnotationsByPlanID(ctx, plan.ID); err != nil {
 			return err
 		}
 	}
 
-	// 3. Delete all Plans for this DevPlan
+	// 3. 이 DevPlan에 대한 모든 Plan 삭제
 	if err := s.planRepo.DeletePlansByDevPlanID(ctx, id); err != nil {
 		return err
 	}
 
-	// 4. Delete the DevPlan
+	// 4. DevPlan 삭제
 	return s.devPlanRepo.DeleteDevPlan(ctx, id)
 }

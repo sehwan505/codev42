@@ -13,7 +13,7 @@ import (
 
 func SetupRoutes() (*grpc.ClientConn, *gin.Engine) {
 	router := gin.Default()
-	// conn, err := grpc.NewClient("agent-server.default.svc.cluster.local:9090", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	// conn, err := grpc.NewClient("agent-server.default.svc.cluster.local:9090", grpc.WithTransportCredentials(insecure.NewCredentials())) // k8s 환경에서 사용할 경우
 	conn, err := grpc.NewClient("localhost:9090", grpc.WithTransportCredentials(insecure.NewCredentials()))
 
 	if err != nil {

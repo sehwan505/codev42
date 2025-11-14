@@ -6,7 +6,7 @@ import (
 	"github.com/pinecone-io/go-pinecone/pinecone"
 )
 
-// PineconeConnection holds your Pinecone client and any other config needed.
+// PineconeConnection : Pinecone 클라이언트 및 기타 필요한 구성을 보관합니다.
 type PineconeConnection struct {
 	Client *pinecone.Client
 }
