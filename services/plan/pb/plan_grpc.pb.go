@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v6.32.0
-// source: plan.proto
+// source: pb/plan.proto
 
 package pb
 
@@ -243,5 +243,5 @@ var PlanService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "plan.proto",
+	Metadata: "pb/plan.proto",
 }

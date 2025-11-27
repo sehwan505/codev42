@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package plan;
 
-option go_package = "codev42/services/plan/pb";
+option go_package = "codev42-plan/pb";
 
 // Plan Service - 개발 계획 생성 및 관리
 service PlanService {
