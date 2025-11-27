@@ -87,4 +87,4 @@ func (r *PlanEntityRepo) DeletePlansByDevPlanID(ctx context.Context, devPlanID i
 	return r.dbConn.DB.WithContext(ctx).
 		Where("dev_plan_id = ?", devPlanID).
 		Delete(&model.Plan{}).Error
-} 
+}
