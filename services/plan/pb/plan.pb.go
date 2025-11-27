@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.6
 // 	protoc        v6.32.0
-// source: plan.proto
+// source: pb/plan.proto
 
 package pb
 
@@ -34,7 +34,7 @@ type Annotation struct {
 
 func (x *Annotation) Reset() {
 	*x = Annotation{}
-	mi := &file_plan_proto_msgTypes[0]
+	mi := &file_pb_plan_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -46,7 +46,7 @@ func (x *Annotation) String() string {
 func (*Annotation) ProtoMessage() {}
 
 func (x *Annotation) ProtoReflect() protoreflect.Message {
-	mi := &file_plan_proto_msgTypes[0]
+	mi := &file_pb_plan_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -59,7 +59,7 @@ func (x *Annotation) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Annotation.ProtoReflect.Descriptor instead.
 func (*Annotation) Descriptor() ([]byte, []int) {
-	return file_plan_proto_rawDescGZIP(), []int{0}
+	return file_pb_plan_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *Annotation) GetName() string {
@@ -100,7 +100,7 @@ type Plan struct {
 
 func (x *Plan) Reset() {
 	*x = Plan{}
-	mi := &file_plan_proto_msgTypes[1]
+	mi := &file_pb_plan_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -112,7 +112,7 @@ func (x *Plan) String() string {
 func (*Plan) ProtoMessage() {}
 
 func (x *Plan) ProtoReflect() protoreflect.Message {
-	mi := &file_plan_proto_msgTypes[1]
+	mi := &file_pb_plan_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -125,7 +125,7 @@ func (x *Plan) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Plan.ProtoReflect.Descriptor instead.
 func (*Plan) Descriptor() ([]byte, []int) {
-	return file_plan_proto_rawDescGZIP(), []int{1}
+	return file_pb_plan_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *Plan) GetClassName() string {
@@ -154,7 +154,7 @@ type GeneratePlanRequest struct {
 
 func (x *GeneratePlanRequest) Reset() {
 	*x = GeneratePlanRequest{}
-	mi := &file_plan_proto_msgTypes[2]
+	mi := &file_pb_plan_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -166,7 +166,7 @@ func (x *GeneratePlanRequest) String() string {
 func (*GeneratePlanRequest) ProtoMessage() {}
 
 func (x *GeneratePlanRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_plan_proto_msgTypes[2]
+	mi := &file_pb_plan_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -179,7 +179,7 @@ func (x *GeneratePlanRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GeneratePlanRequest.ProtoReflect.Descriptor instead.
 func (*GeneratePlanRequest) Descriptor() ([]byte, []int) {
-	return file_plan_proto_rawDescGZIP(), []int{2}
+	return file_pb_plan_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *GeneratePlanRequest) GetPrompt() string {
@@ -214,7 +214,7 @@ type GeneratePlanResponse struct {
 
 func (x *GeneratePlanResponse) Reset() {
 	*x = GeneratePlanResponse{}
-	mi := &file_plan_proto_msgTypes[3]
+	mi := &file_pb_plan_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -226,7 +226,7 @@ func (x *GeneratePlanResponse) String() string {
 func (*GeneratePlanResponse) ProtoMessage() {}
 
 func (x *GeneratePlanResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_plan_proto_msgTypes[3]
+	mi := &file_pb_plan_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -239,7 +239,7 @@ func (x *GeneratePlanResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GeneratePlanResponse.ProtoReflect.Descriptor instead.
 func (*GeneratePlanResponse) Descriptor() ([]byte, []int) {
-	return file_plan_proto_rawDescGZIP(), []int{3}
+	return file_pb_plan_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *GeneratePlanResponse) GetDevPlanId() int64 {
@@ -275,7 +275,7 @@ type ModifyPlanRequest struct {
 
 func (x *ModifyPlanRequest) Reset() {
 	*x = ModifyPlanRequest{}
-	mi := &file_plan_proto_msgTypes[4]
+	mi := &file_pb_plan_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -287,7 +287,7 @@ func (x *ModifyPlanRequest) String() string {
 func (*ModifyPlanRequest) ProtoMessage() {}
 
 func (x *ModifyPlanRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_plan_proto_msgTypes[4]
+	mi := &file_pb_plan_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -300,7 +300,7 @@ func (x *ModifyPlanRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ModifyPlanRequest.ProtoReflect.Descriptor instead.
 func (*ModifyPlanRequest) Descriptor() ([]byte, []int) {
-	return file_plan_proto_rawDescGZIP(), []int{4}
+	return file_pb_plan_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *ModifyPlanRequest) GetDevPlanId() int64 {
@@ -333,7 +333,7 @@ type ModifyPlanResponse struct {
 
 func (x *ModifyPlanResponse) Reset() {
 	*x = ModifyPlanResponse{}
-	mi := &file_plan_proto_msgTypes[5]
+	mi := &file_pb_plan_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -345,7 +345,7 @@ func (x *ModifyPlanResponse) String() string {
 func (*ModifyPlanResponse) ProtoMessage() {}
 
 func (x *ModifyPlanResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_plan_proto_msgTypes[5]
+	mi := &file_pb_plan_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -358,7 +358,7 @@ func (x *ModifyPlanResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ModifyPlanResponse.ProtoReflect.Descriptor instead.
 func (*ModifyPlanResponse) Descriptor() ([]byte, []int) {
-	return file_plan_proto_rawDescGZIP(), []int{5}
+	return file_pb_plan_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *ModifyPlanResponse) GetStatus() string {
@@ -378,7 +378,7 @@ type GetPlanByIdRequest struct {
 
 func (x *GetPlanByIdRequest) Reset() {
 	*x = GetPlanByIdRequest{}
-	mi := &file_plan_proto_msgTypes[6]
+	mi := &file_pb_plan_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -390,7 +390,7 @@ func (x *GetPlanByIdRequest) String() string {
 func (*GetPlanByIdRequest) ProtoMessage() {}
 
 func (x *GetPlanByIdRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_plan_proto_msgTypes[6]
+	mi := &file_pb_plan_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -403,7 +403,7 @@ func (x *GetPlanByIdRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetPlanByIdRequest.ProtoReflect.Descriptor instead.
 func (*GetPlanByIdRequest) Descriptor() ([]byte, []int) {
-	return file_plan_proto_rawDescGZIP(), []int{6}
+	return file_pb_plan_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *GetPlanByIdRequest) GetDevPlanId() int64 {
@@ -426,7 +426,7 @@ type GetPlanByIdResponse struct {
 
 func (x *GetPlanByIdResponse) Reset() {
 	*x = GetPlanByIdResponse{}
-	mi := &file_plan_proto_msgTypes[7]
+	mi := &file_pb_plan_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -438,7 +438,7 @@ func (x *GetPlanByIdResponse) String() string {
 func (*GetPlanByIdResponse) ProtoMessage() {}
 
 func (x *GetPlanByIdResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_plan_proto_msgTypes[7]
+	mi := &file_pb_plan_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -451,7 +451,7 @@ func (x *GetPlanByIdResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetPlanByIdResponse.ProtoReflect.Descriptor instead.
 func (*GetPlanByIdResponse) Descriptor() ([]byte, []int) {
-	return file_plan_proto_rawDescGZIP(), []int{7}
+	return file_pb_plan_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *GetPlanByIdResponse) GetDevPlanId() int64 {
@@ -500,7 +500,7 @@ type GetPlanListRequest struct {
 
 func (x *GetPlanListRequest) Reset() {
 	*x = GetPlanListRequest{}
-	mi := &file_plan_proto_msgTypes[8]
+	mi := &file_pb_plan_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -512,7 +512,7 @@ func (x *GetPlanListRequest) String() string {
 func (*GetPlanListRequest) ProtoMessage() {}
 
 func (x *GetPlanListRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_plan_proto_msgTypes[8]
+	mi := &file_pb_plan_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -525,7 +525,7 @@ func (x *GetPlanListRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetPlanListRequest.ProtoReflect.Descriptor instead.
 func (*GetPlanListRequest) Descriptor() ([]byte, []int) {
-	return file_plan_proto_rawDescGZIP(), []int{8}
+	return file_pb_plan_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *GetPlanListRequest) GetProjectId() string {
@@ -552,7 +552,7 @@ type PlanListElement struct {
 
 func (x *PlanListElement) Reset() {
 	*x = PlanListElement{}
-	mi := &file_plan_proto_msgTypes[9]
+	mi := &file_pb_plan_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -564,7 +564,7 @@ func (x *PlanListElement) String() string {
 func (*PlanListElement) ProtoMessage() {}
 
 func (x *PlanListElement) ProtoReflect() protoreflect.Message {
-	mi := &file_plan_proto_msgTypes[9]
+	mi := &file_pb_plan_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -577,7 +577,7 @@ func (x *PlanListElement) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PlanListElement.ProtoReflect.Descriptor instead.
 func (*PlanListElement) Descriptor() ([]byte, []int) {
-	return file_plan_proto_rawDescGZIP(), []int{9}
+	return file_pb_plan_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *PlanListElement) GetDevPlanId() int64 {
@@ -603,7 +603,7 @@ type GetPlanListResponse struct {
 
 func (x *GetPlanListResponse) Reset() {
 	*x = GetPlanListResponse{}
-	mi := &file_plan_proto_msgTypes[10]
+	mi := &file_pb_plan_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -615,7 +615,7 @@ func (x *GetPlanListResponse) String() string {
 func (*GetPlanListResponse) ProtoMessage() {}
 
 func (x *GetPlanListResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_plan_proto_msgTypes[10]
+	mi := &file_pb_plan_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -628,7 +628,7 @@ func (x *GetPlanListResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetPlanListResponse.ProtoReflect.Descriptor instead.
 func (*GetPlanListResponse) Descriptor() ([]byte, []int) {
-	return file_plan_proto_rawDescGZIP(), []int{10}
+	return file_pb_plan_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *GetPlanListResponse) GetDevPlanList() []*PlanListElement {
@@ -638,12 +638,11 @@ func (x *GetPlanListResponse) GetDevPlanList() []*PlanListElement {
 	return nil
 }
 
-var File_plan_proto protoreflect.FileDescriptor
+var File_pb_plan_proto protoreflect.FileDescriptor
 
-const file_plan_proto_rawDesc = "" +
+const file_pb_plan_proto_rawDesc = "" +
 	"\n" +
-	"\n" +
-	"plan.proto\x12\x04plan\"t\n" +
+	"\rpb/plan.proto\x12\x04plan\"t\n" +
 	"\n" +
 	"Annotation\x12\x12\n" +
 	"\x04Name\x18\x01 \x01(\tR\x04Name\x12\x16\n" +
@@ -691,22 +690,22 @@ const file_plan_proto_rawDesc = "" +
 	"\n" +
 	"ModifyPlan\x12\x17.plan.ModifyPlanRequest\x1a\x18.plan.ModifyPlanResponse\x12B\n" +
 	"\vGetPlanById\x12\x18.plan.GetPlanByIdRequest\x1a\x19.plan.GetPlanByIdResponse\x12B\n" +
-	"\vGetPlanList\x12\x18.plan.GetPlanListRequest\x1a\x19.plan.GetPlanListResponseB\x1aZ\x18codev42/services/plan/pbb\x06proto3"
+	"\vGetPlanList\x12\x18.plan.GetPlanListRequest\x1a\x19.plan.GetPlanListResponseB\x11Z\x0fcodev42-plan/pbb\x06proto3"
 
 var (
-	file_plan_proto_rawDescOnce sync.Once
-	file_plan_proto_rawDescData []byte
+	file_pb_plan_proto_rawDescOnce sync.Once
+	file_pb_plan_proto_rawDescData []byte
 )
 
-func file_plan_proto_rawDescGZIP() []byte {
-	file_plan_proto_rawDescOnce.Do(func() {
-		file_plan_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_plan_proto_rawDesc), len(file_plan_proto_rawDesc)))
+func file_pb_plan_proto_rawDescGZIP() []byte {
+	file_pb_plan_proto_rawDescOnce.Do(func() {
+		file_pb_plan_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_pb_plan_proto_rawDesc), len(file_pb_plan_proto_rawDesc)))
 	})
-	return file_plan_proto_rawDescData
+	return file_pb_plan_proto_rawDescData
 }
 
-var file_plan_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
-var file_plan_proto_goTypes = []any{
+var file_pb_plan_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
+var file_pb_plan_proto_goTypes = []any{
 	(*Annotation)(nil),           // 0: plan.Annotation
 	(*Plan)(nil),                 // 1: plan.Plan
 	(*GeneratePlanRequest)(nil),  // 2: plan.GeneratePlanRequest
@@ -719,7 +718,7 @@ var file_plan_proto_goTypes = []any{
 	(*PlanListElement)(nil),      // 9: plan.PlanListElement
 	(*GetPlanListResponse)(nil),  // 10: plan.GetPlanListResponse
 }
-var file_plan_proto_depIdxs = []int32{
+var file_pb_plan_proto_depIdxs = []int32{
 	0,  // 0: plan.Plan.Annotations:type_name -> plan.Annotation
 	1,  // 1: plan.GeneratePlanResponse.Plans:type_name -> plan.Plan
 	1,  // 2: plan.ModifyPlanRequest.Plans:type_name -> plan.Plan
@@ -740,26 +739,26 @@ var file_plan_proto_depIdxs = []int32{
 	0,  // [0:5] is the sub-list for field type_name
 }
 
-func init() { file_plan_proto_init() }
-func file_plan_proto_init() {
-	if File_plan_proto != nil {
+func init() { file_pb_plan_proto_init() }
+func file_pb_plan_proto_init() {
+	if File_pb_plan_proto != nil {
 		return
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_plan_proto_rawDesc), len(file_plan_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_pb_plan_proto_rawDesc), len(file_pb_plan_proto_rawDesc)),
 			NumEnums:      0,
 			NumMessages:   11,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_plan_proto_goTypes,
-		DependencyIndexes: file_plan_proto_depIdxs,
-		MessageInfos:      file_plan_proto_msgTypes,
+		GoTypes:           file_pb_plan_proto_goTypes,
+		DependencyIndexes: file_pb_plan_proto_depIdxs,
+		MessageInfos:      file_pb_plan_proto_msgTypes,
 	}.Build()
-	File_plan_proto = out.File
-	file_plan_proto_goTypes = nil
-	file_plan_proto_depIdxs = nil
+	File_pb_plan_proto = out.File
+	file_pb_plan_proto_goTypes = nil
+	file_pb_plan_proto_depIdxs = nil
 }
