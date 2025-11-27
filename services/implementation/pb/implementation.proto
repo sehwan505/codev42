@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+package implementation;
+
+option go_package = "codev42/services/implementation/pb";
+
+// Implementation Service - 코드 구현 (비동기)
+service ImplementationService {
+  // 코드 구현 시작 (비동기, Job ID 반환)
+  rpc ImplementPlan(ImplementPlanRequest) returns (ImplementPlanResponse);
+
+  // 구현 상태 조회
+  rpc GetImplementationStatus(GetImplementationStatusRequest) returns (GetImplementationStatusResponse);
+
+  // 구현 결과 조회
+  rpc GetImplementationResult(GetImplementationResultRequest) returns (GetImplementationResultResponse);
+}
+
+// ImplementPlan 요청/응답
+message ImplementPlanRequest {
+  int64 DevPlanId = 1; // 구현할 개발 계획 ID
+}
+
+message ImplementPlanResponse {
+  string JobId = 1;      // Job ID (상태 조회용)
+  string Status = 2;     // 초기 상태 (pending)
+  string Message = 3;    // 메시지
+}
+
+// GetImplementationStatus 요청/응답
+message GetImplementationStatusRequest {
+  string JobId = 1; // Job ID
+}
+
+message GetImplementationStatusResponse {
+  string JobId = 1;         // Job ID
+  string Status = 2;        // 상태 (pending, processing, completed, failed)
+  int32 Progress = 3;       // 진행률 (0-100)
+  string CurrentStep = 4;   // 현재 단계 설명
+  string CreatedAt = 5;     // 생성 시간
+  string UpdatedAt = 6;     // 업데이트 시간
+}
+
+// GetImplementationResult 요청/응답
+message GetImplementationResultRequest {
+  string JobId = 1; // Job ID
+}
+
+message Diagram {
+  string Diagram = 1; // Mermaid 다이어그램 코드
+  string Type = 2;    // 다이어그램 타입 (classDiagram, sequenceDiagram, flowchart)
+}
+
+message ExplainedSegment {
+  int32 StartLine = 1;      // 시작 라인 (0-indexed)
+  int32 EndLine = 2;        // 종료 라인
+  string Explanation = 3;   // 한국어 설명
+}
+
+message GetImplementationResultResponse {
+  string JobId = 1;                        // Job ID
+  string Status = 2;                       // 상태
+  string Code = 3;                         // 생성된 코드
+  repeated Diagram Diagrams = 4;           // 다이어그램 목록
+  repeated ExplainedSegment ExplainedSegments = 5; // 코드 설명 구간
+  string Error = 6;                        // 에러 메시지 (실패 시)
+  string CompletedAt = 7;                  // 완료 시간
+}

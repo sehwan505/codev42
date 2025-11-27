@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package diagram;
+
+option go_package = "codev42/services/diagram/pb";
+
+// Diagram Service - Mermaid 다이어그램 생성
+service DiagramService {
+  // 모든 다이어그램 생성 (병렬 처리)
+  rpc GenerateDiagrams(GenerateDiagramsRequest) returns (GenerateDiagramsResponse);
+
+  // 클래스 다이어그램 생성
+  rpc GenerateClassDiagram(GenerateDiagramRequest) returns (GenerateDiagramResponse);
+
+  // 시퀀스 다이어그램 생성
+  rpc GenerateSequenceDiagram(GenerateDiagramRequest) returns (GenerateDiagramResponse);
+
+  // 플로우차트 생성
+  rpc GenerateFlowchartDiagram(GenerateDiagramRequest) returns (GenerateDiagramResponse);
+}
+
+// 단일 다이어그램 생성 요청/응답
+message GenerateDiagramRequest {
+  string Code = 1;     // 소스 코드
+  string Purpose = 2;  // 목적/설명
+}
+
+message GenerateDiagramResponse {
+  string Diagram = 1;  // Mermaid 다이어그램 코드
+  string Type = 2;     // 다이어그램 타입
+  bool Success = 3;    // 성공 여부
+  string Error = 4;    // 에러 메시지 (실패 시)
+}
+
+// 모든 다이어그램 생성 요청/응답
+message GenerateDiagramsRequest {
+  string Code = 1;     // 소스 코드
+  string Purpose = 2;  // 목적/설명
+}
+
+message DiagramResult {
+  string Diagram = 1;  // Mermaid 다이어그램 코드
+  string Type = 2;     // 다이어그램 타입 (classDiagram, sequenceDiagram, flowchart)
+  bool Success = 3;    // 성공 여부
+  string Error = 4;    // 에러 메시지 (실패 시)
+}
+
+message GenerateDiagramsResponse {
+  repeated DiagramResult Diagrams = 1; // 생성된 다이어그램 목록
+  int32 SuccessCount = 2;              // 성공한 다이어그램 수
+  int32 TotalCount = 3;                // 전체 다이어그램 수
+}
