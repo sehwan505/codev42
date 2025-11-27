@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.6
 // 	protoc        v6.32.0
-// source: diagram.proto
+// source: pb/diagram.proto
 
 package pb
 
@@ -32,7 +32,7 @@ type GenerateDiagramRequest struct {
 
 func (x *GenerateDiagramRequest) Reset() {
 	*x = GenerateDiagramRequest{}
-	mi := &file_diagram_proto_msgTypes[0]
+	mi := &file_pb_diagram_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -44,7 +44,7 @@ func (x *GenerateDiagramRequest) String() string {
 func (*GenerateDiagramRequest) ProtoMessage() {}
 
 func (x *GenerateDiagramRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_diagram_proto_msgTypes[0]
+	mi := &file_pb_diagram_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -57,7 +57,7 @@ func (x *GenerateDiagramRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GenerateDiagramRequest.ProtoReflect.Descriptor instead.
 func (*GenerateDiagramRequest) Descriptor() ([]byte, []int) {
-	return file_diagram_proto_rawDescGZIP(), []int{0}
+	return file_pb_diagram_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *GenerateDiagramRequest) GetCode() string {
@@ -86,7 +86,7 @@ type GenerateDiagramResponse struct {
 
 func (x *GenerateDiagramResponse) Reset() {
 	*x = GenerateDiagramResponse{}
-	mi := &file_diagram_proto_msgTypes[1]
+	mi := &file_pb_diagram_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -98,7 +98,7 @@ func (x *GenerateDiagramResponse) String() string {
 func (*GenerateDiagramResponse) ProtoMessage() {}
 
 func (x *GenerateDiagramResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_diagram_proto_msgTypes[1]
+	mi := &file_pb_diagram_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -111,7 +111,7 @@ func (x *GenerateDiagramResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GenerateDiagramResponse.ProtoReflect.Descriptor instead.
 func (*GenerateDiagramResponse) Descriptor() ([]byte, []int) {
-	return file_diagram_proto_rawDescGZIP(), []int{1}
+	return file_pb_diagram_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *GenerateDiagramResponse) GetDiagram() string {
@@ -153,7 +153,7 @@ type GenerateDiagramsRequest struct {
 
 func (x *GenerateDiagramsRequest) Reset() {
 	*x = GenerateDiagramsRequest{}
-	mi := &file_diagram_proto_msgTypes[2]
+	mi := &file_pb_diagram_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -165,7 +165,7 @@ func (x *GenerateDiagramsRequest) String() string {
 func (*GenerateDiagramsRequest) ProtoMessage() {}
 
 func (x *GenerateDiagramsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_diagram_proto_msgTypes[2]
+	mi := &file_pb_diagram_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -178,7 +178,7 @@ func (x *GenerateDiagramsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GenerateDiagramsRequest.ProtoReflect.Descriptor instead.
 func (*GenerateDiagramsRequest) Descriptor() ([]byte, []int) {
-	return file_diagram_proto_rawDescGZIP(), []int{2}
+	return file_pb_diagram_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *GenerateDiagramsRequest) GetCode() string {
@@ -207,7 +207,7 @@ type DiagramResult struct {
 
 func (x *DiagramResult) Reset() {
 	*x = DiagramResult{}
-	mi := &file_diagram_proto_msgTypes[3]
+	mi := &file_pb_diagram_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -219,7 +219,7 @@ func (x *DiagramResult) String() string {
 func (*DiagramResult) ProtoMessage() {}
 
 func (x *DiagramResult) ProtoReflect() protoreflect.Message {
-	mi := &file_diagram_proto_msgTypes[3]
+	mi := &file_pb_diagram_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -232,7 +232,7 @@ func (x *DiagramResult) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DiagramResult.ProtoReflect.Descriptor instead.
 func (*DiagramResult) Descriptor() ([]byte, []int) {
-	return file_diagram_proto_rawDescGZIP(), []int{3}
+	return file_pb_diagram_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *DiagramResult) GetDiagram() string {
@@ -274,7 +274,7 @@ type GenerateDiagramsResponse struct {
 
 func (x *GenerateDiagramsResponse) Reset() {
 	*x = GenerateDiagramsResponse{}
-	mi := &file_diagram_proto_msgTypes[4]
+	mi := &file_pb_diagram_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -286,7 +286,7 @@ func (x *GenerateDiagramsResponse) String() string {
 func (*GenerateDiagramsResponse) ProtoMessage() {}
 
 func (x *GenerateDiagramsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_diagram_proto_msgTypes[4]
+	mi := &file_pb_diagram_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -299,7 +299,7 @@ func (x *GenerateDiagramsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GenerateDiagramsResponse.ProtoReflect.Descriptor instead.
 func (*GenerateDiagramsResponse) Descriptor() ([]byte, []int) {
-	return file_diagram_proto_rawDescGZIP(), []int{4}
+	return file_pb_diagram_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *GenerateDiagramsResponse) GetDiagrams() []*DiagramResult {
@@ -323,11 +323,11 @@ func (x *GenerateDiagramsResponse) GetTotalCount() int32 {
 	return 0
 }
 
-var File_diagram_proto protoreflect.FileDescriptor
+var File_pb_diagram_proto protoreflect.FileDescriptor
 
-const file_diagram_proto_rawDesc = "" +
+const file_pb_diagram_proto_rawDesc = "" +
 	"\n" +
-	"\rdiagram.proto\x12\adiagram\"F\n" +
+	"\x10pb/diagram.proto\x12\adiagram\"F\n" +
 	"\x16GenerateDiagramRequest\x12\x12\n" +
 	"\x04Code\x18\x01 \x01(\tR\x04Code\x12\x18\n" +
 	"\aPurpose\x18\x02 \x01(\tR\aPurpose\"w\n" +
@@ -354,29 +354,29 @@ const file_diagram_proto_rawDesc = "" +
 	"\x10GenerateDiagrams\x12 .diagram.GenerateDiagramsRequest\x1a!.diagram.GenerateDiagramsResponse\x12Y\n" +
 	"\x14GenerateClassDiagram\x12\x1f.diagram.GenerateDiagramRequest\x1a .diagram.GenerateDiagramResponse\x12\\\n" +
 	"\x17GenerateSequenceDiagram\x12\x1f.diagram.GenerateDiagramRequest\x1a .diagram.GenerateDiagramResponse\x12]\n" +
-	"\x18GenerateFlowchartDiagram\x12\x1f.diagram.GenerateDiagramRequest\x1a .diagram.GenerateDiagramResponseB\x1dZ\x1bcodev42/services/diagram/pbb\x06proto3"
+	"\x18GenerateFlowchartDiagram\x12\x1f.diagram.GenerateDiagramRequest\x1a .diagram.GenerateDiagramResponseB\x14Z\x12codev42-diagram/pbb\x06proto3"
 
 var (
-	file_diagram_proto_rawDescOnce sync.Once
-	file_diagram_proto_rawDescData []byte
+	file_pb_diagram_proto_rawDescOnce sync.Once
+	file_pb_diagram_proto_rawDescData []byte
 )
 
-func file_diagram_proto_rawDescGZIP() []byte {
-	file_diagram_proto_rawDescOnce.Do(func() {
-		file_diagram_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_diagram_proto_rawDesc), len(file_diagram_proto_rawDesc)))
+func file_pb_diagram_proto_rawDescGZIP() []byte {
+	file_pb_diagram_proto_rawDescOnce.Do(func() {
+		file_pb_diagram_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_pb_diagram_proto_rawDesc), len(file_pb_diagram_proto_rawDesc)))
 	})
-	return file_diagram_proto_rawDescData
+	return file_pb_diagram_proto_rawDescData
 }
 
-var file_diagram_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
-var file_diagram_proto_goTypes = []any{
+var file_pb_diagram_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_pb_diagram_proto_goTypes = []any{
 	(*GenerateDiagramRequest)(nil),   // 0: diagram.GenerateDiagramRequest
 	(*GenerateDiagramResponse)(nil),  // 1: diagram.GenerateDiagramResponse
 	(*GenerateDiagramsRequest)(nil),  // 2: diagram.GenerateDiagramsRequest
 	(*DiagramResult)(nil),            // 3: diagram.DiagramResult
 	(*GenerateDiagramsResponse)(nil), // 4: diagram.GenerateDiagramsResponse
 }
-var file_diagram_proto_depIdxs = []int32{
+var file_pb_diagram_proto_depIdxs = []int32{
 	3, // 0: diagram.GenerateDiagramsResponse.Diagrams:type_name -> diagram.DiagramResult
 	2, // 1: diagram.DiagramService.GenerateDiagrams:input_type -> diagram.GenerateDiagramsRequest
 	0, // 2: diagram.DiagramService.GenerateClassDiagram:input_type -> diagram.GenerateDiagramRequest
@@ -393,26 +393,26 @@ var file_diagram_proto_depIdxs = []int32{
 	0, // [0:1] is the sub-list for field type_name
 }
 
-func init() { file_diagram_proto_init() }
-func file_diagram_proto_init() {
-	if File_diagram_proto != nil {
+func init() { file_pb_diagram_proto_init() }
+func file_pb_diagram_proto_init() {
+	if File_pb_diagram_proto != nil {
 		return
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_diagram_proto_rawDesc), len(file_diagram_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_pb_diagram_proto_rawDesc), len(file_pb_diagram_proto_rawDesc)),
 			NumEnums:      0,
 			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_diagram_proto_goTypes,
-		DependencyIndexes: file_diagram_proto_depIdxs,
-		MessageInfos:      file_diagram_proto_msgTypes,
+		GoTypes:           file_pb_diagram_proto_goTypes,
+		DependencyIndexes: file_pb_diagram_proto_depIdxs,
+		MessageInfos:      file_pb_diagram_proto_msgTypes,
 	}.Build()
-	File_diagram_proto = out.File
-	file_diagram_proto_goTypes = nil
-	file_diagram_proto_depIdxs = nil
+	File_pb_diagram_proto = out.File
+	file_pb_diagram_proto_goTypes = nil
+	file_pb_diagram_proto_depIdxs = nil
 }
