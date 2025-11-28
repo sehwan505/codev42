@@ -18,13 +18,11 @@ import (
 )
 
 func main() {
-	// 1. Load configuration
 	config, err := configs.GetConfig()
 	if err != nil {
 		log.Fatalf("Failed to load config: %v", err)
 	}
 
-	// 2. Connect to MySQL
 	dsn := fmt.Sprintf(
 		"%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
 		config.MySQLUser,
@@ -49,23 +47,18 @@ func main() {
 
 	log.Println("Successfully connected to MySQL")
 
-	// 3. Create TCP listener
 	listener, err := net.Listen("tcp", fmt.Sprintf(":%s", config.GRPCPort))
 	if err != nil {
 		log.Fatalf("Failed to create TCP listener: %v", err)
 	}
 
-	// 4. Create gRPC server
 	grpcServer := grpc.NewServer()
 
-	// 5. Register Plan Service
 	planHandler := handler.NewPlanHandler(*config, rdbConnection)
 	pb.RegisterPlanServiceServer(grpcServer, planHandler)
 
-	// 6. Register reflection (for debugging with grpcurl/evans)
 	reflection.Register(grpcServer)
 
-	// 7. Start server
 	log.Printf("Plan Service starting on port %s", config.GRPCPort)
 	if err := grpcServer.Serve(listener); err != nil {
 		log.Fatalf("Failed to serve: %v", err)

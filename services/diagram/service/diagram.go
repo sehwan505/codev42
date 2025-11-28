@@ -1,14 +1,12 @@
 package service
 
-import "codev42-diagram/client"
-
 import (
+	"codev42-diagram/client"
+	"codev42-diagram/util"
 	"context"
 	"encoding/json"
 	"fmt"
 	"sync"
-
-	"codev42-diagram/util"
 
 	"github.com/openai/openai-go"
 )
@@ -35,13 +33,10 @@ const (
 	DiagramTypeClass     = util.DiagramTypeClass
 )
 
-// DiagramResult는 다이어그램 생성 결과를 나타내는 구조체입니다
 type DiagramResult struct {
 	Diagram string      `json:"diagram"` // Mermaid 다이어그램 코드
 	Type    DiagramType `json:"type"`    // 다이어그램 타입
 }
-
-// DiagramTypeOption은 다이어그램 타입 선택 옵션을 나타내는 구조체입니다
 type DiagramTypeOption struct {
 	Type        DiagramType `json:"type"`        // 다이어그램 타입
 	Description string      `json:"description"` // 타입 설명
@@ -81,7 +76,7 @@ func (agent DiagramAgent) call(code string, purpose string, diagramType DiagramT
 	return nil, fmt.Errorf("unexpected error in diagram generation")
 }
 
-// callOnce는 단일 시도로 다이어그램을 생성합니다
+// callOnce는 단일 시도로 다이어그램을 생성
 func (agent DiagramAgent) callOnce(code string, purpose string, diagramType DiagramType, attempt int) (*DiagramResult, error) {
 	retryNote := ""
 	if attempt > 1 {

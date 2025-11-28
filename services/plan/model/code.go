@@ -2,7 +2,7 @@ package model
 
 import "time"
 
-// Function : functions 테이블에 대응
+// Code 구조체
 type Code struct {
 	ID              int64     `gorm:"primaryKey"`
 	FileID          int64     `gorm:"not null;index"`

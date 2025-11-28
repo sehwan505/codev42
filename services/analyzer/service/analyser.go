@@ -1,8 +1,7 @@
 package service
 
-import "codev42-analyzer/client"
-
 import (
+	"codev42-analyzer/client"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -32,7 +31,6 @@ type ImplementResult struct {
 	Code string `json:"code" jsonschema_description:"the result of implementing the function or class"`
 }
 
-// GenerateImplementResultSchema generates a JSON schema for the given type
 func GenerateImplementResultSchema[T any]() interface{} {
 	reflector := jsonschema.Reflector{
 		AllowAdditionalProperties: false,
@@ -105,12 +103,11 @@ type CodeSegment struct {
 	Explanation string `json:"explanation"` // 세그먼트 설명
 }
 
-// CodeSegmentAnalysisResult는 코드 세그먼트 분석 결과를 나타내는 구조체입니다
 type CodeSegmentAnalysisResult struct {
 	CodeSegments []CodeSegment `json:"codeSegments"` // 코드 세그먼트 설명
 }
 
-// AnalyzeCodeSegments는 코드를 분석하여 중요한 세그먼트들을 식별하고 설명합니다
+// AnalyzeCodeSegments 코드를 분석하여 중요한 세그먼트들을 식별하고 설명
 func (agent AnalyserAgent) AnalyzeCodeSegments(code, language string) ([]CodeSegment, error) {
 	// 코드에 줄 번호 추가
 	lines := strings.Split(code, "\n")

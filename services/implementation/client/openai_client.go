@@ -16,7 +16,6 @@ type OpenAIClient struct {
 var instance *OpenAIClient
 var once sync.Once
 
-// GetClient returns a singleton OpenAI client instance
 func GetClient(apiKey string) *OpenAIClient {
 	once.Do(func() {
 		// 커스텀 HTTP 클라이언트 생성
@@ -41,7 +40,6 @@ func GetClient(apiKey string) *OpenAIClient {
 	return instance
 }
 
-// Client returns the underlying OpenAI client
 func (o *OpenAIClient) Client() *openai.Client {
 	return o.client
 }
