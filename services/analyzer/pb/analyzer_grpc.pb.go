@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v6.32.0
-// source: analyzer.proto
+// source: pb/analyzer.proto
 
 package pb
 
@@ -163,5 +163,5 @@ var AnalyzerService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "analyzer.proto",
+	Metadata: "pb/analyzer.proto",
 }
