@@ -5,8 +5,10 @@ import (
 )
 
 func main() {
-	conn, router := routes.SetupRoutes()
+	conns, router := routes.SetupRoutes()
 	router.Run(":8080")
 
-	defer conn.Close()
+	for _, conn := range conns {
+		defer conn.Close()
+	}
 }
