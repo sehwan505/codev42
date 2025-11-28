@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.6
 // 	protoc        v6.32.0
-// source: analyzer.proto
+// source: pb/analyzer.proto
 
 package pb
 
@@ -33,7 +33,7 @@ type CombineCodeRequest struct {
 
 func (x *CombineCodeRequest) Reset() {
 	*x = CombineCodeRequest{}
-	mi := &file_analyzer_proto_msgTypes[0]
+	mi := &file_pb_analyzer_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -45,7 +45,7 @@ func (x *CombineCodeRequest) String() string {
 func (*CombineCodeRequest) ProtoMessage() {}
 
 func (x *CombineCodeRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_analyzer_proto_msgTypes[0]
+	mi := &file_pb_analyzer_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -58,7 +58,7 @@ func (x *CombineCodeRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CombineCodeRequest.ProtoReflect.Descriptor instead.
 func (*CombineCodeRequest) Descriptor() ([]byte, []int) {
-	return file_analyzer_proto_rawDescGZIP(), []int{0}
+	return file_pb_analyzer_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *CombineCodeRequest) GetCodes() []string {
@@ -93,7 +93,7 @@ type CombineCodeResponse struct {
 
 func (x *CombineCodeResponse) Reset() {
 	*x = CombineCodeResponse{}
-	mi := &file_analyzer_proto_msgTypes[1]
+	mi := &file_pb_analyzer_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -105,7 +105,7 @@ func (x *CombineCodeResponse) String() string {
 func (*CombineCodeResponse) ProtoMessage() {}
 
 func (x *CombineCodeResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_analyzer_proto_msgTypes[1]
+	mi := &file_pb_analyzer_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -118,7 +118,7 @@ func (x *CombineCodeResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CombineCodeResponse.ProtoReflect.Descriptor instead.
 func (*CombineCodeResponse) Descriptor() ([]byte, []int) {
-	return file_analyzer_proto_rawDescGZIP(), []int{1}
+	return file_pb_analyzer_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *CombineCodeResponse) GetCode() string {
@@ -153,7 +153,7 @@ type AnalyzeCodeSegmentsRequest struct {
 
 func (x *AnalyzeCodeSegmentsRequest) Reset() {
 	*x = AnalyzeCodeSegmentsRequest{}
-	mi := &file_analyzer_proto_msgTypes[2]
+	mi := &file_pb_analyzer_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -165,7 +165,7 @@ func (x *AnalyzeCodeSegmentsRequest) String() string {
 func (*AnalyzeCodeSegmentsRequest) ProtoMessage() {}
 
 func (x *AnalyzeCodeSegmentsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_analyzer_proto_msgTypes[2]
+	mi := &file_pb_analyzer_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -178,7 +178,7 @@ func (x *AnalyzeCodeSegmentsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AnalyzeCodeSegmentsRequest.ProtoReflect.Descriptor instead.
 func (*AnalyzeCodeSegmentsRequest) Descriptor() ([]byte, []int) {
-	return file_analyzer_proto_rawDescGZIP(), []int{2}
+	return file_pb_analyzer_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *AnalyzeCodeSegmentsRequest) GetCode() string {
@@ -206,7 +206,7 @@ type CodeSegment struct {
 
 func (x *CodeSegment) Reset() {
 	*x = CodeSegment{}
-	mi := &file_analyzer_proto_msgTypes[3]
+	mi := &file_pb_analyzer_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -218,7 +218,7 @@ func (x *CodeSegment) String() string {
 func (*CodeSegment) ProtoMessage() {}
 
 func (x *CodeSegment) ProtoReflect() protoreflect.Message {
-	mi := &file_analyzer_proto_msgTypes[3]
+	mi := &file_pb_analyzer_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -231,7 +231,7 @@ func (x *CodeSegment) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CodeSegment.ProtoReflect.Descriptor instead.
 func (*CodeSegment) Descriptor() ([]byte, []int) {
-	return file_analyzer_proto_rawDescGZIP(), []int{3}
+	return file_pb_analyzer_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *CodeSegment) GetStartLine() int32 {
@@ -266,7 +266,7 @@ type AnalyzeCodeSegmentsResponse struct {
 
 func (x *AnalyzeCodeSegmentsResponse) Reset() {
 	*x = AnalyzeCodeSegmentsResponse{}
-	mi := &file_analyzer_proto_msgTypes[4]
+	mi := &file_pb_analyzer_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -278,7 +278,7 @@ func (x *AnalyzeCodeSegmentsResponse) String() string {
 func (*AnalyzeCodeSegmentsResponse) ProtoMessage() {}
 
 func (x *AnalyzeCodeSegmentsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_analyzer_proto_msgTypes[4]
+	mi := &file_pb_analyzer_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -291,7 +291,7 @@ func (x *AnalyzeCodeSegmentsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AnalyzeCodeSegmentsResponse.ProtoReflect.Descriptor instead.
 func (*AnalyzeCodeSegmentsResponse) Descriptor() ([]byte, []int) {
-	return file_analyzer_proto_rawDescGZIP(), []int{4}
+	return file_pb_analyzer_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *AnalyzeCodeSegmentsResponse) GetCodeSegments() []*CodeSegment {
@@ -315,11 +315,11 @@ func (x *AnalyzeCodeSegmentsResponse) GetError() string {
 	return ""
 }
 
-var File_analyzer_proto protoreflect.FileDescriptor
+var File_pb_analyzer_proto protoreflect.FileDescriptor
 
-const file_analyzer_proto_rawDesc = "" +
+const file_pb_analyzer_proto_rawDesc = "" +
 	"\n" +
-	"\x0eanalyzer.proto\x12\banalyzer\"`\n" +
+	"\x11pb/analyzer.proto\x12\banalyzer\"`\n" +
 	"\x12CombineCodeRequest\x12\x14\n" +
 	"\x05Codes\x18\x01 \x03(\tR\x05Codes\x12\x18\n" +
 	"\aPurpose\x18\x02 \x01(\tR\aPurpose\x12\x1a\n" +
@@ -341,29 +341,29 @@ const file_analyzer_proto_rawDesc = "" +
 	"\x05Error\x18\x03 \x01(\tR\x05Error2\xc1\x01\n" +
 	"\x0fAnalyzerService\x12J\n" +
 	"\vCombineCode\x12\x1c.analyzer.CombineCodeRequest\x1a\x1d.analyzer.CombineCodeResponse\x12b\n" +
-	"\x13AnalyzeCodeSegments\x12$.analyzer.AnalyzeCodeSegmentsRequest\x1a%.analyzer.AnalyzeCodeSegmentsResponseB\x1eZ\x1ccodev42/services/analyzer/pbb\x06proto3"
+	"\x13AnalyzeCodeSegments\x12$.analyzer.AnalyzeCodeSegmentsRequest\x1a%.analyzer.AnalyzeCodeSegmentsResponseB\x15Z\x13codev42-analyzer/pbb\x06proto3"
 
 var (
-	file_analyzer_proto_rawDescOnce sync.Once
-	file_analyzer_proto_rawDescData []byte
+	file_pb_analyzer_proto_rawDescOnce sync.Once
+	file_pb_analyzer_proto_rawDescData []byte
 )
 
-func file_analyzer_proto_rawDescGZIP() []byte {
-	file_analyzer_proto_rawDescOnce.Do(func() {
-		file_analyzer_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_analyzer_proto_rawDesc), len(file_analyzer_proto_rawDesc)))
+func file_pb_analyzer_proto_rawDescGZIP() []byte {
+	file_pb_analyzer_proto_rawDescOnce.Do(func() {
+		file_pb_analyzer_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_pb_analyzer_proto_rawDesc), len(file_pb_analyzer_proto_rawDesc)))
 	})
-	return file_analyzer_proto_rawDescData
+	return file_pb_analyzer_proto_rawDescData
 }
 
-var file_analyzer_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
-var file_analyzer_proto_goTypes = []any{
+var file_pb_analyzer_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_pb_analyzer_proto_goTypes = []any{
 	(*CombineCodeRequest)(nil),          // 0: analyzer.CombineCodeRequest
 	(*CombineCodeResponse)(nil),         // 1: analyzer.CombineCodeResponse
 	(*AnalyzeCodeSegmentsRequest)(nil),  // 2: analyzer.AnalyzeCodeSegmentsRequest
 	(*CodeSegment)(nil),                 // 3: analyzer.CodeSegment
 	(*AnalyzeCodeSegmentsResponse)(nil), // 4: analyzer.AnalyzeCodeSegmentsResponse
 }
-var file_analyzer_proto_depIdxs = []int32{
+var file_pb_analyzer_proto_depIdxs = []int32{
 	3, // 0: analyzer.AnalyzeCodeSegmentsResponse.CodeSegments:type_name -> analyzer.CodeSegment
 	0, // 1: analyzer.AnalyzerService.CombineCode:input_type -> analyzer.CombineCodeRequest
 	2, // 2: analyzer.AnalyzerService.AnalyzeCodeSegments:input_type -> analyzer.AnalyzeCodeSegmentsRequest
@@ -376,26 +376,26 @@ var file_analyzer_proto_depIdxs = []int32{
 	0, // [0:1] is the sub-list for field type_name
 }
 
-func init() { file_analyzer_proto_init() }
-func file_analyzer_proto_init() {
-	if File_analyzer_proto != nil {
+func init() { file_pb_analyzer_proto_init() }
+func file_pb_analyzer_proto_init() {
+	if File_pb_analyzer_proto != nil {
 		return
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_analyzer_proto_rawDesc), len(file_analyzer_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_pb_analyzer_proto_rawDesc), len(file_pb_analyzer_proto_rawDesc)),
 			NumEnums:      0,
 			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_analyzer_proto_goTypes,
-		DependencyIndexes: file_analyzer_proto_depIdxs,
-		MessageInfos:      file_analyzer_proto_msgTypes,
+		GoTypes:           file_pb_analyzer_proto_goTypes,
+		DependencyIndexes: file_pb_analyzer_proto_depIdxs,
+		MessageInfos:      file_pb_analyzer_proto_msgTypes,
 	}.Build()
-	File_analyzer_proto = out.File
-	file_analyzer_proto_goTypes = nil
-	file_analyzer_proto_depIdxs = nil
+	File_pb_analyzer_proto = out.File
+	file_pb_analyzer_proto_goTypes = nil
+	file_pb_analyzer_proto_depIdxs = nil
 }
