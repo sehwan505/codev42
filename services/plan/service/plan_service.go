@@ -7,14 +7,13 @@ import (
 	"codev42-plan/storage/repo"
 )
 
-// PlanService는 DevPlanRepo, PlanRepo 및 AnnotationRepo 간의 작업을 조정합니다.
 type PlanService struct {
 	devPlanRepo    repo.DevPlanRepository
 	planRepo       repo.PlanRepository
 	annotationRepo repo.AnnotationRepository
 }
 
-// NewPlanService는 새로운 PlanService 인스턴스를 생성합니다.
+// NewPlanService 생성
 func NewPlanService(
 	devPlanRepo repo.DevPlanRepository,
 	planRepo repo.PlanRepository,

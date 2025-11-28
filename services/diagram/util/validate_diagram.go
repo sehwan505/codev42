@@ -20,7 +20,7 @@ func NewDiagramValidator() *DiagramValidator {
 	return &DiagramValidator{}
 }
 
-// 다이어그램 검증 함수 (개선된 버전)
+// 다이어그램 검증 함수
 func (validator DiagramValidator) ValidateDiagram(diagram string, diagramType DiagramType) error {
 	diagram = strings.TrimSpace(diagram)
 

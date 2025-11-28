@@ -24,9 +24,8 @@ func NewAnalyzerHandler(config configs.Config) *AnalyzerHandler {
 	}
 }
 
-// CombineCode combines multiple code snippets into one
+// CombineCode 여러 코드 조각을 하나로 조합
 func (h *AnalyzerHandler) CombineCode(ctx context.Context, req *pb.CombineCodeRequest) (*pb.CombineCodeResponse, error) {
-	// Convert string codes to ImplementResult format
 	var implementResults []*service.ImplementResult
 	for _, code := range req.Codes {
 		implementResults = append(implementResults, &service.ImplementResult{
@@ -50,7 +49,7 @@ func (h *AnalyzerHandler) CombineCode(ctx context.Context, req *pb.CombineCodeRe
 	}, nil
 }
 
-// AnalyzeCodeSegments analyzes code and returns important segments with explanations
+// AnalyzeCodeSegments 코드 분석 및 설명 생성
 func (h *AnalyzerHandler) AnalyzeCodeSegments(ctx context.Context, req *pb.AnalyzeCodeSegmentsRequest) (*pb.AnalyzeCodeSegmentsResponse, error) {
 	segments, err := h.analyserAgent.AnalyzeCodeSegments(req.Code, req.Language)
 	if err != nil {
@@ -60,8 +59,6 @@ func (h *AnalyzerHandler) AnalyzeCodeSegments(ctx context.Context, req *pb.Analy
 			Error:        fmt.Sprintf("failed to analyze code segments: %v", err),
 		}, nil
 	}
-
-	// Convert to protobuf format
 	pbSegments := make([]*pb.CodeSegment, len(segments))
 	for i, segment := range segments {
 		pbSegments[i] = &pb.CodeSegment{

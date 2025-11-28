@@ -24,7 +24,7 @@ func NewDiagramHandler(config configs.Config) *DiagramHandler {
 	}
 }
 
-// GenerateDiagrams generates all diagram types in parallel
+// GenerateDiagrams 모든 다이어그램 병렬 생성
 func (h *DiagramHandler) GenerateDiagrams(ctx context.Context, req *pb.GenerateDiagramsRequest) (*pb.GenerateDiagramsResponse, error) {
 	results, err := h.diagramAgent.ImplementDiagrams(req.Code, req.Purpose)
 	if err != nil {
@@ -55,7 +55,7 @@ func (h *DiagramHandler) GenerateDiagrams(ctx context.Context, req *pb.GenerateD
 	}, nil
 }
 
-// GenerateClassDiagram generates a class diagram
+// GenerateClassDiagram 클래스 다이어그램 생성
 func (h *DiagramHandler) GenerateClassDiagram(ctx context.Context, req *pb.GenerateDiagramRequest) (*pb.GenerateDiagramResponse, error) {
 	result, err := h.diagramAgent.GenerateClassDiagram(req.Code, req.Purpose)
 	if err != nil {
@@ -75,7 +75,7 @@ func (h *DiagramHandler) GenerateClassDiagram(ctx context.Context, req *pb.Gener
 	}, nil
 }
 
-// GenerateSequenceDiagram generates a sequence diagram
+// GenerateSequenceDiagram 시퀀스 다이어그램 생성
 func (h *DiagramHandler) GenerateSequenceDiagram(ctx context.Context, req *pb.GenerateDiagramRequest) (*pb.GenerateDiagramResponse, error) {
 	result, err := h.diagramAgent.GenerateSequenceDiagram(req.Code, req.Purpose)
 	if err != nil {
@@ -95,7 +95,7 @@ func (h *DiagramHandler) GenerateSequenceDiagram(ctx context.Context, req *pb.Ge
 	}, nil
 }
 
-// GenerateFlowchartDiagram generates a flowchart diagram
+// GenerateFlowchartDiagram 플로우차트 생성
 func (h *DiagramHandler) GenerateFlowchartDiagram(ctx context.Context, req *pb.GenerateDiagramRequest) (*pb.GenerateDiagramResponse, error) {
 	result, err := h.diagramAgent.GenerateFlowchartDiagram(req.Code, req.Purpose)
 	if err != nil {
