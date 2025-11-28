@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package implementation;
 
-option go_package = "codev42/services/implementation/pb";
+option go_package = "codev42-implementation/pb";
 
 // Implementation Service - 코드 구현 (비동기)
 service ImplementationService {
