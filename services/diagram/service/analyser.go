@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/invopop/jsonschema"
 	"github.com/openai/openai-go"
 )
 
@@ -25,6 +26,21 @@ func NewAnalyserAgent(apiKey string) *AnalyserAgent {
 
 type CombinedResult struct {
 	Code string `json:"code" jsonschema_description:"the result of combining the codes"`
+}
+
+type ImplementResult struct {
+	Code string `json:"code" jsonschema_description:"the result of implementing the function or class"`
+}
+
+// GenerateImplementResultSchema generates a JSON schema for the given type
+func GenerateImplementResultSchema[T any]() interface{} {
+	reflector := jsonschema.Reflector{
+		AllowAdditionalProperties: false,
+		DoNotReference:            true,
+	}
+	var v T
+	schema := reflector.Reflect(v)
+	return schema
 }
 
 func (agent AnalyserAgent) call(codes []string, purpose string) (*CombinedResult, error) {

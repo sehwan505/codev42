@@ -57,7 +57,7 @@ func (h *DiagramHandler) GenerateDiagrams(ctx context.Context, req *pb.GenerateD
 
 // GenerateClassDiagram generates a class diagram
 func (h *DiagramHandler) GenerateClassDiagram(ctx context.Context, req *pb.GenerateDiagramRequest) (*pb.GenerateDiagramResponse, error) {
-	diagram, err := h.diagramAgent.GenerateClassDiagram(req.Code, req.Purpose)
+	result, err := h.diagramAgent.GenerateClassDiagram(req.Code, req.Purpose)
 	if err != nil {
 		return &pb.GenerateDiagramResponse{
 			Diagram: "",
@@ -68,7 +68,7 @@ func (h *DiagramHandler) GenerateClassDiagram(ctx context.Context, req *pb.Gener
 	}
 
 	return &pb.GenerateDiagramResponse{
-		Diagram: diagram,
+		Diagram: result.Diagram,
 		Type:    "classDiagram",
 		Success: true,
 		Error:   "",
@@ -77,7 +77,7 @@ func (h *DiagramHandler) GenerateClassDiagram(ctx context.Context, req *pb.Gener
 
 // GenerateSequenceDiagram generates a sequence diagram
 func (h *DiagramHandler) GenerateSequenceDiagram(ctx context.Context, req *pb.GenerateDiagramRequest) (*pb.GenerateDiagramResponse, error) {
-	diagram, err := h.diagramAgent.GenerateSequenceDiagram(req.Code, req.Purpose)
+	result, err := h.diagramAgent.GenerateSequenceDiagram(req.Code, req.Purpose)
 	if err != nil {
 		return &pb.GenerateDiagramResponse{
 			Diagram: "",
@@ -88,7 +88,7 @@ func (h *DiagramHandler) GenerateSequenceDiagram(ctx context.Context, req *pb.Ge
 	}
 
 	return &pb.GenerateDiagramResponse{
-		Diagram: diagram,
+		Diagram: result.Diagram,
 		Type:    "sequenceDiagram",
 		Success: true,
 		Error:   "",
@@ -97,7 +97,7 @@ func (h *DiagramHandler) GenerateSequenceDiagram(ctx context.Context, req *pb.Ge
 
 // GenerateFlowchartDiagram generates a flowchart diagram
 func (h *DiagramHandler) GenerateFlowchartDiagram(ctx context.Context, req *pb.GenerateDiagramRequest) (*pb.GenerateDiagramResponse, error) {
-	diagram, err := h.diagramAgent.GenerateFlowchartDiagram(req.Code, req.Purpose)
+	result, err := h.diagramAgent.GenerateFlowchartDiagram(req.Code, req.Purpose)
 	if err != nil {
 		return &pb.GenerateDiagramResponse{
 			Diagram: "",
@@ -108,7 +108,7 @@ func (h *DiagramHandler) GenerateFlowchartDiagram(ctx context.Context, req *pb.G
 	}
 
 	return &pb.GenerateDiagramResponse{
-		Diagram: diagram,
+		Diagram: result.Diagram,
 		Type:    "flowchart",
 		Success: true,
 		Error:   "",
