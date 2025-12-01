@@ -1,0 +1,25 @@
+apiVersion: v2
+name: codev42
+description: Codev42 API
+type: application
+
+version: 1.0.0
+
+appVersion: "1.0.0"
+
+dependencies:
+  - name: plan-service
+    version: 0.1.0
+    repository: "file://../plan-service"
+  - name: implementation-service
+    version: 0.1.0
+    repository: "file://../implementation-service"
+  - name: diagram-service
+    version: 0.1.0
+    repository: "file://../diagram-service"
+  - name: analyzer-service
+    version: 0.1.0
+    repository: "file://../analyzer-service"
+  - name: gin-gateway
+    version: 0.1.0
+    repository: "file://../gin-gateway"

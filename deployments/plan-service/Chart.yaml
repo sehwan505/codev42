@@ -1,0 +1,9 @@
+apiVersion: v2
+name: plan-service
+description: Plan Service for MSA
+
+type: application
+
+version: 0.1.0
+
+appVersion: "1.0.0"

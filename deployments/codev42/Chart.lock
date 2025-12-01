@@ -1,0 +1,18 @@
+dependencies:
+- name: plan-service
+  repository: file://../plan-service
+  version: 0.1.0
+- name: implementation-service
+  repository: file://../implementation-service
+  version: 0.1.0
+- name: diagram-service
+  repository: file://../diagram-service
+  version: 0.1.0
+- name: analyzer-service
+  repository: file://../analyzer-service
+  version: 0.1.0
+- name: gin-gateway
+  repository: file://../gin-gateway
+  version: 0.1.0
+digest: sha256:d882b261b0751e7b03cdc17473cac59718731af70b3b354e7e2262177d6e8ffc
+generated: "2025-11-28T15:58:17.620567+09:00"
