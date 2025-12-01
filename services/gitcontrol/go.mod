@@ -1,6 +1,6 @@
 module codev42-gitcontrol
 
-go 1.23.4
+go 1.25
 
 require (
 	github.com/go-git/go-git/v5 v5.13.2

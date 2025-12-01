@@ -1,8 +1,9 @@
 module codev42-diagram
 
-go 1.25.1
+go 1.25
 
 require (
+	github.com/invopop/jsonschema v0.13.0
 	github.com/openai/openai-go v0.1.0-alpha.51
 	google.golang.org/grpc v1.77.0
 	google.golang.org/protobuf v1.36.10
@@ -11,7 +12,6 @@ require (
 require (
 	github.com/bahlo/generic-list-go v0.2.0 // indirect
 	github.com/buger/jsonparser v1.1.1 // indirect
-	github.com/invopop/jsonschema v0.13.0 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/tidwall/gjson v1.14.4 // indirect
 	github.com/tidwall/match v1.1.1 // indirect

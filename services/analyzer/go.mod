@@ -1,6 +1,6 @@
 module codev42-analyzer
 
-go 1.24.0
+go 1.25
 
 require (
 	github.com/invopop/jsonschema v0.13.0

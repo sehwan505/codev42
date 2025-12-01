@@ -1,6 +1,6 @@
 module codev42-plan
 
-go 1.25.1
+go 1.25.0
 
 require (
 	ariga.io/atlas-provider-gorm v0.6.0
