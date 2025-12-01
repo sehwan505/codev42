@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "implementation-service.fullname" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "implementation-service.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "implementation-service.name" . }}
+    spec:
+      containers:
+        - name: implementation-service
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy | default "IfNotPresent" }}
+          ports:
+            - containerPort: {{ .Values.service.port }}
+              name: grpc
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          envFrom:
+          - secretRef:
+              name: {{ include "implementation-service.fullname" . }}-secret
+          env:
+          {{- toYaml .Values.env | nindent 12 }}

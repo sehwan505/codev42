@@ -20,9 +20,21 @@ spec:
             - containerPort: {{ .Values.service.port }}
               name: http
           env:
-            - name: AGENT_SERVER_HOST
-              value: {{ .Values.agentServer.host }}
-            - name: AGENT_SERVER_PORT
-              value: "{{ .Values.agentServer.port }}"
+            - name: PLAN_SERVICE_HOST
+              value: "plan-service"
+            - name: PLAN_SERVICE_PORT
+              value: "9091"
+            - name: IMPLEMENTATION_SERVICE_HOST
+              value: "implementation-service"
+            - name: IMPLEMENTATION_SERVICE_PORT
+              value: "9092"
+            - name: DIAGRAM_SERVICE_HOST
+              value: "diagram-service"
+            - name: DIAGRAM_SERVICE_PORT
+              value: "9093"
+            - name: ANALYZER_SERVICE_HOST
+              value: "analyzer-service"
+            - name: ANALYZER_SERVICE_PORT
+              value: "9094"
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
