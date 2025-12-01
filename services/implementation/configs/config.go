@@ -35,7 +35,7 @@ func GetConfig() (*Config, error) {
 		MySQLPort:     GetEnv("MYSQL_PORT", "3306"),
 		MySQLDB:       GetEnv("MYSQL_DB", "codev"),
 
-		GRPCPort: GetEnv("GRPC_PORT", "9091"),
+		GRPCPort: GetEnv("GRPC_PORT", "9092"),
 	}
 
 	if config.OpenAiKey == "" {
