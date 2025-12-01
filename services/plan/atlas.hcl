@@ -10,7 +10,7 @@ data "external_schema" "gorm" {
   ]
 }
 
-env "gorm" {
+env "plan" {
   src = data.external_schema.gorm.url
   url = "mysql://mainuser:${getenv("MYSQL_PASSWORD")}@localhost:3306/codev?charset=utf8mb4&collation=utf8mb4_general_ci&tls=false"
   dev = "docker://maria/10.7/schema"
@@ -26,3 +26,4 @@ env "gorm" {
     }
   }
 }
+

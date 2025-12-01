@@ -1,6 +1,6 @@
 module codev42
 
-go 1.25.1
+go 1.25.0
 
 require (
 	codev42-analyzer v0.0.0

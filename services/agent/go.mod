@@ -1,6 +1,6 @@
 module codev42-agent
 
-go 1.23.4
+go 1.25
 
 require (
 	ariga.io/atlas-provider-gorm v0.5.1
