@@ -21,14 +21,106 @@
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mariadb/mariadb-original-wordmark.svg" alt="MariaDB" width="80" height="80"/>
 </p>
 
-## 아키텍처
+## 시스템 아키텍처
 
 본 시스템은 MSA(Microservice Architecture)를 기반으로 설계되었으며, 각 서비스는 독립적으로 개발, 배포 및 확장이 가능합니다.
 
-- **서비스 구성:**
-  - **API Gateway (`internal/gateway`):** 외부 HTTP 요청을 수신하여 내부의 gRPC 서비스로 라우팅하는 진입점입니다.
-  - **Agent Service (`services/agent`):** LLM 연동, 계획 수립, 코드/다이어그램 생성 등 핵심 비즈니스 로직을 수행하는 메인 서비스입니다.
-  - **Git Control Service (`services/gitcontrol`):** Git 저장소의 생성, 클론, 브랜치, 커밋 등 버전 관리와 관련된 작업을 처리하는 서비스입니다.
+```mermaid
+flowchart TB
+    subgraph Client["Client Layer"]
+        UI[Web UI / CLI]
+    end
+
+    subgraph Gateway["API Gateway Layer"]
+        GW[Gin HTTP Gateway:8080]
+    end
+
+    subgraph Services["Microservices Layer"]
+        direction TB
+        
+        subgraph PlanSvc["Plan Service :9091"]
+            PS[Plan Handler]
+            MA[Master Agent]
+        end
+        
+        subgraph ImplSvc["Implementation Service :9092"]
+            IS[Implementation Handler]
+            WA[Worker Agent]
+            JQ[Job Queue]
+        end
+        
+        subgraph DiagramSvc["Diagram Service :9093"]
+            DS[Diagram Handler]
+            DA[Diagram Agent]
+        end
+        
+        subgraph AnalyzerSvc["Analyzer Service :9094"]
+            AS[Analyzer Handler]
+            AA[Analyser Agent]
+        end
+        
+        subgraph AgentSvc["Agent Service :9090"]
+            AGS[Agent Handler]
+            CH[Code Handler]
+            PH[Plan Handler]
+        end
+        
+        subgraph GitSvc["GitControl Service"]
+            GS[Git Handler]
+        end
+    end
+
+    subgraph External["External Services"]
+        OAI[OpenAI API]
+    end
+
+    subgraph Storage["Data Layer"]
+        RDB[(MariaDB)]
+    end
+
+    UI -->|HTTP/REST| GW
+    
+    GW -->|gRPC| PS
+    GW -->|gRPC| IS
+    GW -->|gRPC| DS
+    GW -->|gRPC| AS
+
+    PS --> MA
+    IS --> WA
+    DS --> DA
+    AS --> AA
+
+    MA -->|Chat Completions| OAI
+    WA -->|Chat Completions| OAI
+    DA -->|Chat Completions| OAI
+    AA -->|Chat Completions| OAI
+
+    PS --> RDB
+    AGS --> RDB
+    AGS --> VDB
+    CH --> VDB
+```
+
+### 서비스 구성
+
+| 서비스 | 경로 | 포트 | 역할 |
+|--------|------|------|------|
+| **API Gateway** | `internal/gateway` | 8080 | 외부 HTTP 요청을 수신하여 내부 gRPC 서비스로 라우팅 |
+| **Plan Service** | `services/plan` | 9091 | 개발 계획 수립, 수정, 조회 (MasterAgent 활용) |
+| **Implementation Service** | `services/implementation` | 9092 | 비동기 코드 구현 및 상태 관리 (WorkerAgent 활용) |
+| **Diagram Service** | `services/diagram` | 9093 | Mermaid 다이어그램 생성 (Class, Sequence, Flowchart) |
+| **Analyzer Service** | `services/analyzer` | 9094 | 코드 병합 및 세그먼트 분석/설명 생성 |
+| **Agent Service** | `services/agent` | 9090 | 벡터 DB 연동, 임베딩 및 통합 에이전트 기능 |
+| **GitControl Service** | `services/gitcontrol` | - | Git 저장소 생성, 클론, 브랜치, 커밋 관리 |
+
+### 서비스별 AI 에이전트
+
+각 서비스는 특화된 AI 에이전트를 통해 OpenAI API와 연동합니다:
+
+- **MasterAgent** (Plan Service): 사용자 요구사항을 분석하여 개발 계획 구조화
+- **WorkerAgent** (Implementation Service): 계획에 따른 실제 코드 구현
+- **DiagramAgent** (Diagram Service): 코드 기반 Mermaid 다이어그램 생성
+- **AnalyserAgent** (Analyzer Service): 코드 병합 및 세그먼트별 설명 생성
 
 ## 시작하기
 
@@ -109,90 +201,109 @@
 
 ## HTTP API (Gateway)
 
-- `POST /generate-plan`
-- `POST /modify-plan`
-- `POST /implement-plan`
-- `GET /get-plan-list?ProjectId=...&Branch=...`
-- `GET /get-plan-by-id?DevPlanId=...`
+### Plan Endpoints
+| Method | Endpoint | 설명 |
+|--------|----------|------|
+| `POST` | `/generate-plan` | 요구사항 기반 개발 계획 생성 |
+| `POST` | `/modify-plan` | 기존 계획 수정 |
+| `GET` | `/get-plan-list` | 프로젝트별 계획 목록 조회 |
+| `GET` | `/get-plan-by-id` | 특정 계획 상세 조회 |
 
-요청/응답 스키마는 내부 gRPC `services/agent/pb` 정의를 따릅니다.
+### Implementation Endpoints
+| Method | Endpoint | 설명 |
+|--------|----------|------|
+| `POST` | `/implement-plan` | 계획 기반 코드 구현 |
+| `GET` | `/implementation-status` | 구현 작업 상태 조회 |
+| `GET` | `/implementation-result` | 구현 결과 조회 |
 
-## AI 구조 (Mermaid)
+### Diagram Endpoints
+| Method | Endpoint | 설명 |
+|--------|----------|------|
+| `POST` | `/generate-diagrams` | 모든 다이어그램 병렬 생성 |
+| `POST` | `/generate-class-diagram` | 클래스 다이어그램 생성 |
+| `POST` | `/generate-sequence-diagram` | 시퀀스 다이어그램 생성 |
+| `POST` | `/generate-flowchart-diagram` | 플로우차트 생성 |
 
-아래 다이어그램은 Gateway → Agent Service 내부 에이전트들의 상호작용과 외부 의존성을 나타냅니다.
+### Analyzer Endpoints
+| Method | Endpoint | 설명 |
+|--------|----------|------|
+| `POST` | `/combine-code` | 여러 코드 조각 병합 |
+| `POST` | `/analyze-code-segments` | 코드 세그먼트 분석 및 설명 |
+
+요청/응답 스키마는 각 서비스의 gRPC `.proto` 파일 정의를 따릅니다.
+
+## 서비스 통신 흐름
+
+### 전체 요청 흐름
 
 ```mermaid
-flowchart TD
-  C[Client / UI] -->|HTTP| GW[API Gateway - gin]
-
-  subgraph AgentService[Agent Service]
-    AG[gRPC Server]
-
-    MA[GeneratePlan]
-    PS[저장 및 조회]
-    RDB[MariaDB]
-
-    WA[병렬 코드 구현]
-    AA[병합/설명]
-    DA[Mermaid 생성]
-    DV[Diagram 평가]
-
-    OA[OpenAI API]
-
-    AG --> MA
-    MA -->|DevPlan| PS
-    PS --> RDB
-
-    AG --> WA
-    AA -->|combined code + segments| DA
-    DA -->|validate| DV
-
-    AG -->|Embeddings| VDB
-
-    MA --> OA
-    WA --> OA
-    AA --> OA
-    DA --> OA
-  end
-
-  GW -->|gRPC| AG
-  AG -->|Code + Diagrams + ExplainedSegments| GW
-  GW -->|JSON| C
+flowchart LR
+    C[Client] -->|HTTP| GW[API Gateway]
+    
+    GW -->|gRPC :9091| PS[Plan Service]
+    GW -->|gRPC :9092| IS[Implementation Service]
+    GW -->|gRPC :9093| DS[Diagram Service]
+    GW -->|gRPC :9094| AS[Analyzer Service]
+    
+    PS -->|OpenAI| OAI((OpenAI))
+    IS -->|OpenAI| OAI
+    DS -->|OpenAI| OAI
+    AS -->|OpenAI| OAI
+    
+    PS --> DB[(MariaDB)]
 ```
 
-### 구현 플로우 (ImplementPlan) 시퀀스
+### 구현 플로우 시퀀스
 
 ```mermaid
 sequenceDiagram
-  participant C as Client
-  participant GW as API Gateway
-  participant AG as AgentService
-  participant WA as WorkerAgent
-  participant AA as AnalyserAgent
-  participant DA as DiagramAgent
-  participant DV as DiagramValidator
-  participant DB as MariaDB
-  participant VDB as Pinecone/Milvus
-  participant OA as OpenAI
+    participant C as Client
+    participant GW as API Gateway
+    participant PS as Plan Service
+    participant IS as Implementation Service
+    participant DS as Diagram Service
+    participant AS as Analyzer Service
+    participant OA as OpenAI
 
-  C->>GW: POST /implement-plan
-  GW->>AG: gRPC ImplementPlan
-  AG->>DB: Get DevPlan
-  AG->>WA: ImplementPlan(plans)
-  WA->>OA: Chat.Completions (N회)
-  OA-->>WA: code JSON
-  WA-->>AG: ImplementResult[]
-  AG->>AA: CombineImplementation(codes, purpose)
-  AA->>OA: Chat.Completions
-  OA-->>AA: combined code JSON
-  AA-->>AG: CombinedResult
-  AG->>DA: ImplementDiagrams(code, purpose)
-  par Class / Sequence / Flowchart
-    DA->>OA: Chat.Completions
-    OA-->>DA: diagram JSON
-    DA->>DV: ValidateDiagram
-  end
-  DA-->>AG: DiagramResult[]
-  AG-->>GW: Code + Diagrams + ExplainedSegments
-  GW-->>C: HTTP 200 JSON
+    C->>GW: POST /implement-plan
+    GW->>IS: gRPC ImplementPlan
+    IS-->>GW: JobID (비동기 시작)
+    GW-->>C: HTTP 200 {jobId}
+    
+    Note over IS: 비동기 처리 시작
+    IS->>OA: Chat.Completions (코드 생성)
+    OA-->>IS: Generated Code
+    
+    C->>GW: GET /implementation-status
+    GW->>IS: gRPC GetStatus
+    IS-->>GW: Progress Info
+    GW-->>C: HTTP 200 {status, progress}
+    
+    C->>GW: GET /implementation-result
+    GW->>IS: gRPC GetResult
+    IS-->>GW: Code + Diagrams
+    GW-->>C: HTTP 200 {code, diagrams}
+```
+
+### 계획 수립 플로우 시퀀스
+
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant GW as API Gateway
+    participant PS as Plan Service
+    participant MA as MasterAgent
+    participant DB as MariaDB
+    participant OA as OpenAI
+
+    C->>GW: POST /generate-plan {prompt}
+    GW->>PS: gRPC GeneratePlan
+    PS->>MA: Call(prompt)
+    MA->>OA: Chat.Completions
+    OA-->>MA: DevPlan JSON
+    MA-->>PS: Parsed DevPlan
+    PS->>DB: Save DevPlan
+    DB-->>PS: OK
+    PS-->>GW: GeneratePlanResponse
+    GW-->>C: HTTP 200 {devPlanId, plans}
 ```

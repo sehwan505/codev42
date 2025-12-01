@@ -2,14 +2,26 @@ DB_URL=postgresql://root:secret@localhost:5432/simple_bank?sslmode=disable
 
 
 image:
-	docker build -f deployments/Dockerfile.agent -t codev42/agent-server .
-	docker build -f deployments/Dockerfile.gateway -t codev42/gin-gateway .
+	docker build -f deployments/Dockerfile.plan -t plan-service:latest .
+	docker build -f deployments/Dockerfile.implementation -t implementation-service:latest .
+	docker build -f deployments/Dockerfile.diagram -t diagram-service:latest .
+	docker build -f deployments/Dockerfile.analyzer -t analyzer-service:latest .
+	docker build -f deployments/Dockerfile.gateway -t gin-gateway:latest .
 
-image-agent:
-	docker build -f deployments/Dockerfile.agent -t codev42/agent-server .
+image-plan:
+	docker build -f deployments/Dockerfile.plan -t plan-service:latest .
+
+image-implementation:
+	docker build -f deployments/Dockerfile.implementation -t implementation-service:latest .
+
+image-diagram:
+	docker build -f deployments/Dockerfile.diagram -t diagram-service:latest .
+
+image-analyzer:
+	docker build -f deployments/Dockerfile.analyzer -t analyzer-service:latest .
 
 image-gateway:
-	docker build -f deployments/Dockerfile.gateway -t codev42/gin-gateway .
+	docker build -f deployments/Dockerfile.gateway -t gin-gateway:latest .
 
 db_docs:
 	dbdocs build doc/db.dbml
@@ -80,25 +92,22 @@ proto-analyzer:
 run-gateway:
 	go run internal/gateway/main.go
 
-run-agent:
-	go run services/agent/main.go
-
 run-plan:
-	go run services/plan/main.go
+	cd services/plan && go run main.go
 
 run-implementation:
-	go run services/implementation/main.go
+	cd services/implementation && go run main.go
 
 run-diagram:
-	go run services/diagram/main.go
+	cd services/diagram && go run main.go
 
 run-analyzer:
-	go run services/analyzer/main.go
+	cd services/analyzer && go run main.go
 
 # 모든 서비스 동시 실행 (개발용)
 run-all:
 	@echo "Starting all microservices..."
-	@make -j6 run-gateway run-agent run-plan run-implementation run-diagram run-analyzer
+	@make -j6 run-gateway run-plan run-implementation run-diagram run-analyzer
 
 evans:
 	evans --host localhost --port 9090 -r repl
@@ -115,4 +124,37 @@ evans-diagram:
 evans-analyzer:
 	evans --host localhost --port 9094 -r repl
 
-.PHONY: network postgres createdb dropdb migrateup migratedown migrateup1 migratedown1 new_migration db_docs db_schema sqlc test server mock proto proto-agent proto-plan proto-implementation proto-diagram proto-analyzer evans evans-plan evans-implementation evans-diagram evans-analyzer redis run-gateway run-agent run-plan run-implementation run-diagram run-analyzer run-all
+# Kubernetes / Helm
+k8s-install:
+	@echo "Installing Codev42  to Kubernetes..."
+	cd deployments/codev42 && helm dependency update
+	helm install codev42 deployments/codev42 -n codev42 --create-namespace
+
+k8s-upgrade:
+	@echo "Upgrading Codev42 ..."
+	helm upgrade codev42 deployments/codev42 -n codev42
+
+k8s-uninstall:
+	@echo "Uninstalling Codev42 ..."
+	helm uninstall codev42 -n codev42
+
+k8s-status:
+	@echo "Checking Codev42  status..."
+	kubectl get all -n codev42
+
+k8s-logs-plan:
+	kubectl logs -f deployment/plan-service -n codev42
+
+k8s-logs-impl:
+	kubectl logs -f deployment/implementation-service -n codev42
+
+k8s-logs-diagram:
+	kubectl logs -f deployment/diagram-service -n codev42
+
+k8s-logs-analyzer:
+	kubectl logs -f deployment/analyzer-service -n codev42
+
+k8s-logs-gateway:
+	kubectl logs -f deployment/gin-gateway -n codev42
+
+.PHONY: network postgres createdb dropdb migrateup migratedown migrateup1 migratedown1 new_migration db_docs db_schema sqlc test server mock proto proto-agent proto-plan proto-implementation proto-diagram proto-analyzer evans evans-plan evans-implementation evans-diagram evans-analyzer redis run-gateway run-agent run-plan run-implementation run-diagram run-analyzer run-all k8s-install k8s-upgrade k8s-uninstall k8s-status k8s-logs-plan k8s-logs-impl k8s-logs-diagram k8s-logs-analyzer k8s-logs-gateway
