@@ -1,0 +1,19 @@
+FROM golang:1.25-alpine AS builder
+
+WORKDIR /app
+
+RUN apk add --no-cache ca-certificates
+
+COPY ./services/diagram/go.mod ./services/diagram/go.sum ./
+RUN go mod download
+
+COPY ./services/diagram/ ./
+RUN go build -o main ./main.go
+
+EXPOSE 9093
+
+FROM alpine:latest
+RUN apk --no-cache add ca-certificates
+WORKDIR /root/
+COPY --from=builder /app/main .
+CMD ["./main"]
