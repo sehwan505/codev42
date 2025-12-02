@@ -10,7 +10,7 @@ import (
 
 	"codev42-plan/configs"
 	"codev42-plan/handler"
-	"codev42-plan/pb"
+	"codev42-plan/proto/plan"
 	"codev42-plan/storage"
 
 	"google.golang.org/grpc"
@@ -55,7 +55,7 @@ func main() {
 	grpcServer := grpc.NewServer()
 
 	planHandler := handler.NewPlanHandler(*config, rdbConnection)
-	pb.RegisterPlanServiceServer(grpcServer, planHandler)
+	plan.RegisterPlanServiceServer(grpcServer, planHandler)
 
 	reflection.Register(grpcServer)
 
