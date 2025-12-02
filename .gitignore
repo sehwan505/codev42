@@ -25,3 +25,6 @@ deployments/**/values.yaml
 .env
 **/bin
 storage/migrations/*
+**/*.pb.go
+*.tgz
+codev42-*
