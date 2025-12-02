@@ -5,12 +5,12 @@ import (
 	"fmt"
 
 	"codev42-analyzer/configs"
-	"codev42-analyzer/pb"
+	"codev42-analyzer/proto/analyzer"
 	"codev42-analyzer/service"
 )
 
 type AnalyzerHandler struct {
-	pb.UnimplementedAnalyzerServiceServer
+	analyzer.UnimplementedAnalyzerServiceServer
 	Config        configs.Config
 	analyserAgent *service.AnalyserAgent
 }
@@ -25,7 +25,7 @@ func NewAnalyzerHandler(config configs.Config) *AnalyzerHandler {
 }
 
 // CombineCode 여러 코드 조각을 하나로 조합
-func (h *AnalyzerHandler) CombineCode(ctx context.Context, req *pb.CombineCodeRequest) (*pb.CombineCodeResponse, error) {
+func (h *AnalyzerHandler) CombineCode(ctx context.Context, req *analyzer.CombineCodeRequest) (*analyzer.CombineCodeResponse, error) {
 	var implementResults []*service.ImplementResult
 	for _, code := range req.Codes {
 		implementResults = append(implementResults, &service.ImplementResult{
@@ -35,14 +35,14 @@ func (h *AnalyzerHandler) CombineCode(ctx context.Context, req *pb.CombineCodeRe
 
 	result, err := h.analyserAgent.CombineImplementation(implementResults, req.Purpose)
 	if err != nil {
-		return &pb.CombineCodeResponse{
+		return &analyzer.CombineCodeResponse{
 			Code:    "",
 			Success: false,
 			Error:   err.Error(),
 		}, nil
 	}
 
-	return &pb.CombineCodeResponse{
+	return &analyzer.CombineCodeResponse{
 		Code:    result.Code,
 		Success: true,
 		Error:   "",
@@ -50,25 +50,25 @@ func (h *AnalyzerHandler) CombineCode(ctx context.Context, req *pb.CombineCodeRe
 }
 
 // AnalyzeCodeSegments 코드 분석 및 설명 생성
-func (h *AnalyzerHandler) AnalyzeCodeSegments(ctx context.Context, req *pb.AnalyzeCodeSegmentsRequest) (*pb.AnalyzeCodeSegmentsResponse, error) {
+func (h *AnalyzerHandler) AnalyzeCodeSegments(ctx context.Context, req *analyzer.AnalyzeCodeSegmentsRequest) (*analyzer.AnalyzeCodeSegmentsResponse, error) {
 	segments, err := h.analyserAgent.AnalyzeCodeSegments(req.Code, req.Language)
 	if err != nil {
-		return &pb.AnalyzeCodeSegmentsResponse{
+		return &analyzer.AnalyzeCodeSegmentsResponse{
 			CodeSegments: nil,
 			Success:      false,
 			Error:        fmt.Sprintf("failed to analyze code segments: %v", err),
 		}, nil
 	}
-	pbSegments := make([]*pb.CodeSegment, len(segments))
+	pbSegments := make([]*analyzer.CodeSegment, len(segments))
 	for i, segment := range segments {
-		pbSegments[i] = &pb.CodeSegment{
+		pbSegments[i] = &analyzer.CodeSegment{
 			StartLine:   int32(segment.StartLine),
 			EndLine:     int32(segment.EndLine),
 			Explanation: segment.Explanation,
 		}
 	}
 
-	return &pb.AnalyzeCodeSegmentsResponse{
+	return &analyzer.AnalyzeCodeSegmentsResponse{
 		CodeSegments: pbSegments,
 		Success:      true,
 		Error:        "",

@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package analyzer;
 
-option go_package = "codev42-analyzer/pb";
+option go_package = "codev42-analyzer/proto/analyzer";
 
 // Analyzer Service - 코드 분석 및 조합
 service AnalyzerService {
