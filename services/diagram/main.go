@@ -7,7 +7,7 @@ import (
 
 	"codev42-diagram/configs"
 	"codev42-diagram/handler"
-	"codev42-diagram/pb"
+	"codev42-diagram/proto/diagram"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
@@ -29,7 +29,7 @@ func main() {
 	grpcServer := grpc.NewServer()
 
 	diagramHandler := handler.NewDiagramHandler(*config)
-	pb.RegisterDiagramServiceServer(grpcServer, diagramHandler)
+	diagram.RegisterDiagramServiceServer(grpcServer, diagramHandler)
 
 	reflection.Register(grpcServer)
 
