@@ -5,12 +5,12 @@ import (
 	"fmt"
 
 	"codev42-diagram/configs"
-	"codev42-diagram/pb"
+	"codev42-diagram/proto/diagram"
 	"codev42-diagram/service"
 )
 
 type DiagramHandler struct {
-	pb.UnimplementedDiagramServiceServer
+	diagram.UnimplementedDiagramServiceServer
 	Config       configs.Config
 	diagramAgent *service.DiagramAgent
 }
@@ -25,13 +25,13 @@ func NewDiagramHandler(config configs.Config) *DiagramHandler {
 }
 
 // GenerateDiagrams 모든 다이어그램 병렬 생성
-func (h *DiagramHandler) GenerateDiagrams(ctx context.Context, req *pb.GenerateDiagramsRequest) (*pb.GenerateDiagramsResponse, error) {
+func (h *DiagramHandler) GenerateDiagrams(ctx context.Context, req *diagram.GenerateDiagramsRequest) (*diagram.GenerateDiagramsResponse, error) {
 	results, err := h.diagramAgent.ImplementDiagrams(req.Code, req.Purpose)
 	if err != nil {
 		return nil, fmt.Errorf("failed to generate diagrams: %v", err)
 	}
 
-	pbResults := make([]*pb.DiagramResult, len(results))
+	pbResults := make([]*diagram.DiagramResult, len(results))
 	successCount := 0
 
 	for i, result := range results {
@@ -40,7 +40,7 @@ func (h *DiagramHandler) GenerateDiagrams(ctx context.Context, req *pb.GenerateD
 			successCount++
 		}
 
-		pbResults[i] = &pb.DiagramResult{
+		pbResults[i] = &diagram.DiagramResult{
 			Diagram: result.Diagram,
 			Type:    string(result.Type),
 			Success: success,
@@ -48,7 +48,7 @@ func (h *DiagramHandler) GenerateDiagrams(ctx context.Context, req *pb.GenerateD
 		}
 	}
 
-	return &pb.GenerateDiagramsResponse{
+	return &diagram.GenerateDiagramsResponse{
 		Diagrams:     pbResults,
 		SuccessCount: int32(successCount),
 		TotalCount:   int32(len(results)),
@@ -56,10 +56,10 @@ func (h *DiagramHandler) GenerateDiagrams(ctx context.Context, req *pb.GenerateD
 }
 
 // GenerateClassDiagram 클래스 다이어그램 생성
-func (h *DiagramHandler) GenerateClassDiagram(ctx context.Context, req *pb.GenerateDiagramRequest) (*pb.GenerateDiagramResponse, error) {
+func (h *DiagramHandler) GenerateClassDiagram(ctx context.Context, req *diagram.GenerateDiagramRequest) (*diagram.GenerateDiagramResponse, error) {
 	result, err := h.diagramAgent.GenerateClassDiagram(req.Code, req.Purpose)
 	if err != nil {
-		return &pb.GenerateDiagramResponse{
+		return &diagram.GenerateDiagramResponse{
 			Diagram: "",
 			Type:    "classDiagram",
 			Success: false,
@@ -67,7 +67,7 @@ func (h *DiagramHandler) GenerateClassDiagram(ctx context.Context, req *pb.Gener
 		}, nil
 	}
 
-	return &pb.GenerateDiagramResponse{
+	return &diagram.GenerateDiagramResponse{
 		Diagram: result.Diagram,
 		Type:    "classDiagram",
 		Success: true,
@@ -76,10 +76,10 @@ func (h *DiagramHandler) GenerateClassDiagram(ctx context.Context, req *pb.Gener
 }
 
 // GenerateSequenceDiagram 시퀀스 다이어그램 생성
-func (h *DiagramHandler) GenerateSequenceDiagram(ctx context.Context, req *pb.GenerateDiagramRequest) (*pb.GenerateDiagramResponse, error) {
+func (h *DiagramHandler) GenerateSequenceDiagram(ctx context.Context, req *diagram.GenerateDiagramRequest) (*diagram.GenerateDiagramResponse, error) {
 	result, err := h.diagramAgent.GenerateSequenceDiagram(req.Code, req.Purpose)
 	if err != nil {
-		return &pb.GenerateDiagramResponse{
+		return &diagram.GenerateDiagramResponse{
 			Diagram: "",
 			Type:    "sequenceDiagram",
 			Success: false,
@@ -87,7 +87,7 @@ func (h *DiagramHandler) GenerateSequenceDiagram(ctx context.Context, req *pb.Ge
 		}, nil
 	}
 
-	return &pb.GenerateDiagramResponse{
+	return &diagram.GenerateDiagramResponse{
 		Diagram: result.Diagram,
 		Type:    "sequenceDiagram",
 		Success: true,
@@ -96,10 +96,10 @@ func (h *DiagramHandler) GenerateSequenceDiagram(ctx context.Context, req *pb.Ge
 }
 
 // GenerateFlowchartDiagram 플로우차트 생성
-func (h *DiagramHandler) GenerateFlowchartDiagram(ctx context.Context, req *pb.GenerateDiagramRequest) (*pb.GenerateDiagramResponse, error) {
+func (h *DiagramHandler) GenerateFlowchartDiagram(ctx context.Context, req *diagram.GenerateDiagramRequest) (*diagram.GenerateDiagramResponse, error) {
 	result, err := h.diagramAgent.GenerateFlowchartDiagram(req.Code, req.Purpose)
 	if err != nil {
-		return &pb.GenerateDiagramResponse{
+		return &diagram.GenerateDiagramResponse{
 			Diagram: "",
 			Type:    "flowchart",
 			Success: false,
@@ -107,7 +107,7 @@ func (h *DiagramHandler) GenerateFlowchartDiagram(ctx context.Context, req *pb.G
 		}, nil
 	}
 
-	return &pb.GenerateDiagramResponse{
+	return &diagram.GenerateDiagramResponse{
 		Diagram: result.Diagram,
 		Type:    "flowchart",
 		Success: true,
