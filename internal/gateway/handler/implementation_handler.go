@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 
-	implpb "codev42-implementation/pb"
+	implpb "codev42-implementation/proto/implementation"
 
 	"github.com/gin-gonic/gin"
 )
