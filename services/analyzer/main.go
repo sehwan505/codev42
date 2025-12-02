@@ -7,7 +7,7 @@ import (
 
 	"codev42-analyzer/configs"
 	"codev42-analyzer/handler"
-	"codev42-analyzer/pb"
+	"codev42-analyzer/proto/analyzer"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
@@ -29,7 +29,7 @@ func main() {
 	grpcServer := grpc.NewServer()
 
 	analyzerHandler := handler.NewAnalyzerHandler(*config)
-	pb.RegisterAnalyzerServiceServer(grpcServer, analyzerHandler)
+	analyzer.RegisterAnalyzerServiceServer(grpcServer, analyzerHandler)
 
 	reflection.Register(grpcServer)
 
