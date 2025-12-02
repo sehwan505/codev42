@@ -3,145 +3,128 @@ package handler
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"codev42-implementation/configs"
-	"codev42-implementation/pb"
-	"codev42-implementation/queue"
+	"codev42-implementation/proto/analyzer"
+	"codev42-implementation/proto/diagram"
+	"codev42-implementation/proto/implementation"
+	"codev42-implementation/proto/plan"
 	"codev42-implementation/service"
 )
 
 type ImplementationHandler struct {
-	pb.UnimplementedImplementationServiceServer
-	Config      configs.Config
-	workerAgent *service.WorkerAgent
-	jobQueue    *queue.JobQueue
+	implementation.UnimplementedImplementationServiceServer
+	Config         configs.Config
+	workerAgent    *service.WorkerAgent
+	planClient     plan.PlanServiceClient
+	diagramClient  diagram.DiagramServiceClient
+	analyzerClient analyzer.AnalyzerServiceClient
 }
 
-func NewImplementationHandler(config configs.Config) *ImplementationHandler {
+func NewImplementationHandler(
+	config configs.Config,
+	planClient plan.PlanServiceClient,
+	diagramClient diagram.DiagramServiceClient,
+	analyzerClient analyzer.AnalyzerServiceClient,
+) *ImplementationHandler {
 	workerAgent := service.NewWorkerAgent(config.OpenAiKey)
-	jobQueue := queue.NewJobQueue()
 
 	return &ImplementationHandler{
-		Config:      config,
-		workerAgent: workerAgent,
-		jobQueue:    jobQueue,
+		Config:         config,
+		workerAgent:    workerAgent,
+		planClient:     planClient,
+		diagramClient:  diagramClient,
+		analyzerClient: analyzerClient,
 	}
 }
 
-// ImplementPlan 비동기로 코드 구현 시작
-func (h *ImplementationHandler) ImplementPlan(ctx context.Context, req *pb.ImplementPlanRequest) (*pb.ImplementPlanResponse, error) {
-	job := h.jobQueue.CreateJob(req.DevPlanId)
-	go h.processImplementation(job.ID, req.DevPlanId)
-
-	return &pb.ImplementPlanResponse{
-		JobId:   job.ID,
-		Status:  string(queue.JobStatusPending),
-		Message: "Implementation job started",
-	}, nil
-}
-
-// GetImplementationStatus 구현 상태 조회
-func (h *ImplementationHandler) GetImplementationStatus(ctx context.Context, req *pb.GetImplementationStatusRequest) (*pb.GetImplementationStatusResponse, error) {
-	job, err := h.jobQueue.GetJob(req.JobId)
+// ImplementPlan 코드 구현 (동기 실행)
+func (h *ImplementationHandler) ImplementPlan(ctx context.Context, req *implementation.ImplementPlanRequest) (*implementation.ImplementPlanResponse, error) {
+	// Plan 서비스에서 개발 계획 조회
+	planResp, err := h.planClient.GetPlanById(ctx, &plan.GetPlanByIdRequest{
+		DevPlanId: req.DevPlanId,
+	})
 	if err != nil {
-		return nil, fmt.Errorf("failed to get job status: %v", err)
+		return nil, fmt.Errorf("failed to fetch plan: %v", err)
 	}
 
-	return &pb.GetImplementationStatusResponse{
-		JobId:       job.ID,
-		Status:      string(job.Status),
-		Progress:    job.Progress,
-		CurrentStep: job.CurrentStep,
-		CreatedAt:   job.CreatedAt.Format(time.RFC3339),
-		UpdatedAt:   job.UpdatedAt.Format(time.RFC3339),
-	}, nil
-}
-
-// GetImplementationResult 구현 결과 조회
-func (h *ImplementationHandler) GetImplementationResult(ctx context.Context, req *pb.GetImplementationResultRequest) (*pb.GetImplementationResultResponse, error) {
-	job, err := h.jobQueue.GetJob(req.JobId)
-	if err != nil {
-		return nil, fmt.Errorf("failed to get job result: %v", err)
-	}
-
-	response := &pb.GetImplementationResultResponse{
-		JobId:  job.ID,
-		Status: string(job.Status),
-		Error:  job.Error,
-	}
-
-	if job.CompletedAt != nil {
-		response.CompletedAt = job.CompletedAt.Format(time.RFC3339)
-	}
-
-	if job.Result != nil {
-		response.Code = job.Result.Code
-
-		// Convert diagrams
-		for _, diagram := range job.Result.Diagrams {
-			response.Diagrams = append(response.Diagrams, &pb.Diagram{
-				Diagram: diagram.Diagram,
-				Type:    diagram.Type,
+	// planpb.Plan -> service.Plan 변환
+	plans := make([]service.Plan, 0, len(planResp.Plans))
+	for _, pbPlan := range planResp.Plans {
+		annotations := make([]service.Annotation, 0, len(pbPlan.Annotations))
+		for _, pbAnnotation := range pbPlan.Annotations {
+			annotations = append(annotations, service.Annotation{
+				Name:        pbAnnotation.Name,
+				Description: pbAnnotation.Description,
+				Params:      pbAnnotation.Params,
+				Returns:     pbAnnotation.Returns,
 			})
 		}
-
-		// Convert explained segments
-		for _, segment := range job.Result.ExplainedSegments {
-			response.ExplainedSegments = append(response.ExplainedSegments, &pb.ExplainedSegment{
-				StartLine:   segment.StartLine,
-				EndLine:     segment.EndLine,
-				Explanation: segment.Explanation,
-			})
-		}
+		plans = append(plans, service.Plan{
+			ClassName:   pbPlan.ClassName,
+			Annotations: annotations,
+		})
 	}
 
-	return response, nil
-}
-
-// processImplementation 비동기 구현 처리
-func (h *ImplementationHandler) processImplementation(jobID string, devPlanID int64) {
-	h.jobQueue.UpdateJob(jobID, queue.JobStatusProcessing, 10, "Fetching development plan")
-	plans := []service.Plan{
-		{
-			ClassName: "Example",
-			Annotations: []service.Annotation{
-				{
-					Name:        "exampleMethod",
-					Description: "An example method",
-					Params:      "string input",
-					Returns:     "string",
-				},
-			},
-		},
-	}
-
-	h.jobQueue.UpdateJob(jobID, queue.JobStatusProcessing, 30, "Implementing code")
-
-	// Call worker agent to implement
-	results, err := h.workerAgent.ImplementPlan("go", plans)
+	// AI로 코드 생성
+	results, err := h.workerAgent.ImplementPlan(planResp.Language, plans)
 	if err != nil {
-		h.jobQueue.SetJobError(jobID, err)
-		return
+		return nil, fmt.Errorf("failed to generate code: %v", err)
 	}
 
-	h.jobQueue.UpdateJob(jobID, queue.JobStatusProcessing, 70, "Combining implementations")
-
-	// Combine results (simplified - just take first result for now)
+	// 코드 결과 조합
 	var code string
 	if len(results) > 0 && results[0] != nil {
 		code = results[0].Code
 	}
 
-	h.jobQueue.UpdateJob(jobID, queue.JobStatusProcessing, 90, "Finalizing")
-
-	// Set job result
-	result := &queue.JobResult{
-		Code:              code,
-		Diagrams:          []queue.Diagram{},          // TODO: Generate diagrams
-		ExplainedSegments: []queue.ExplainedSegment{}, // TODO: Analyze code segments
+	if code == "" {
+		return nil, fmt.Errorf("generated code is empty")
 	}
 
-	h.jobQueue.SetJobResult(jobID, result)
-	h.jobQueue.UpdateJob(jobID, queue.JobStatusCompleted, 100, "Completed")
+	// Diagram 서비스로 다이어그램 생성
+	diagramResp, err := h.diagramClient.GenerateDiagrams(ctx, &diagram.GenerateDiagramsRequest{
+		Code:    code,
+		Purpose: fmt.Sprintf("Development Plan ID: %d", req.DevPlanId),
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to generate diagrams: %v", err)
+	}
+
+	// 다이어그램 결과 변환
+	diagrams := make([]*implementation.Diagram, 0, len(diagramResp.Diagrams))
+	for _, pbDiagram := range diagramResp.Diagrams {
+		diagrams = append(diagrams, &implementation.Diagram{
+			Diagram: pbDiagram.Diagram,
+			Type:    pbDiagram.Type,
+		})
+	}
+
+	// 4. Analyzer 서비스로 코드 분석
+	analyzerResp, err := h.analyzerClient.AnalyzeCodeSegments(ctx, &analyzer.AnalyzeCodeSegmentsRequest{
+		Code:     code,
+		Language: planResp.Language,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to analyze code: %v", err)
+	}
+
+	// 분석 결과 변환
+	explainedSegments := make([]*implementation.ExplainedSegment, 0, len(analyzerResp.CodeSegments))
+	for _, pbSegment := range analyzerResp.CodeSegments {
+		explainedSegments = append(explainedSegments, &implementation.ExplainedSegment{
+			StartLine:   pbSegment.StartLine,
+			EndLine:     pbSegment.EndLine,
+			Explanation: pbSegment.Explanation,
+		})
+	}
+
+	// 5. 최종 결과 반환
+	return &implementation.ImplementPlanResponse{
+		Code:              code,
+		Diagrams:          diagrams,
+		ExplainedSegments: explainedSegments,
+		Status:            "completed",
+		Message:           "Implementation completed successfully",
+	}, nil
 }
