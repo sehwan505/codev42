@@ -3,10 +3,10 @@ package routes
 import (
 	"log"
 
-	analyzerpb "codev42-analyzer/pb"
-	diagrampb "codev42-diagram/pb"
-	implpb "codev42-implementation/pb"
-	planpb "codev42-plan/pb"
+	analyzerpb "codev42-analyzer/proto/analyzer"
+	diagrampb "codev42-diagram/proto/diagram"
+	implpb "codev42-implementation/proto/implementation"
+	planpb "codev42-plan/proto/plan"
 	"codev42/internal/gateway/handler"
 
 	"github.com/gin-gonic/gin"

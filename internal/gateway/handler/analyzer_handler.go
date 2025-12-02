@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 
-	analyzerpb "codev42-analyzer/pb"
+	analyzerpb "codev42-analyzer/proto/analyzer"
 
 	"github.com/gin-gonic/gin"
 )

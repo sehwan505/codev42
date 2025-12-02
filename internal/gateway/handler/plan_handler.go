@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	planpb "codev42-plan/pb"
+	planpb "codev42-plan/proto/plan"
 
 	"github.com/gin-gonic/gin"
 )

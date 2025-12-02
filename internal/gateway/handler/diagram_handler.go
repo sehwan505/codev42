@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 
-	diagrampb "codev42-diagram/pb"
+	diagrampb "codev42-diagram/proto/diagram"
 
 	"github.com/gin-gonic/gin"
 )
