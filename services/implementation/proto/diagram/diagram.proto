@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package diagram;
 
-option go_package = "codev42-diagram/pb";
+option go_package = "codev42-implementation/proto/diagram";
 
 // Diagram Service - Mermaid 다이어그램 생성
 service DiagramService {

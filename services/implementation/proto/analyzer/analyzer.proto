@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package analyzer;
+
+option go_package = "codev42-implementation/proto/analyzer";
+
+// Analyzer Service - 코드 분석 및 조합
+service AnalyzerService {
+  // 여러 코드 조각을 조합하여 하나의 코드로 만듦
+  rpc CombineCode(CombineCodeRequest) returns (CombineCodeResponse);
+
+  // 코드를 분석하여 중요 구간 설명 생성
+  rpc AnalyzeCodeSegments(AnalyzeCodeSegmentsRequest) returns (AnalyzeCodeSegmentsResponse);
+}
+
+// CombineCode 요청/응답
+message CombineCodeRequest {
+  repeated string Codes = 1;  // 조합할 코드 목록
+  string Purpose = 2;         // 목적/설명
+  string Language = 3;        // 프로그래밍 언어
+}
+
+message CombineCodeResponse {
+  string Code = 1;     // 조합된 코드
+  bool Success = 2;    // 성공 여부
+  string Error = 3;    // 에러 메시지 (실패 시)
+}
+
+// AnalyzeCodeSegments 요청/응답
+message AnalyzeCodeSegmentsRequest {
+  string Code = 1;     // 분석할 코드
+  string Language = 2; // 프로그래밍 언어
+}
+
+message CodeSegment {
+  int32 StartLine = 1;      // 시작 라인 (0-indexed)
+  int32 EndLine = 2;        // 종료 라인
+  string Explanation = 3;   // 한국어 설명
+}
+
+message AnalyzeCodeSegmentsResponse {
+  repeated CodeSegment CodeSegments = 1; // 분석된 코드 구간 목록
+  bool Success = 2;                      // 성공 여부
+  string Error = 3;                      // 에러 메시지 (실패 시)
+}

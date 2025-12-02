@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package implementation;
 
-option go_package = "codev42-implementation/pb";
+option go_package = "codev42-implementation/proto/implementation";
 
 // Implementation Service - 코드 구현 (비동기)
 service ImplementationService {
@@ -22,9 +22,13 @@ message ImplementPlanRequest {
 }
 
 message ImplementPlanResponse {
-  string JobId = 1;      // Job ID (상태 조회용)
-  string Status = 2;     // 초기 상태 (pending)
-  string Message = 3;    // 메시지
+  string JobId = 1;                             // Job ID (비동기 모드용, 동기 모드에서는 빈 값)
+  string Status = 2;                            // 상태 (completed, failed)
+  string Message = 3;                           // 메시지
+  string Code = 4;                              // 생성된 코드
+  repeated Diagram Diagrams = 5;                // 다이어그램 목록
+  repeated ExplainedSegment ExplainedSegments = 6; // 코드 설명 구간
+  string Error = 7;                             // 에러 메시지 (실패 시)
 }
 
 // GetImplementationStatus 요청/응답

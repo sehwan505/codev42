@@ -15,6 +15,11 @@ type Config struct {
 	MySQLDB       string
 
 	GRPCPort string
+
+	// 서비스 간 통신 엔드포인트
+	PlanServiceAddr     string
+	DiagramServiceAddr  string
+	AnalyzerServiceAddr string
 }
 
 func GetEnv(key, defaultValue string) string {
@@ -36,6 +41,11 @@ func GetConfig() (*Config, error) {
 		MySQLDB:       GetEnv("MYSQL_DB", "codev"),
 
 		GRPCPort: GetEnv("GRPC_PORT", "9092"),
+
+		// 서비스 엔드포인트
+		PlanServiceAddr:     GetEnv("PLAN_SERVICE_ADDR", "localhost:9091"),
+		DiagramServiceAddr:  GetEnv("DIAGRAM_SERVICE_ADDR", "localhost:9093"),
+		AnalyzerServiceAddr: GetEnv("ANALYZER_SERVICE_ADDR", "localhost:9094"),
 	}
 
 	if config.OpenAiKey == "" {
