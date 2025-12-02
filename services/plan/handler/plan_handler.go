@@ -6,27 +6,27 @@ import (
 
 	"codev42-plan/configs"
 	"codev42-plan/model"
-	"codev42-plan/pb"
+	"codev42-plan/proto/plan"
 	"codev42-plan/service"
 	"codev42-plan/storage"
 	"codev42-plan/storage/repo"
 )
 
 type PlanHandler struct {
-	pb.UnimplementedPlanServiceServer
-	Config     configs.Config
-	DB         *storage.RDBConnection
-	planSvc    *service.PlanService
+	plan.UnimplementedPlanServiceServer
+	Config      configs.Config
+	DB          *storage.RDBConnection
+	planSvc     *service.PlanService
 	masterAgent *service.MasterAgent
 }
 
 func NewPlanHandler(config configs.Config, db *storage.RDBConnection) *PlanHandler {
-	// Initialize repositories
+	// 저장소 초기화
 	devPlanRepo := repo.NewDevPlanRepository(db)
 	planRepo := repo.NewPlanRepository(db)
 	annotationRepo := repo.NewAnnotationRepository(db)
 
-	// Initialize services
+	// 서비스 초기화
 	planSvc := service.NewPlanService(devPlanRepo, planRepo, annotationRepo)
 	masterAgent := service.NewMasterAgent(config.OpenAiKey)
 
@@ -38,7 +38,7 @@ func NewPlanHandler(config configs.Config, db *storage.RDBConnection) *PlanHandl
 	}
 }
 
-// Helper: Convert service.DevPlan to model.DevPlan
+// service.DevPlan을 model.DevPlan으로 변환
 func convertServiceDevPlanToModelDevPlan(projectID, branch string, devPlan *service.DevPlan, prompt string) *model.DevPlan {
 	return &model.DevPlan{
 		ProjectID: projectID,
@@ -69,13 +69,13 @@ func convertServiceDevPlanToModelDevPlan(projectID, branch string, devPlan *serv
 	}
 }
 
-// Helper: Convert model.DevPlan to pb.GeneratePlanResponse
-func createPBResponse(devPlan *model.DevPlan) *pb.GeneratePlanResponse {
-	plans := make([]*pb.Plan, len(devPlan.Plans))
-	for i, plan := range devPlan.Plans {
-		annotations := make([]*pb.Annotation, len(plan.Annotations))
-		for j, ann := range plan.Annotations {
-			annotations[j] = &pb.Annotation{
+// model.DevPlan을 plan.GeneratePlanResponse으로 변환
+func createPBResponse(devPlan *model.DevPlan) *plan.GeneratePlanResponse {
+	pbPlans := make([]*plan.Plan, len(devPlan.Plans))
+	for i, modelPlan := range devPlan.Plans {
+		pbAnnotations := make([]*plan.Annotation, len(modelPlan.Annotations))
+		for j, ann := range modelPlan.Annotations {
+			pbAnnotations[j] = &plan.Annotation{
 				Name:        ann.Name,
 				Params:      ann.Params,
 				Returns:     ann.Returns,
@@ -83,32 +83,32 @@ func createPBResponse(devPlan *model.DevPlan) *pb.GeneratePlanResponse {
 			}
 		}
 
-		plans[i] = &pb.Plan{
-			ClassName:   plan.ClassName,
-			Annotations: annotations,
+		pbPlans[i] = &plan.Plan{
+			ClassName:   modelPlan.ClassName,
+			Annotations: pbAnnotations,
 		}
 	}
 
-	return &pb.GeneratePlanResponse{
+	return &plan.GeneratePlanResponse{
 		DevPlanId: devPlan.ID,
 		Language:  devPlan.Language,
-		Plans:     plans,
+		Plans:     pbPlans,
 	}
 }
 
-// GeneratePlan creates a new development plan
-func (h *PlanHandler) GeneratePlan(ctx context.Context, request *pb.GeneratePlanRequest) (*pb.GeneratePlanResponse, error) {
-	// 1. Generate plan using Master Agent
+// 새로운 개발 계획 생성
+func (h *PlanHandler) GeneratePlan(ctx context.Context, request *plan.GeneratePlanRequest) (*plan.GeneratePlanResponse, error) {
+	// 1. 마스터 에이전트를 사용하여 계획 생성
 	devPlan, err := h.masterAgent.Call(request.Prompt)
 	if err != nil {
 		return nil, fmt.Errorf("failed to generate plan: %v", err)
 	}
 
-	// 2. Check if project exists, create if not
+	// 2. 프로젝트가 존재하는지 확인, 없으면 생성
 	projectRepo := repo.NewProjectRepo(h.DB)
 	project, err := projectRepo.GetProjectByID(ctx, request.ProjectId, request.Branch)
 	if err != nil {
-		// Project doesn't exist, create it
+		// 프로젝트가 존재하지 않으면 생성
 		project = &model.Project{
 			ID:     request.ProjectId,
 			Branch: request.Branch,
@@ -119,21 +119,21 @@ func (h *PlanHandler) GeneratePlan(ctx context.Context, request *pb.GeneratePlan
 		}
 	}
 
-	// 3. Convert service DevPlan to model DevPlan
+	// 3. service DevPlan을 model DevPlan으로 변환
 	modelDevPlan := convertServiceDevPlanToModelDevPlan(request.ProjectId, request.Branch, devPlan, request.Prompt)
 
-	// 4. Save to database
+	// 4. 데이터베이스에 저장
 	if err := h.planSvc.CreateDevPlanWithDetails(ctx, modelDevPlan); err != nil {
 		return nil, fmt.Errorf("failed to save plan: %v", err)
 	}
 
-	// 5. Return response
+	// 5. 응답 반환
 	return createPBResponse(modelDevPlan), nil
 }
 
-// ModifyPlan updates an existing development plan
-func (h *PlanHandler) ModifyPlan(ctx context.Context, request *pb.ModifyPlanRequest) (*pb.ModifyPlanResponse, error) {
-	// 1. Convert pb.Plan to model.Plan
+// 기존 개발 계획 수정
+func (h *PlanHandler) ModifyPlan(ctx context.Context, request *plan.ModifyPlanRequest) (*plan.ModifyPlanResponse, error) {
+	// plan.Plan을 model.Plan으로 변환
 	modelPlans := make([]model.Plan, len(request.Plans))
 	for i, pbPlan := range request.Plans {
 		annotations := make([]model.Annotation, len(pbPlan.Annotations))
@@ -151,13 +151,13 @@ func (h *PlanHandler) ModifyPlan(ctx context.Context, request *pb.ModifyPlanRequ
 		}
 	}
 
-	// 2. Get existing DevPlan
+	// 기존 DevPlan 조회
 	existingDevPlan, err := h.planSvc.GetDevPlanByID(ctx, request.DevPlanId)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get existing plan: %v", err)
 	}
 
-	// 3. Update DevPlan
+	// DevPlan 업데이트
 	existingDevPlan.Language = request.Language
 	existingDevPlan.Plans = modelPlans
 
@@ -165,37 +165,37 @@ func (h *PlanHandler) ModifyPlan(ctx context.Context, request *pb.ModifyPlanRequ
 		return nil, fmt.Errorf("failed to update plan: %v", err)
 	}
 
-	return &pb.ModifyPlanResponse{
+	return &plan.ModifyPlanResponse{
 		Status: "success",
 	}, nil
 }
 
-// GetPlanById retrieves a development plan by ID
-func (h *PlanHandler) GetPlanById(ctx context.Context, request *pb.GetPlanByIdRequest) (*pb.GetPlanByIdResponse, error) {
+// ID로 개발 계획 조회
+func (h *PlanHandler) GetPlanById(ctx context.Context, request *plan.GetPlanByIdRequest) (*plan.GetPlanByIdResponse, error) {
 	devPlan, err := h.planSvc.GetDevPlanByID(ctx, request.DevPlanId)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get plan: %v", err)
 	}
 
-	// Convert to pb response
-	pbPlans := make([]*pb.Plan, len(devPlan.Plans))
-	for i, plan := range devPlan.Plans {
-		pbAnnotations := make([]*pb.Annotation, len(plan.Annotations))
-		for j, ann := range plan.Annotations {
-			pbAnnotations[j] = &pb.Annotation{
+	// pb 형식으로 변환
+	pbPlans := make([]*plan.Plan, len(devPlan.Plans))
+	for i, modelPlan := range devPlan.Plans {
+		pbAnnotations := make([]*plan.Annotation, len(modelPlan.Annotations))
+		for j, ann := range modelPlan.Annotations {
+			pbAnnotations[j] = &plan.Annotation{
 				Name:        ann.Name,
 				Params:      ann.Params,
 				Returns:     ann.Returns,
 				Description: ann.Description,
 			}
 		}
-		pbPlans[i] = &pb.Plan{
-			ClassName:   plan.ClassName,
+		pbPlans[i] = &plan.Plan{
+			ClassName:   modelPlan.ClassName,
 			Annotations: pbAnnotations,
 		}
 	}
 
-	return &pb.GetPlanByIdResponse{
+	return &plan.GetPlanByIdResponse{
 		DevPlanId: devPlan.ID,
 		ProjectId: devPlan.ProjectID,
 		Branch:    devPlan.Branch,
@@ -204,23 +204,23 @@ func (h *PlanHandler) GetPlanById(ctx context.Context, request *pb.GetPlanByIdRe
 	}, nil
 }
 
-// GetPlanList retrieves all development plans for a project
-func (h *PlanHandler) GetPlanList(ctx context.Context, request *pb.GetPlanListRequest) (*pb.GetPlanListResponse, error) {
+// 프로젝트의 모든 개발 계획 조회
+func (h *PlanHandler) GetPlanList(ctx context.Context, request *plan.GetPlanListRequest) (*plan.GetPlanListResponse, error) {
 	devPlans, err := h.planSvc.GetDevPlansByProjectID(ctx, request.ProjectId, request.Branch)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get plan list: %v", err)
 	}
 
-	// Convert to pb response
-	pbList := make([]*pb.PlanListElement, len(devPlans))
+	// pb 형식으로 변환
+	pbList := make([]*plan.PlanListElement, len(devPlans))
 	for i, dp := range devPlans {
-		pbList[i] = &pb.PlanListElement{
+		pbList[i] = &plan.PlanListElement{
 			DevPlanId: dp.ID,
 			Prompt:    dp.Prompt,
 		}
 	}
 
-	return &pb.GetPlanListResponse{
+	return &plan.GetPlanListResponse{
 		DevPlanList: pbList,
 	}, nil
 }
